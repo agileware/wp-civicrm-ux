@@ -25,32 +25,33 @@ class Agileware_Civicrm_Utilities_Admin {
 	/**
 	 * The ID of this plugin.
 	 *
+	 * @var      string $agileware_civicrm_utilities The ID of this plugin.
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $agileware_civicrm_utilities    The ID of this plugin.
 	 */
 	private $agileware_civicrm_utilities;
 
 	/**
 	 * The version of this plugin.
 	 *
+	 * @var      string $version The current version of this plugin.
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
+	 * @param string $agileware_civicrm_utilities The name of this plugin.
+	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
-	 * @param      string    $agileware_civicrm_utilities       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct( $agileware_civicrm_utilities, $version ) {
 
 		$this->agileware_civicrm_utilities = $agileware_civicrm_utilities;
-		$this->version = $version;
+		$this->version                     = $version;
 
 	}
 
@@ -73,7 +74,7 @@ class Agileware_Civicrm_Utilities_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'css/agileware-civicrm-utilities-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'css/agileware-civicrm-utilities-admin.css', [], $this->version, 'all' );
 
 	}
 
@@ -96,7 +97,7 @@ class Agileware_Civicrm_Utilities_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-admin.js', [ 'jquery' ], $this->version, FALSE );
 
 	}
 

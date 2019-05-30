@@ -33,27 +33,27 @@ class Agileware_Civicrm_Utilities {
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
+	 * @var      Agileware_Civicrm_Utilities_Loader $loader Maintains and registers all hooks for the plugin.
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Agileware_Civicrm_Utilities_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
 	/**
 	 * The unique identifier of this plugin.
 	 *
+	 * @var      string $agileware_civicrm_utilities The string used to uniquely identify this plugin.
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $agileware_civicrm_utilities    The string used to uniquely identify this plugin.
 	 */
 	protected $agileware_civicrm_utilities;
 
 	/**
 	 * The current version of the plugin.
 	 *
+	 * @var      string $version The current version of the plugin.
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
 	 */
 	protected $version;
 
@@ -188,8 +188,8 @@ class Agileware_Civicrm_Utilities {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_agileware_civicrm_utilities() {
 		return $this->agileware_civicrm_utilities;
@@ -198,8 +198,8 @@ class Agileware_Civicrm_Utilities {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    Agileware_Civicrm_Utilities_Loader    Orchestrates the hooks of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -208,8 +208,8 @@ class Agileware_Civicrm_Utilities {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
+	 * @since     1.0.0
 	 */
 	public function get_version() {
 		return $this->version;
