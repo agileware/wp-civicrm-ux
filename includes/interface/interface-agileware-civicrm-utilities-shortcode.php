@@ -6,6 +6,13 @@
 interface iAgileware_Civicrm_Utilities_Shortcode {
 
 	/**
+	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 *
+	 * @return mixed
+	 */
+	public function init_setup($manager);
+
+	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name();

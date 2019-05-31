@@ -25,7 +25,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 	protected $plugin;
 
 	/**
-	 * @var array A list of registered shortcodes.
+	 * @var \iAgileware_Civicrm_Utilities_Shortcode[] A list of registered shortcodes.
 	 */
 	protected $registered_shortcodes;
 
@@ -60,27 +60,32 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 				// Do something...
 			}
 		}
+
+		foreach (get_declared_classes() as $className) {
+			if (in_array('iAgileware_Civicrm_Utilities_Shortcode', class_implements($className))) {
+				/** @var \iAgileware_Civicrm_Utilities_Shortcode $instance */
+				$instance = new $className();
+				$instance->init_setup( $this );
+				$this->registered_shortcodes[] = $instance;
+			}
+		}
 	}
 
 	/**
 	 * Hooked action init
 	 */
 	public function register_shortcodes() {
-		$classes = [];
-		foreach (get_declared_classes() as $className) {
-			if (in_array('iAgileware_Civicrm_Utilities_Shortcode', class_implements($className))) {
-				$classes[] = $className;
-			}
-		}
-		if ( ! $classes ) {
+		if ( empty($this->registered_shortcodes) ) {
 			return;
 		}
 
-		foreach ( $classes as $class ) {
-			/** @var \iAgileware_Civicrm_Utilities_Shortcode $instance */
-			$instance = new $class();
+		foreach ( $this->registered_shortcodes as $instance ) {
 			add_shortcode( $instance->get_shortcode_name(), [ $instance, 'shortcode_callback' ] );
 			$this->registered_shortcodes[] = $instance->get_shortcode_name();
 		}
+	}
+
+	public function get_plugin() {
+		return $this->plugin;
 	}
 }
