@@ -33,7 +33,7 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 	 *
 	 * @return mixed
 	 */
-	public function init_setup( $manager ) {
+	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager ) {
 		$this->manager = $manager;
 
 		$manager->get_plugin()->get_loader()->add_action( 'rest_api_init', $this, 'rest_api_init' );

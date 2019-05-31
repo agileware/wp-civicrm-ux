@@ -2,3 +2,16 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+.civicrm-event-listing-wrap h2, .civicrm-event-listing-wrap h3,
+.civicrm-event-listing-wrap p {
+    margin: 0;
+}
+
+.civicrm-event-listing-wrap h3 {
+    font-size: 18px;
+}
+
+div.civicrm-event-listing-item {
+    margin: 0 0 10px 0;
+}
