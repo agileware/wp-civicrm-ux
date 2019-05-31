@@ -53,6 +53,7 @@ class Agileware_Civicrm_Utilities_Admin {
 		$this->agileware_civicrm_utilities = $agileware_civicrm_utilities;
 		$this->version                     = $version;
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/agileware-civicrm-utilities-admin-display.php';
 	}
 
 	/**

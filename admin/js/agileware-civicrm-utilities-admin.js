@@ -28,5 +28,20 @@
      * Although scripts in the WordPress core, Plugins and Themes may be
      * practising this, we should strive to set a better example in our own work.
      */
+    function dec2hex(dec) {
+        return ('0' + dec.toString(16)).substr(-2)
+    }
+
+    // generateId :: Integer -> String
+    function generateId(len) {
+        var arr = new Uint8Array((len || 40) / 2)
+        window.crypto.getRandomValues(arr)
+        return Array.from(arr, dec2hex).join('')
+    }
+
+    $('#generate-ical-hash').on('click', function () {
+        let hash = generateId(16);
+        $('#ical-hash-field').val(hash);
+    })
 
 })(jQuery);

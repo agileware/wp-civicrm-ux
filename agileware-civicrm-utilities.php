@@ -29,6 +29,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+//TODO check CiviCRM and Caldera Forms activated
+
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**

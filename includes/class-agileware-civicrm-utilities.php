@@ -89,6 +89,9 @@ class Agileware_Civicrm_Utilities {
 		$this->define_public_hooks();
 		$this->define_shortcodes();
 
+		$this->loader->add_action( 'init', $this, 'civicrm_init' );
+		$this->register_options();
+
 	}
 
 	/**
@@ -214,6 +217,10 @@ class Agileware_Civicrm_Utilities {
 		$this->loader->add_action( 'init', $shortcode_manager, 'register_shortcodes' );
 	}
 
+	private function register_options() {
+
+	}
+
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
@@ -232,6 +239,10 @@ class Agileware_Civicrm_Utilities {
 	 */
 	public function get_agileware_civicrm_utilities() {
 		return $this->agileware_civicrm_utilities;
+	}
+
+	public function civicrm_init() {
+		civicrm_initialize();
 	}
 
 	/**

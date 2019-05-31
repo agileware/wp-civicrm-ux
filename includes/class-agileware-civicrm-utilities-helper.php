@@ -67,6 +67,14 @@ class Agileware_Civicrm_Utilities_Helper {
 		return FALSE;
 	}
 
+	public function generate_hash() {
+		return bin2hex(random_bytes(16));
+	}
+
+	public function check_hash_in_option(string $hash, string $option) {
+		return $hash == get_option( $option );
+	}
+
 	/**
 	 * @param string $path absolute path
 	 *
@@ -77,6 +85,4 @@ class Agileware_Civicrm_Utilities_Helper {
 
 		return is_file( $path ) && $file_info['extension'] == 'php';
 	}
-
-
 }
