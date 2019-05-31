@@ -3,7 +3,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       https://agileware.com.au
  * @since      1.0.0
  *
  * @package    Agileware_Civicrm_Utilities
@@ -18,7 +18,7 @@
  *
  * @package    Agileware_Civicrm_Utilities
  * @subpackage Agileware_Civicrm_Utilities/admin
- * @author     Your Name <email@example.com>
+ * @author     Agileware <support@agileware.com.au>
  */
 class Agileware_Civicrm_Utilities_Admin {
 

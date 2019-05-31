@@ -7,17 +7,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://agileware.com.au
+ * @link              https://agileware.com.au
  * @since             1.0.0
  * @package           Agileware_Civicrm_Utilities
  *
  * @wordpress-plugin
  * Plugin Name:       Agileware CiviCRM Utilities
- * Plugin URI:        http://agileware.com.au
+ * Plugin URI:        https://agileware.com.au
  * Description:       A plugin for using with CiviCRM and Caldera Forms
  * Version:           1.0.0
  * Author:            Agileware
- * Author URI:        http://example.com/
+ * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       agileware-civicrm-utilities

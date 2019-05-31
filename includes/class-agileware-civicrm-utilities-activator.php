@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
+ * @link       https://agileware.com.au
  * @since      1.0.0
  *
  * @package    Agileware_Civicrm_Utilities
@@ -18,7 +18,7 @@
  * @since      1.0.0
  * @package    Agileware_Civicrm_Utilities
  * @subpackage Agileware_Civicrm_Utilities/includes
- * @author     Your Name <email@example.com>
+ * @author     Agileware <support@agileware.com.au>
  */
 class Agileware_Civicrm_Utilities_Activator {
 

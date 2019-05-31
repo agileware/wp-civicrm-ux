@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       http://example.com
+ * @link       https://agileware.com.au
  * @since      1.0.0
  *
  * @package    Agileware_Civicrm_Utilities
@@ -25,7 +25,7 @@
  * @since      1.0.0
  * @package    Agileware_Civicrm_Utilities
  * @subpackage Agileware_Civicrm_Utilities/includes
- * @author     Your Name <email@example.com>
+ * @author     Agileware <support@agileware.com.au>
  */
 class Agileware_Civicrm_Utilities {
 
@@ -38,6 +38,15 @@ class Agileware_Civicrm_Utilities {
 	 * @access   protected
 	 */
 	protected $loader;
+
+	/**
+	 * The helper class that provide helper function to all other class
+	 *
+	 * @var      Agileware_Civicrm_Utilities_Helper $helper The helper class that provide helper function to all other class
+	 * @since    1.0.0
+	 * @access   public
+	 */
+	public $helper;
 
 	/**
 	 * The unique identifier of this plugin.
@@ -78,6 +87,7 @@ class Agileware_Civicrm_Utilities {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_shortcodes();
 
 	}
 
@@ -106,6 +116,21 @@ class Agileware_Civicrm_Utilities {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-loader.php';
 
 		/**
+		 * The helper class.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-helper.php';
+
+		/**
+		 * The shortcode manager.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-shortcode-manager.php';
+
+		/**
+		 * The shortcode interface.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-agileware-civicrm-utilities-shortcode.php';
+
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
@@ -123,6 +148,7 @@ class Agileware_Civicrm_Utilities {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-agileware-civicrm-utilities-public.php';
 
 		$this->loader = new Agileware_Civicrm_Utilities_Loader();
+		$this->helper = new Agileware_Civicrm_Utilities_Helper($this);
 
 	}
 
@@ -173,6 +199,19 @@ class Agileware_Civicrm_Utilities {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+	}
+
+	/**
+	 * Register shortcodes.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_shortcodes() {
+
+		$shortcode_manager = new Agileware_Civicrm_Utilities_Shortcode_Manager( $this );
+
+		$this->loader->add_action( 'init', $shortcode_manager, 'register_shortcodes' );
 	}
 
 	/**
