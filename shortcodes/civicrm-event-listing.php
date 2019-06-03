@@ -66,20 +66,27 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 	}
 
 	private function get_event_item_html( array $event ) {
-		$date        = $this->get_date_object( $event['event_start_date'] );
-		if ($date->format('h:i a') == '12:00 am') {
+		$start_date        = $this->get_date_object( $event['event_start_date'] );
+		if ($start_date->format('h:i a') == '12:00 am') {
 			$date_format = 'j F Y';
 		} else{
 			$date_format = 'j F Y g:i a';
 		}
-
+		
+        $end_date_text = '';
 		if ( ! empty( $event['event_end_date'] ) ) {
-			// TODO add end date
 			$end_date = $this->get_date_object( $event['event_end_date'] );
+			
+			// Check if end date is the same day as start date
+			if ($end_date->format('j F Y') == $start_date->format('j F Y')) {
+      			$end_date_text = ' to ' . $end_date->format('g:i a');
+			} else {
+			    $end_date_text = ' to ' . $end_date->format( $date_format );
+			}
 		}
 
-		$output = '<p><b>' . $date->format( $date_format ) . '</b> - ' . $this->get_event_register_link_html( $event['id'] ) . '</p>' .
-		          '<h3>' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</h3>' .
+		$output = '<h3>' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</h3>' .
+		          '<p><b>' . $start_date->format( $date_format ) . $end_date_text . '</b> - ' . $this->get_event_register_link_html( $event['id'] ) . '</p>' .
 		          '<p>' . $event['summary'] . ' ' . $this->get_event_info_link_html( $event['id'] ) . '</p>';
 
 		return "<div class='civicrm-event-listing-item'>$output</div>";
@@ -94,12 +101,12 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 	private function get_event_register_link_html( string $event_id ) {
 		$url = home_url( '/' ) . 'civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Fregister&reset=1&id=' . $event_id;
 
-		return '<a href="' . $url . '">Register now</a>';
+		return '<a target=_blank href="' . $url . '">Register now</a>';
 	}
 
 	private function get_event_info_link_html( string $event_id, string $text = 'More information' ) {
 		$url = home_url( '/' ) . 'civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event_id;
 
-		return '<a href="' . $url . '">' . $text . '</a>';
+		return '<a target=_blank href="' . $url . '">' . $text . '</a>';
 	}
 }

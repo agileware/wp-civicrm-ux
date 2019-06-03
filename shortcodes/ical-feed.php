@@ -257,13 +257,13 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 			if ( $is_internal ) {
 				$count = $event['api.Participant.get']['count'];
 				$iCal  .= 'SUMMARY:' .
-				          $event['title'] . "-$count Participant(s)" .
+				          $event['title'] . " - $count Participants" .
 				          "\r\n";
 
 				$url  = home_url( '/' ) . 'civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'];
 				$iCal .= "DESCRIPTION:Event url: $url";
 				if ( $count > 0 ) {
-					$iCal .= '\n' . "{$count} Participant(s):";
+					$iCal .= '\n' . "{$count} Participants:";
 					foreach ( $event['api.Participant.get']['values'] as $participant ) {
 						$contact = $participant['api.Contact.getsingle'];
 						$name    = $contact['display_name'];
@@ -277,7 +277,7 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 				$iCal .= 'SUMMARY:' .
 				         $event['title'] .
 				         "\r\n";
-				$url  = home_url( '/' ) . '?page=CiviCRM&q=civicrm%2Fevent%2Fregister&reset=1&id=' . $event['id'];
+				$url  = home_url( '/' ) . 'civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Fregister&reset=1&id=' . $event['id'];
 				$iCal .= "DESCRIPTION:Event url: $url\r\n";
 			}
 
