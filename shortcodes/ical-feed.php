@@ -15,6 +15,8 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 
 	const EXTERNAL_ENDPOINT = 'event';
 
+	const INTERNAL_ENDPOINT = 'manage';
+
 	/**
 	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
 	 */
