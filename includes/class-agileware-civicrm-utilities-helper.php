@@ -68,10 +68,10 @@ class Agileware_Civicrm_Utilities_Helper {
 	}
 
 	public function generate_hash() {
-		return bin2hex(random_bytes(16));
+		return bin2hex( random_bytes( 16 ) );
 	}
 
-	public function check_hash_in_option(string $hash, string $option) {
+	public function check_hash_in_option( string $hash, string $option ) {
 		return $hash == get_option( $option );
 	}
 
@@ -84,5 +84,11 @@ class Agileware_Civicrm_Utilities_Helper {
 		$file_info = pathinfo( $path );
 
 		return is_file( $path ) && $file_info['extension'] == 'php';
+	}
+
+	private function is_sub_dir( $path ) {
+		$file_info = pathinfo( $path );
+
+		return is_dir( $path ) && in_array( $file_info['filename'], [ '.', '..' ] );
 	}
 }

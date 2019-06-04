@@ -81,7 +81,6 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 
 		foreach ( $this->registered_shortcodes as $instance ) {
 			add_shortcode( $instance->get_shortcode_name(), [ $instance, 'shortcode_callback' ] );
-			$this->registered_shortcodes[] = $instance->get_shortcode_name();
 		}
 	}
 

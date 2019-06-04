@@ -88,6 +88,7 @@ class Agileware_Civicrm_Utilities {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_shortcodes();
+		$this->define_rest();
 
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
 		$this->register_options();
@@ -123,15 +124,12 @@ class Agileware_Civicrm_Utilities {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-helper.php';
 
-		/**
-		 * The shortcode manager.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-shortcode-manager.php';
 
-		/**
-		 * The shortcode interface.
-		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-shortcode-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-rest-manager.php';
+
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-agileware-civicrm-utilities-shortcode.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-agileware-civicrm-utilities-rest.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
@@ -215,6 +213,13 @@ class Agileware_Civicrm_Utilities {
 		$shortcode_manager = new Agileware_Civicrm_Utilities_Shortcode_Manager( $this );
 
 		$this->loader->add_action( 'init', $shortcode_manager, 'register_shortcodes' );
+	}
+
+	private function define_rest() {
+
+		$manager = new Agileware_Civicrm_Utilities_REST_Manager( $this );
+
+		$this->loader->add_action( 'rest_api_init', $manager, 'register_rest_routes' );
 	}
 
 	private function register_options() {
