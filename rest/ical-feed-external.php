@@ -119,24 +119,14 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 		foreach ( $result['values'] as $event ) {
 
 			$time_str = $event['start_date'];
-			// Get UTC(GMT) time
-			// $timestampUTC   = get_gmt_from_date( $time_str, 'U' );
-			$timestampLocal = strtotime( $time_str );
-
-
-			// Check future or past
-			$diff = $timestampLocal - $dateNow;
-			if ( $diff < 0 ) {
-				continue;
-			}
+			$date = DateTime::createFromFormat( 'Y-m-d H:i:s', $time_str );
 
 			$iCal .= "BEGIN:VEVENT\r\n";
 
 			// UID format: [date]EVENTID[id]@[site name]
 			$iCal .= "UID:" .
-			         date( 'Ymd', $timestampLocal ) .
-			         'T230000EVENTID' .
-			         $event['id'] .
+			         $date->format( 'Ymd' ) . 'T' . $date->format( 'His' ) .
+			         'EVENTID' . $event['id'] .
 			         '@' .
 			         get_bloginfo( 'name' ) .
 			         "\r\n";
@@ -145,17 +135,13 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 			$iCal .= 'DTSTAMP;TZID=' .
 			         $timezone_str .
 			         ":" .
-			         date( 'Ymd', $timestampLocal ) .
-			         "T" .
-			         date( 'hms', $timestampLocal ) .
+			         $date->format( 'Ymd' ) . 'T' . $date->format( 'His' ) .
 			         "\r\n";
 
 			$iCal .= 'DTSTART;TZID=' .
 			         $timezone_str .
 			         ":" .
-			         date( 'Ymd', $timestampLocal ) .
-			         "T" .
-			         date( 'hms', $timestampLocal ) .
+			         $date->format( 'Ymd' ) . 'T' . $date->format( 'His' ) .
 			         "\r\n";
 
 			// Check if end time set
@@ -163,18 +149,14 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 				$iCal .= 'DTEND;TZID=' .
 				         $timezone_str .
 				         ":" .
-				         date( 'Ymd', $timestampLocal ) .
-				         "T" .
-				         date( 'hms', $timestampLocal ) .
+				         $date->format( 'Ymd') . 'T' . $date->format( 'His') .
 				         "\r\n";
 			} else {
-				$timestamp_end = strtotime( $event['event_end_date'] );
+				$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $event['event_end_date'] );
 				$iCal          .= 'DTEND;TZID=' .
 				                  $timezone_str .
 				                  ":" .
-				                  date( 'Ymd', $timestamp_end ) .
-				                  "T" .
-				                  date( 'hms', $timestamp_end ) .
+				                  $end_date->format( 'Ymd' ) . 'T' . $end_date->format( 'His' ) .
 				                  "\r\n";
 			}
 			$iCal .= 'SUMMARY:' .

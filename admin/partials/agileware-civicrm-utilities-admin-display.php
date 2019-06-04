@@ -18,7 +18,7 @@ add_action( 'admin_menu', 'agileware_civicrm_utilities_create_menu' );
 function agileware_civicrm_utilities_create_menu() {
 
 	//create new top-level menu
-	add_menu_page( 'Agileware CiviCRM Utilities Settings', 'Agileware CiviCRM Utilities Settings', 'administrator', __FILE__, 'agileware_civicrm_utilities_settings_page' );
+	add_menu_page( 'ACU Settings', 'ACU Settings', 'administrator', __FILE__, 'agileware_civicrm_utilities_settings_page' );
 
 	//call register settings function
 	add_action( 'admin_init', 'agileware_civicrm_utilities_register_settings' );
