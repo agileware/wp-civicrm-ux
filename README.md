@@ -12,30 +12,40 @@ Agileware CiviCRM plugin all in one.
 ## General usages
 ### Shortcodes
 #### Campaign
- - [campaign-info-with-thermometer id=3]
+ - `[campaign-info-with-thermometer id=3]`
     * Formatted html with styling
- - [campaign-honour-listing id=3]
+ - `[campaign-honour-listing id=3]`
     * Formatted html with styling
- - [campaign-found-raised id=3]
- - [campaign-goal-amount id=3]
- - [campaign-end-date id=3]
- - [campaign-day-remaining id=3]
- - [campaign-total-contribution-number id=3]  
+ - `[campaign-found-raised id=3]`
+ - `[campaign-goal-amount id=3]`
+ - `[campaign-end-date id=3]`
+ - `[campaign-day-remaining id=3]`
+ - `[campaign-total-contribution-number id=3]`  
  
 Note:  
 Id for the campaign id is required.  
 Shortcodes return raw string value except first two
 
 #### Event
- - [ical-feed types="Meeting,Exhibition"]
- - [civicrm-event-listing types="Training"]
+ - `[ical-feed types="Meeting,Exhibition"]display text[/ical-feed]`
+ - `[civicrm-event-listing types="Training"]`
  
 Note:  
 Type is optional.  
 Shortcodes return formatted html with styling.
 
+### REST API
+ - ICalFeed/event
+ - ICalFeed/manage
+
 ## Development
 ### How to add shortcode
-1. Create a php file in shortcodes directory.
+1. Create a php file in **shortcodes** directory.
 1. Within the file, create a class which implement `iAgileware_Civicrm_Utilities_Shortcode`.
-1. Implement there functions defined in the interface. It will be easy if you are using PhpStorm.
+1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
+
+### How to add REST API route
+1. Create a php file in **rest** directory.
+1. Within the file, create a class which implement `iAgileware_Civicrm_Utilities_REST`.
+1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
+
