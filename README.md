@@ -29,6 +29,7 @@ Shortcodes return raw string value except first two
 #### Event
  - `[ical-feed types="Meeting,Exhibition"]display text[/ical-feed]`
  - `[civicrm-event-listing types="Training"]`
+ - `[civicrm-upcoming-events count=5]`
  
 Note:  
 Type is optional.  
@@ -49,3 +50,6 @@ Shortcodes return formatted html with styling.
 1. Within the file, create a class which implement `iAgileware_Civicrm_Utilities_REST`.
 1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
 
+### CSS and JavaScript
+All css files should go to `public/css` or `admin/css`. If you create new css files, make sure you enqueue them.
+The same as javascript files. They should be in `public/js` or `admin/js`.
