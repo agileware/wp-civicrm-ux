@@ -2,7 +2,10 @@
 
 class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware_Civicrm_Utilities_Shortcode {
 
-
+	/**
+	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 */
+	protected $manager;
 
 	/**
 	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
@@ -10,7 +13,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 	 * @return mixed
 	 */
 	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager ) {
-
+		$this->manager = $manager;
 	}
 
 	/**
@@ -36,7 +39,12 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 			'options'    => [ 'sort' => "start_date ASC", 'limit' => 5 ],
 		];
 
-		if ( !empty($atts) && $atts['count'] && is_integer(atts['count']) ) {
+		if ( ! empty( $atts ) && isset( $atts['types'] ) ) {
+			$types                       = explode( ',', $atts['types'] );
+			$civi_param['event_type_id'] = [ 'IN' => $types ];
+		}
+
+		if ( ! empty( $atts ) && isset( $atts['count'] ) && is_integer( atts['count'] ) ) {
 			$civi_param['options']['limit'] = $atts['count'];
 		}
 
@@ -46,7 +54,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 			return "error";
 		}
 
-		$output             = '<div class="civicrm-upcoming-event-wrap">';
+		$output = '<div class="civicrm-upcoming-event-wrap">';
 		foreach ( $result['values'] as $event ) {
 			$output .= $this->get_event_item_html( $event );
 		}
@@ -57,27 +65,37 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 	}
 
 	private function get_event_item_html( array $event ) {
-		$start_date        = $this->get_date_object( $event['event_start_date'] );
-		if ($start_date->format('h:i a') == '12:00 am') {
+		$start_date = $this->get_date_object( $event['event_start_date'] );
+		if ( $start_date->format( 'h:i a' ) == '12:00 am' ) {
 			$date_format = 'j F Y';
-		} else{
+		} else {
 			$date_format = 'j F Y g:i a';
 		}
 
 		$end_date_text = '';
 		if ( ! empty( $event['event_end_date'] ) ) {
 			$end_date = $this->get_date_object( $event['event_end_date'] );
+			if ( $end_date->format( 'h:i a' ) == '12:00 am' ) {
+				$end_date_format = 'j F Y';
+			} else {
+				$end_date_format = 'j F Y g:i a';
+			}
 
 			// Check if end date is the same day as start date
-			if ($end_date->format('j F Y') == $start_date->format('j F Y')) {
-				$end_date_text = ' to ' . $end_date->format('g:i a');
+			if ( $end_date->format( 'j F Y' ) == $start_date->format( 'j F Y' ) ) {
+				$end_date_format = str_replace( [ 'j F Y ', 'j F Y' ], '', $end_date_format );
+				$end_date_text   = ' to ' . $end_date->format( $end_date_format );
 			} else {
-				$end_date_text = ' to ' . $end_date->format( $date_format );
+				$end_date_text = ' to ' . $end_date->format( $end_date_format );
+			}
+
+			if ( $this->manager->get_plugin()->helper->ends_with( $end_date_text, ' to ' ) ) {
+				$end_date_text = substr( $end_date_text, 0, strlen( $end_date_text ) - 4 );
 			}
 		}
 
-		$output = '<p><strong>' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</strong></p>' .
-		          '<p><b>' . $start_date->format( $date_format ) . $end_date_text . '</b></p>';
+		$output = '<p class="civicrm-upcoming-event-title"><strong>' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</strong></p>' .
+		          '<p class="civicrm-upcoming-event-date">' . $start_date->format( $date_format ) . $end_date_text . '</p>';
 
 		return "<div class='civicrm-upcoming-event-item'>$output</div>";
 	}

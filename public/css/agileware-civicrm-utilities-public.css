@@ -10,6 +10,7 @@
 
 .civicrm-event-listing-wrap p {
     margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .civicrm-event-listing-wrap h3 {
@@ -23,10 +24,14 @@ div.civicrm-event-listing-item {
 /*Upcoming event*/
 .civicrm-upcoming-event-item p {
     margin-bottom: 0;
+    padding-bottom: 0;
 }
 
+.civicrm-upcoming-event-item a {
 
-/* Campaign shortcodes */
+}
+
+    /* Campaign shortcodes */
 .campaign-meter {
     width: 100%;
     background-color: #e0e0e0;

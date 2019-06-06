@@ -85,9 +85,9 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 			}
 		}
 
-		$output = '<h3>' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</h3>' .
-		          '<p><b>' . $start_date->format( $date_format ) . $end_date_text . '</b> - ' . $this->get_event_register_link_html( $event['id'] ) . '</p>' .
-		          '<p>' . $event['summary'] . ' ' . $this->get_event_info_link_html( $event['id'] ) . '</p>';
+		$output = '<h3 class="civicrm-event-item-header">' . $this->get_event_info_link_html( $event['id'], $event['title'] ) . '</h3>' .
+		          '<p class="civicrm-event-item-date"><b>' . $start_date->format( $date_format ) . $end_date_text . '</b> - ' . $this->get_event_register_link_html( $event['id'] ) . '</p>' .
+		          '<p class="civicrm-event-item-summary">' . $event['summary'] . ' ' . $this->get_event_info_link_html( $event['id'] ) . '</p>';
 
 		return "<div class='civicrm-event-listing-item'>$output</div>";
 	}
