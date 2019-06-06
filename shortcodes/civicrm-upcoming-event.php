@@ -36,17 +36,24 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 			'is_public'  => 1,
 			'is_active'  => 1,
 			'start_date' => [ '>' => "now" ],
-			'options'    => [ 'sort' => "start_date ASC", 'limit' => 5 ],
+			'options'    => [ 'sort' => "start_date ASC" ],
 		];
 
-		if ( ! empty( $atts ) && isset( $atts['types'] ) ) {
-			$types                       = explode( ',', $atts['types'] );
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		// override default attributes with user attributes
+		$mod_atts = shortcode_atts( [
+			'types' => '',
+			'count' => 5,
+		], $atts, $tag );
+
+		if ( ! empty( $mod_atts['types'] ) ) {
+			$types                       = explode( ',', $mod_atts['types'] );
 			$civi_param['event_type_id'] = [ 'IN' => $types ];
 		}
+		$civi_param['options']['limit'] = $mod_atts['count'];
 
-		if ( ! empty( $atts ) && isset( $atts['count'] ) && is_integer( atts['count'] ) ) {
-			$civi_param['options']['limit'] = $atts['count'];
-		}
 
 		try {
 			$result = civicrm_api3( 'Event', 'get', $civi_param );

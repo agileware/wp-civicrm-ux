@@ -36,10 +36,17 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Info_With_Thermometer imple
 	 * @throws \Exception
 	 */
 	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
-		if ( empty( $atts ) || ! $atts['id'] ) {
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		// override default attributes with user attributes
+		$mod_atts = shortcode_atts( [
+			'id' => '',
+		], $atts, $tag );
+		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
 		}
-		$id = $atts['id'];
+		$id = $mod_atts['id'];
 
 		$civi_param = [
 			'sequential'           => 1,

@@ -37,8 +37,16 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 			'options'    => [ 'sort' => "start_date ASC", 'limit' => PHP_INT_MAX ],
 		];
 
-		if ( !empty($atts) && $atts['types'] ) {
-			$types                       = explode( ',', $atts['types'] );
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		// override default attributes with user attributes
+		$mod_atts = shortcode_atts( [
+			'types' => '',
+		], $atts, $tag );
+
+		if ( ! empty( $mod_atts['types'] ) ) {
+			$types                       = explode( ',', $mod_atts['types'] );
 			$civi_param['event_type_id'] = [ 'IN' => $types ];
 		}
 
@@ -66,22 +74,22 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 	}
 
 	private function get_event_item_html( array $event ) {
-		$start_date        = $this->get_date_object( $event['event_start_date'] );
-		if ($start_date->format('h:i a') == '12:00 am') {
+		$start_date = $this->get_date_object( $event['event_start_date'] );
+		if ( $start_date->format( 'h:i a' ) == '12:00 am' ) {
 			$date_format = 'j F Y';
-		} else{
+		} else {
 			$date_format = 'j F Y g:i a';
 		}
-		
-        $end_date_text = '';
+
+		$end_date_text = '';
 		if ( ! empty( $event['event_end_date'] ) ) {
 			$end_date = $this->get_date_object( $event['event_end_date'] );
-			
+
 			// Check if end date is the same day as start date
-			if ($end_date->format('j F Y') == $start_date->format('j F Y')) {
-      			$end_date_text = ' to ' . $end_date->format('g:i a');
+			if ( $end_date->format( 'j F Y' ) == $start_date->format( 'j F Y' ) ) {
+				$end_date_text = ' to ' . $end_date->format( 'g:i a' );
 			} else {
-			    $end_date_text = ' to ' . $end_date->format( $date_format );
+				$end_date_text = ' to ' . $end_date->format( $date_format );
 			}
 		}
 

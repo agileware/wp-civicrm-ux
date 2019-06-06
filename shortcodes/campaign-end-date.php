@@ -34,10 +34,17 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_End_date implements iAgilew
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
-		if ( empty( $atts ) || ! $atts['id'] ) {
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		// override default attributes with user attributes
+		$mod_atts = shortcode_atts( [
+			'id' => '',
+		], $atts, $tag );
+		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
 		}
-		$id = $atts['id'];
+		$id = $mod_atts['id'];
 
 		$civi_param = [
 			'sequential'           => 1,
@@ -58,7 +65,8 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_End_date implements iAgilew
 		}
 
 		$end_date = $result['end_date'];
-		$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date )->format( 'j F Y');
+		$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date )->format( 'j F Y' );
+
 		return $end_date;
 	}
 }
