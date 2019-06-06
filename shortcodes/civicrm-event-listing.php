@@ -42,11 +42,11 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'types' => '',
+			'type' => '',
 		], $atts, $tag );
 
-		if ( ! empty( $mod_atts['types'] ) ) {
-			$types                       = explode( ',', $mod_atts['types'] );
+		if ( ! empty( $mod_atts['type'] ) ) {
+			$types                       = explode( ',', $mod_atts['type'] );
 			$civi_param['event_type_id'] = [ 'IN' => $types ];
 		}
 

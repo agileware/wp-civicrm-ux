@@ -56,8 +56,8 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_Internal implements iAgileware_
 			exit();
 		}
 		$opts = [];
-		if ( $data->get_param( 'types' ) ) {
-			$types         = $data->get_param( 'types' );
+		if ( $data->get_param( 'type' ) ) {
+			$types         = $data->get_param( 'type' );
 			$types         = explode( ',', $types );
 			$opts['types'] = $types;
 		}

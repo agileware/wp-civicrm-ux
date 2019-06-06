@@ -27,9 +27,9 @@ Id for the campaign id is required.
 Shortcodes return raw string value except first two
 
 #### Event
- - `[ical-feed types="Meeting,Exhibition"]display text[/ical-feed]`
- - `[civicrm-event-listing types="Training"]`
- - `[civicrm-upcoming-events count=5]`
+ - `[ical-feed type="Meeting,Exhibition"]display text[/ical-feed]`
+ - `[civicrm-event-listing type="Training"]`
+ - `[civicrm-upcoming-events count=5 type="Meeting"]`
  
 Note:  
 Type is optional.  

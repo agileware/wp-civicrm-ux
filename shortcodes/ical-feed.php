@@ -58,7 +58,7 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'types' => '',
+			'type' => '',
 		], $atts, $tag );
 
 		$url = add_query_arg( $mod_atts, get_rest_url( NULL, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );

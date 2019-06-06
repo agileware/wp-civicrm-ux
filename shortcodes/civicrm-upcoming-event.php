@@ -44,12 +44,12 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'types' => '',
+			'type' => '',
 			'count' => 5,
 		], $atts, $tag );
 
-		if ( ! empty( $mod_atts['types'] ) ) {
-			$types                       = explode( ',', $mod_atts['types'] );
+		if ( ! empty( $mod_atts['type'] ) ) {
+			$types                       = explode( ',', $mod_atts['type'] );
 			$civi_param['event_type_id'] = [ 'IN' => $types ];
 		}
 		$civi_param['options']['limit'] = $mod_atts['count'];

@@ -48,8 +48,8 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 	public function rest_api_callback( $data ) {
 		header( 'Content-Type: text/calendar' );
 		$opts = [];
-		if ( $data->get_param( 'types' ) ) {
-			$types         = $data->get_param( 'types' );
+		if ( $data->get_param( 'type' ) ) {
+			$types         = $data->get_param( 'type' );
 			$types         = explode( ',', $types );
 			$opts['types'] = $types;
 		}
