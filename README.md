@@ -22,8 +22,9 @@ Agileware CiviCRM plugin all in one.
  - `[campaign-funds-raised id=3]`
  - `[campaign-goal-amount id=3]`
  - `[campaign-end-date id=3]`
- - `[campaign-days-remaining id=3]`
-    * Return 'n days remaining or 'on-going'
+ - `[campaign-days-remaining id=3 end-text='on-going']`
+    * Return 'n days remaining'
+    * If the end date is past, return the text in `end-text`. Default is 'on-going'
  - `[campaign-total-contribution-number id=3]`  
  
 Note:  

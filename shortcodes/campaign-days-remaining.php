@@ -41,6 +41,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements i
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
 			'id' => '',
+			'end-text' => 'on-going'
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
@@ -72,7 +73,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements i
 		$day_remaining = $this->get_remaining_day( $end_date );
 
 		if ( $day_remaining === 0 ) {
-			return 'on-going';
+			return $mod_atts['end-text'];
 		}
 
 		return $day_remaining === 1 ? $day_remaining . ' day remaining' : $day_remaining . ' days remaining';
