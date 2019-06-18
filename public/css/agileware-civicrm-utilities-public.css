@@ -61,6 +61,7 @@ div.civicrm-event-listing-item {
 
 .campaign-honour-item {
     display: flex;
+    height: 3rem;
     justify-content: space-between;
     align-items: center;
     padding: 0 10px;
