@@ -22,7 +22,8 @@ Agileware CiviCRM plugin all in one.
  - `[campaign-funds-raised id=3]`
  - `[campaign-goal-amount id=3]`
  - `[campaign-end-date id=3]`
- - `[campaign-day-remaining id=3]`
+ - `[campaign-days-remaining id=3 display-empty=1]`
+    * Display-empty 0 or 1. 1 is default. If false, then return empty string instead of 0.
  - `[campaign-total-contribution-number id=3]`  
  
 Note:  

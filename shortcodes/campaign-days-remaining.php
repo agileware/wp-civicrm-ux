@@ -3,7 +3,7 @@
 /**
  * Class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining
  */
-class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining implements iAgileware_Civicrm_Utilities_Shortcode {
+class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements iAgileware_Civicrm_Utilities_Shortcode {
 
 	/**
 	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager
@@ -23,7 +23,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining implements iA
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-day-remaining';
+		return 'campaign-days-remaining';
 	}
 
 	/**
@@ -33,13 +33,14 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining implements iA
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'id' => '',
+			'id'            => '',
+			'display-empty' => true,
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
@@ -51,7 +52,10 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining implements iA
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [ 'sequential' => 1, 'campaign_id' => "\$value.id" ],
+			'api.Contribution.get' => [
+				'sequential'  => 1,
+				'campaign_id' => "\$value.id",
+			],
 		];
 
 		try {
@@ -66,6 +70,10 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Day_Remaining implements iA
 
 		$end_date      = $result['end_date'];
 		$day_remaining = $this->get_remaining_day( $end_date );
+
+		if ( $day_remaining === 0 && ! $mod_atts['display-empty'] ) {
+			return '';
+		}
 
 		return $day_remaining;
 	}
