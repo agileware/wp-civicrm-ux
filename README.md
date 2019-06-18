@@ -14,7 +14,7 @@ Agileware CiviCRM plugin all in one.
 #### Campaign
  - `[campaign-info-with-thermometer id=3]`
     * Formatted html with styling
-    * Will hide some contents if they are empty
+    * Will hide thermometer, goal, remaining days and donations if they are empty.
  - `[campaign-honour-listing id=3 display-amount=0]`
     * Formatted html with styling
     * Display-amount 0 or 1. 0 is default.
@@ -22,8 +22,8 @@ Agileware CiviCRM plugin all in one.
  - `[campaign-funds-raised id=3]`
  - `[campaign-goal-amount id=3]`
  - `[campaign-end-date id=3]`
- - `[campaign-days-remaining id=3 display-empty=1]`
-    * Display-empty 0 or 1. 1 is default. If false, then return empty string instead of 0.
+ - `[campaign-days-remaining id=3]`
+    * Return 'n days remaining or 'on-going'
  - `[campaign-total-contribution-number id=3]`  
  
 Note:  

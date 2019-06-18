@@ -32,6 +32,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements i
 	 * @param string $tag
 	 *
 	 * @return mixed Should be the html output of the shortcode
+	 * @throws Exception
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
@@ -39,8 +40,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements i
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'id'            => '',
-			'display-empty' => true,
+			'id' => '',
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
@@ -71,11 +71,11 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Days_Remaining implements i
 		$end_date      = $result['end_date'];
 		$day_remaining = $this->get_remaining_day( $end_date );
 
-		if ( $day_remaining === 0 && ! $mod_atts['display-empty'] ) {
-			return '';
+		if ( $day_remaining === 0 ) {
+			return 'on-going';
 		}
 
-		return $day_remaining;
+		return $day_remaining === 1 ? $day_remaining . ' day remaining' : $day_remaining . ' days remaining';
 	}
 
 	/**
