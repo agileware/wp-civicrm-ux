@@ -65,6 +65,9 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_End_date implements iAgilew
 		}
 
 		$end_date = $result['end_date'];
+    if (empty($end_date)) {
+      return '';
+    }
 		$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date )->format( 'j F Y' );
 
 		return $end_date;
