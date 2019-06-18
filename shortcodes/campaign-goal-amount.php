@@ -33,7 +33,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Goal_Amount implements iAgi
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
@@ -66,7 +66,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Goal_Amount implements iAgi
 
 		$goal_amount = (float) $result['goal_revenue'];
 
-		return $goal_amount;
+		return CRM_Utils_Money::format($goal_amount);
 	}
 
 }

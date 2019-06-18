@@ -25,9 +25,9 @@ interface iAgileware_Civicrm_Utilities_REST {
 	public function get_method();
 
 	/**
-	 * @param \WP_REST_Request$data
+	 * @param \WP_REST_Request $data
 	 *
 	 * @return mixed
 	 */
-	public function rest_api_callback($data);
+	public function rest_api_callback( $data );
 }

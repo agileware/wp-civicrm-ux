@@ -26,15 +26,15 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Funds_Raised implements iAg
 		return 'campaign-funds-raised';
 	}
 
-  /**
-   * @param array $atts
-   * @param null $content
-   * @param string $tag
-   *
-   * @return mixed Should be the html output of the shortcode
-   * @throws \CRM_Core_Exception
-   */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	/**
+	 * @param array $atts
+	 * @param null $content
+	 * @param string $tag
+	 *
+	 * @return mixed Should be the html output of the shortcode
+	 * @throws \CRM_Core_Exception
+	 */
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 

@@ -30,7 +30,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		$civi_param = [
 			'sequential' => 1,
 			'is_public'  => 1,
@@ -44,7 +44,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'type' => '',
+			'type'  => '',
 			'count' => 5,
 		], $atts, $tag );
 

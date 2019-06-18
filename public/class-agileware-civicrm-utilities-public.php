@@ -97,7 +97,7 @@ class Agileware_Civicrm_Utilities_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-public.js', [ 'jquery' ], $this->version, FALSE );
+		wp_enqueue_script( $this->agileware_civicrm_utilities, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-public.js', [ 'jquery' ], $this->version, false );
 
 	}
 

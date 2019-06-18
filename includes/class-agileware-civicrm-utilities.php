@@ -149,7 +149,7 @@ class Agileware_Civicrm_Utilities {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-agileware-civicrm-utilities-public.php';
 
 		$this->loader = new Agileware_Civicrm_Utilities_Loader();
-		$this->helper = new Agileware_Civicrm_Utilities_Helper($this);
+		$this->helper = new Agileware_Civicrm_Utilities_Helper( $this );
 
 	}
 

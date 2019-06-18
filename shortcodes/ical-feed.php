@@ -52,7 +52,7 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
@@ -61,8 +61,8 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 			'type' => '',
 		], $atts, $tag );
 
-		$url = add_query_arg( $mod_atts, get_rest_url( NULL, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );
+		$url = add_query_arg( $mod_atts, get_rest_url( null, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );
 
-		return "<a href='$url'>" . ( empty( $content )? 'iCal Feed' : $content ) . "</a>";
+		return "<a href='$url'>" . ( empty( $content ) ? 'iCal Feed' : $content ) . "</a>";
 	}
 }

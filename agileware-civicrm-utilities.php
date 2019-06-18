@@ -9,7 +9,7 @@
  * Plugin Name:       Agileware CiviCRM Utilities
  * Plugin URI:        https://agileware.com.au
  * Description:       A plugin for using with CiviCRM and Caldera Forms
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
@@ -33,7 +33,7 @@ require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'AGILEWARE_CIVICRM_UTILITIESVERSION', '1.0.2' );
+define( 'AGILEWARE_CIVICRM_UTILITIESVERSION', '1.0.3' );
 
 /**
  * The code that runs during plugin activation.

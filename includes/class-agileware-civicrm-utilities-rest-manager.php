@@ -64,7 +64,7 @@ class Agileware_Civicrm_Utilities_REST_Manager {
 		foreach ( get_declared_classes() as $className ) {
 			if ( in_array( 'iAgileware_Civicrm_Utilities_REST', class_implements( $className ) ) ) {
 				/** @var \iAgileware_Civicrm_Utilities_REST $instance */
-				$instance                     = new $className();
+				$instance = new $className();
 				$instance->init_setup( $this );
 				$this->registered_instances[] = $instance;
 			}
@@ -80,7 +80,13 @@ class Agileware_Civicrm_Utilities_REST_Manager {
 		}
 
 		foreach ( $this->registered_instances as $instance ) {
-			register_rest_route( $instance->get_route(), $instance->get_endpoint(), [ 'methods' => $instance->get_method(), 'callback' => [ $instance, 'rest_api_callback' ] ] );
+			register_rest_route( $instance->get_route(), $instance->get_endpoint(), [
+				'methods'  => $instance->get_method(),
+				'callback' => [
+					$instance,
+					'rest_api_callback'
+				]
+			] );
 		}
 	}
 

@@ -26,22 +26,22 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Honour_Listing implements i
 		return 'campaign-honour-listing';
 	}
 
-  /**
-   * @param array $atts
-   * @param null $content
-   * @param string $tag
-   *
-   * @return mixed Should be the html output of the shortcode
-   * @throws \CRM_Core_Exception
-   */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	/**
+	 * @param array $atts
+	 * @param null $content
+	 * @param string $tag
+	 *
+	 * @return mixed Should be the html output of the shortcode
+	 * @throws \CRM_Core_Exception
+	 */
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'id' => '',
-      'display-amount' => FALSE,
+			'id'             => '',
+			'display-amount' => false,
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
@@ -77,10 +77,10 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Honour_Listing implements i
 			$amount = $contribution['total_amount'];
 
 			// Conditional display amount
-      $amount_html = '';
-      if (!empty($amount) && $mod_atts['display-amount']) {
-        $amount_html = '<div class="campaign-honour-item-amount">' . CRM_Utils_Money::format( $amount ) . '</div>';
-      }
+			$amount_html = '';
+			if ( ! empty( $amount ) && $mod_atts['display-amount'] ) {
+				$amount_html = '<div class="campaign-honour-item-amount">' . CRM_Utils_Money::format( $amount ) . '</div>';
+			}
 
 			$output .= '<div class="campaign-honour-item">' .
 			           '<div class="campaign-honour-item-info">' .

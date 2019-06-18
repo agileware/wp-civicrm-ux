@@ -33,7 +33,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Total_Contribution_Number i
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 

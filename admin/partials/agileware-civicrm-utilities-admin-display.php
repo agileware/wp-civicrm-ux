@@ -36,7 +36,7 @@ function agileware_civicrm_utilities_settings_page() {
 	];
 	$url       = add_query_arg(
 		$url_param,
-		get_rest_url( NULL,
+		get_rest_url( null,
 			'/' . Agileware_Civicrm_Utilities_Shortcode_ICal_Feed::API_NAMESPACE . '/' . Agileware_Civicrm_Utilities_Shortcode_ICal_Feed::INTERNAL_ENDPOINT ) );
 	?>
     <div class="wrap">
@@ -48,7 +48,8 @@ function agileware_civicrm_utilities_settings_page() {
             <ul>
                 <li>
                     <label>ICal Hash
-                        <input id="ical-hash-field" type="text" name="ical_hash" value="<?php echo esc_attr( get_option( Agileware_Civicrm_Utilities_Shortcode_ICal_Feed::HASH_OPTION ) ); ?>"/>
+                        <input id="ical-hash-field" type="text" name="ical_hash"
+                               value="<?php echo esc_attr( get_option( Agileware_Civicrm_Utilities_Shortcode_ICal_Feed::HASH_OPTION ) ); ?>"/>
                     </label>
                     <button id="generate-ical-hash">GENERATE</button>
                 </li>

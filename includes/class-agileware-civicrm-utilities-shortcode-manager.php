@@ -56,13 +56,13 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 	public function run() {
 		$paths = $this->plugin->helper->get_php_file_paths( self::DIRECTORY );
 		foreach ( $paths as $path ) {
-			if ($this->plugin->helper->require_php_file( $path )) {
+			if ( $this->plugin->helper->require_php_file( $path ) ) {
 				// Do something...
 			}
 		}
 
-		foreach (get_declared_classes() as $className) {
-			if (in_array('iAgileware_Civicrm_Utilities_Shortcode', class_implements($className))) {
+		foreach ( get_declared_classes() as $className ) {
+			if ( in_array( 'iAgileware_Civicrm_Utilities_Shortcode', class_implements( $className ) ) ) {
 				/** @var \iAgileware_Civicrm_Utilities_Shortcode $instance */
 				$instance = new $className();
 				$instance->init_setup( $this );
@@ -75,7 +75,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 	 * Hooked action init
 	 */
 	public function register_shortcodes() {
-		if ( empty($this->registered_shortcodes) ) {
+		if ( empty( $this->registered_shortcodes ) ) {
 			return;
 		}
 

@@ -61,10 +61,10 @@ class Agileware_Civicrm_Utilities_Helper {
 		if ( $this->is_php_file( $path ) ) {
 			require_once $path;
 
-			return TRUE;
+			return true;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	public function generate_hash() {
@@ -75,11 +75,14 @@ class Agileware_Civicrm_Utilities_Helper {
 		return $hash == get_option( $option );
 	}
 
-	public function ends_with($string, $needle) {
-		$str_len = strlen($string);
-		$needle_len = strlen($needle);
-		if ($needle_len > $str_len) return false;
-		return substr_compare($string, $needle, $str_len - $needle_len, $needle_len) === 0;
+	public function ends_with( $string, $needle ) {
+		$str_len    = strlen( $string );
+		$needle_len = strlen( $needle );
+		if ( $needle_len > $str_len ) {
+			return false;
+		}
+
+		return substr_compare( $string, $needle, $str_len - $needle_len, $needle_len ) === 0;
 	}
 
 	/**

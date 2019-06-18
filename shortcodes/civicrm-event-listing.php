@@ -28,7 +28,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Event_Listing implements iAgileware_
 	 *
 	 * @return mixed Should be the html output of the shortcode
 	 */
-	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
+	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		$civi_param = [
 			'sequential' => 1,
 			'is_public'  => 1,

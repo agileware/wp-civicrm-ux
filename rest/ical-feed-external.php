@@ -119,7 +119,7 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 		foreach ( $result['values'] as $event ) {
 
 			$time_str = $event['start_date'];
-			$date = DateTime::createFromFormat( 'Y-m-d H:i:s', $time_str );
+			$date     = DateTime::createFromFormat( 'Y-m-d H:i:s', $time_str );
 
 			$iCal .= "BEGIN:VEVENT\r\n";
 
@@ -149,15 +149,15 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 				$iCal .= 'DTEND;TZID=' .
 				         $timezone_str .
 				         ":" .
-				         $date->format( 'Ymd') . 'T' . $date->format( 'His') .
+				         $date->format( 'Ymd' ) . 'T' . $date->format( 'His' ) .
 				         "\r\n";
 			} else {
 				$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $event['event_end_date'] );
-				$iCal          .= 'DTEND;TZID=' .
-				                  $timezone_str .
-				                  ":" .
-				                  $end_date->format( 'Ymd' ) . 'T' . $end_date->format( 'His' ) .
-				                  "\r\n";
+				$iCal     .= 'DTEND;TZID=' .
+				             $timezone_str .
+				             ":" .
+				             $end_date->format( 'Ymd' ) . 'T' . $end_date->format( 'His' ) .
+				             "\r\n";
 			}
 			$iCal .= 'SUMMARY:' .
 			         $event['title'] .
@@ -192,7 +192,7 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 		try {
 			$tz = new \DateTimeZone( $tzid );
 		} catch ( \Exception $e ) {
-			return FALSE;
+			return false;
 		}
 		// get all transitions for one year back/ahead
 		$year        = 86400 * 360;
@@ -200,10 +200,10 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_External implements iAgileware_
 		$vcalendar   = new VObject\Component\VCalendar();
 		$vt          = $vcalendar->createComponent( 'VTIMEZONE' );
 		$vt->TZID    = $tz->getName();
-		$std         = NULL;
-		$dst         = NULL;
+		$std         = null;
+		$dst         = null;
 		foreach ( $transitions as $i => $trans ) {
-			$cmp = NULL;
+			$cmp = null;
 			// skip the first entry...
 			if ( $i == 0 ) {
 				// ... but remember the offset for the next TZOFFSETFROM value

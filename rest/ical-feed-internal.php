@@ -145,7 +145,7 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_Internal implements iAgileware_
 				'error_message' => $errorMessage,
 				'error_code'    => $errorCode,
 				'error_data'    => $errorData,
-			] ) ;
+			] );
 		}
 
 		// Exit if error
@@ -244,7 +244,7 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_Internal implements iAgileware_
 		try {
 			$tz = new \DateTimeZone( $tzid );
 		} catch ( \Exception $e ) {
-			return FALSE;
+			return false;
 		}
 		// get all transitions for one year back/ahead
 		$year        = 86400 * 360;
@@ -252,10 +252,10 @@ class Agileware_Civicrm_Utilities_REST_ICal_Feed_Internal implements iAgileware_
 		$vcalendar   = new VObject\Component\VCalendar();
 		$vt          = $vcalendar->createComponent( 'VTIMEZONE' );
 		$vt->TZID    = $tz->getName();
-		$std         = NULL;
-		$dst         = NULL;
+		$std         = null;
+		$dst         = null;
 		foreach ( $transitions as $i => $trans ) {
-			$cmp = NULL;
+			$cmp = null;
 			// skip the first entry...
 			if ( $i == 0 ) {
 				// ... but remember the offset for the next TZOFFSETFROM value
