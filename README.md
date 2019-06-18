@@ -17,6 +17,7 @@ Agileware CiviCRM plugin all in one.
  - `[campaign-honour-listing id=3 display-amount=0]`
     * Formatted html with styling
     * Display-amount 0 or 1. 0 is default.
+ - `[campaign-thermometer id=1]`
  - `[campaign-funds-raised id=3]`
  - `[campaign-goal-amount id=3]`
  - `[campaign-end-date id=3]`
