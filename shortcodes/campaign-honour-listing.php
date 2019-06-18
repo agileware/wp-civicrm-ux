@@ -48,6 +48,10 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Honour_Listing implements i
 		}
 		$id = $mod_atts['id'];
 
+		if ( $mod_atts['display-amount'] === 'false' ) {
+			$mod_atts['display-amount'] = false;
+		}
+
 		$civi_param = [
 			'sequential'           => 1,
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
