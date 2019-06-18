@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class Agileware_Civicrm_Utilities_Shortcode_Campaign_Found_Raised
+ * Class Agileware_Civicrm_Utilities_Shortcode_Campaign_Funds_Raised
  */
-class Agileware_Civicrm_Utilities_Shortcode_Campaign_Found_Raised implements iAgileware_Civicrm_Utilities_Shortcode {
+class Agileware_Civicrm_Utilities_Shortcode_Campaign_Funds_Raised implements iAgileware_Civicrm_Utilities_Shortcode {
 
 	/**
 	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager
@@ -23,16 +23,17 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Found_Raised implements iAg
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-found-raised';
+		return 'campaign-funds-raised';
 	}
 
-	/**
-	 * @param array $atts
-	 * @param null $content
-	 * @param string $tag
-	 *
-	 * @return mixed Should be the html output of the shortcode
-	 */
+  /**
+   * @param array $atts
+   * @param null $content
+   * @param string $tag
+   *
+   * @return mixed Should be the html output of the shortcode
+   * @throws \CRM_Core_Exception
+   */
 	public function shortcode_callback( $atts = [], $content = NULL, $tag = '' ) {
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
@@ -66,7 +67,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Found_Raised implements iAg
 
 		$sum = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
 
-		return number_format( $sum );
+		return CRM_Utils_Money::format( $sum );
 	}
 
 

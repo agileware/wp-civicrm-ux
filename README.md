@@ -16,7 +16,7 @@ Agileware CiviCRM plugin all in one.
     * Formatted html with styling
  - `[campaign-honour-listing id=3]`
     * Formatted html with styling
- - `[campaign-found-raised id=3]`
+ - `[campaign-funds-raised id=3]`
  - `[campaign-goal-amount id=3]`
  - `[campaign-end-date id=3]`
  - `[campaign-day-remaining id=3]`

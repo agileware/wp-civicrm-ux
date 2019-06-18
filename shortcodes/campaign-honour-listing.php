@@ -40,6 +40,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Campaign_Honour_Listing implements i
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
 			'id' => '',
+      'display'
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
