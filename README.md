@@ -14,6 +14,7 @@ Agileware CiviCRM plugin all in one.
 #### Campaign
  - `[campaign-info-with-thermometer id=3]`
     * Formatted html with styling
+    * Will hide some contents if they are empty
  - `[campaign-honour-listing id=3 display-amount=0]`
     * Formatted html with styling
     * Display-amount 0 or 1. 0 is default.
