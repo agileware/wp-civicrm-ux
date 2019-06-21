@@ -6,26 +6,26 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  */
 
 /**
  * Register all shortcodes
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Agileware_Civicrm_Utilities_Shortcode_Manager {
+class Civicrm_Ux_Shortcode_Manager {
 
 	/**
-	 * @var \Agileware_Civicrm_Utilities $plugin the plugin instance
+	 * @var \Civicrm_Ux $plugin the plugin instance
 	 */
 	protected $plugin;
 
 	/**
-	 * @var \iAgileware_Civicrm_Utilities_Shortcode[] A list of registered shortcodes.
+	 * @var \iCivicrm_Ux_Shortcode[] A list of registered shortcodes.
 	 */
 	protected $registered_shortcodes;
 
@@ -37,7 +37,7 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 	/**
 	 * Initialize
 	 *
-	 * @param \Agileware_Civicrm_Utilities $plugin
+	 * @param \Civicrm_Ux $plugin
 	 *
 	 * @since    1.0.0
 	 */
@@ -62,8 +62,8 @@ class Agileware_Civicrm_Utilities_Shortcode_Manager {
 		}
 
 		foreach ( get_declared_classes() as $className ) {
-			if ( in_array( 'iAgileware_Civicrm_Utilities_Shortcode', class_implements( $className ) ) ) {
-				/** @var \iAgileware_Civicrm_Utilities_Shortcode $instance */
+			if ( in_array( 'iCivicrm_Ux_Shortcode', class_implements( $className ) ) ) {
+				/** @var \iCivicrm_Ux_Shortcode $instance */
 				$instance = new $className();
 				$instance->init_setup( $this );
 				$this->registered_shortcodes[] = $instance;

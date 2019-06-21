@@ -9,8 +9,8 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Agileware_Civicrm_Utilities_i18n {
+class Civicrm_Ux_i18n {
 
 
 	/**

@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Class Agileware_Civicrm_Utilities_Shortcode_Campaign_Total_Contribution_Number
+ * Class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number
  */
-class Agileware_Civicrm_Utilities_Shortcode_Campaign_Total_Contribution_Number implements iAgileware_Civicrm_Utilities_Shortcode {
+class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number implements iCivicrm_Ux_Shortcode {
 
 	/**
-	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager
+	 * @var \Civicrm_Ux_Shortcode_Manager
 	 */
 	private $manager;
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @param \Civicrm_Ux_Shortcode_Manager $manager
 	 *
 	 * @return mixed
 	 */
-	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager ) {
+	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
 		$this->manager = $manager;
 	}
 

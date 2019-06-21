@@ -22,7 +22,7 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
+ * @package    Civicrm_Ux
  */
 
 // If uninstall not called from WordPress, then exit.

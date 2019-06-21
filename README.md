@@ -1,4 +1,4 @@
-# Agileware CiviCRM Utilities
+# CiviCRM UX
 Tags: civicrm, shortcode, caldera-form  
 Requires at least: 5.1  
 Tested up to: 5.1  
@@ -47,12 +47,12 @@ Shortcodes return formatted html with styling.
 ## Development
 ### How to add shortcode
 1. Create a php file in **shortcodes** directory.
-1. Within the file, create a class which implement `iAgileware_Civicrm_Utilities_Shortcode`.
+1. Within the file, create a class which implement `iCivicrm_Ux_Shortcode`.
 1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
 
 ### How to add REST API route
 1. Create a php file in **rest** directory.
-1. Within the file, create a class which implement `iAgileware_Civicrm_Utilities_REST`.
+1. Within the file, create a class which implement `iCivicrm_Ux_REST`.
 1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
 
 ### CSS and JavaScript

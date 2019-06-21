@@ -5,9 +5,9 @@ use \Sabre\VObject;
 /**
  * Provide shortcode for iCal feed link and generate the iCal content
  *
- * Class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed
+ * Class Civicrm_Ux_Shortcode_ICal_Feed
  */
-class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civicrm_Utilities_Shortcode {
+class Civicrm_Ux_Shortcode_ICal_Feed implements iCivicrm_Ux_Shortcode {
 
 	const HASH_OPTION = 'internal_ical_hash';
 
@@ -18,16 +18,16 @@ class Agileware_Civicrm_Utilities_Shortcode_ICal_Feed implements iAgileware_Civi
 	const INTERNAL_ENDPOINT = 'manage';
 
 	/**
-	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @var \Civicrm_Ux_Shortcode_Manager $manager
 	 */
 	private $manager;
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @param \Civicrm_Ux_Shortcode_Manager $manager
 	 *
 	 * @return mixed
 	 */
-	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager ) {
+	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
 		$this->manager = $manager;
 
 		add_option( self::HASH_OPTION, '' );

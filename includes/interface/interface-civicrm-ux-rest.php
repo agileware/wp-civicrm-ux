@@ -1,9 +1,9 @@
 <?php
 
-interface iAgileware_Civicrm_Utilities_REST {
+interface iCivicrm_Ux_REST {
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_REST_Manager $manage
+	 * @param \Civicrm_Ux_REST_Manager $manage
 	 *
 	 * @return mixed
 	 */

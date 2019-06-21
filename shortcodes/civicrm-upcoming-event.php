@@ -1,18 +1,18 @@
 <?php
 
-class Agileware_Civicrm_Utilities_Shortcode_Upcoming_Event implements iAgileware_Civicrm_Utilities_Shortcode {
+class Civicrm_Ux_Shortcode_Upcoming_Event implements iCivicrm_Ux_Shortcode {
 
 	/**
-	 * @var \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @var \Civicrm_Ux_Shortcode_Manager $manager
 	 */
 	protected $manager;
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @param \Civicrm_Ux_Shortcode_Manager $manager
 	 *
 	 * @return mixed
 	 */
-	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager ) {
+	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
 		$this->manager = $manager;
 	}
 

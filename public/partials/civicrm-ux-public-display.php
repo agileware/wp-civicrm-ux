@@ -8,8 +8,8 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/public/partials
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/public/partials
  */
 ?>
 

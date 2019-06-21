@@ -2,17 +2,17 @@
 
 use \Sabre\VObject;
 
-class Agileware_Civicrm_Utilities_REST_ICal_Feed_Internal implements iAgileware_Civicrm_Utilities_REST {
+class Civicrm_Ux_REST_ICal_Feed_Internal implements iCivicrm_Ux_REST {
 
 	const HASH_OPTION = 'internal_ical_hash';
 
 	/**
-	 * @var \Agileware_Civicrm_Utilities_REST_Manager
+	 * @var \Civicrm_Ux_REST_Manager
 	 */
 	protected $manager;
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_REST_Manager $manage
+	 * @param \Civicrm_Ux_REST_Manager $manage
 	 *
 	 * @return mixed
 	 */

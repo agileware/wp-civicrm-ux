@@ -6,8 +6,8 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Agileware_Civicrm_Utilities_Loader {
+class Civicrm_Ux_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Interface iAgileware_Civicrm_Utilities_Shortcode
+ * Interface iCivicrm_Ux_Shortcode
  */
-interface iAgileware_Civicrm_Utilities_Shortcode {
+interface iCivicrm_Ux_Shortcode {
 
 	/**
-	 * @param \Agileware_Civicrm_Utilities_Shortcode_Manager $manager
+	 * @param \Civicrm_Ux_Shortcode_Manager $manager
 	 *
 	 * @return mixed
 	 */
-	public function init_setup( Agileware_Civicrm_Utilities_Shortcode_Manager $manager );
+	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager );
 
 	/**
 	 * @return string The name of shortcode

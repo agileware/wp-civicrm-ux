@@ -3,20 +3,20 @@
 /**
  * @link              https://agileware.com.au
  * @since             1.0.0
- * @package           Agileware_Civicrm_Utilities
+ * @package           Civicrm_Ux
  *
  * @wordpress-plugin
- * Plugin Name:       Agileware CiviCRM Utilities
+ * Plugin Name:       CiviCRM UX
  * Plugin URI:        https://agileware.com.au
- * Description:       A plugin for using with CiviCRM and Caldera Forms
- * Version:           1.0.3
+ * Description:       UX for CiviCRM
+ * Version:           0.0.4
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       agileware-civicrm-utilities
  * Domain Path:       /languages
- * GitHub Plugin URI: https://github.com/agileware/agileware-civicrm-utilities
+ * GitHub Plugin URI: todo
  */
 
 // If this file is called directly, abort.
@@ -33,28 +33,28 @@ require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'AGILEWARE_CIVICRM_UTILITIESVERSION', '1.0.3' );
+define( 'CIVICRM_UXVERSION', '0.0.4' );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-agileware-civicrm-utilities-activator.php
  */
-function activate_agileware_civicrm_utilities() {
+function activate_civicrm_ux() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilities-activator.php';
-	Agileware_Civicrm_Utilities_Activator::activate();
+	Civicrm_Ux_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-agileware-civicrm-utilities-deactivator.php
  */
-function deactivate_agileware_civicrm_utilities() {
+function deactivate_civicrm_ux() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilities-deactivator.php';
-	Agileware_Civicrm_Utilities_Deactivator::deactivate();
+	Civicrm_Ux_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_agileware_civicrm_utilities' );
-register_deactivation_hook( __FILE__, 'deactivate_agileware_civicrm_utilities' );
+register_activation_hook( __FILE__, 'activate_civicrm_ux' );
+register_deactivation_hook( __FILE__, 'deactivate_civicrm_ux' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -71,11 +71,11 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilitie
  *
  * @since    1.0.0
  */
-function run_agileware_civicrm_utilities() {
+function run_civicrm_ux() {
 
-	$plugin = new Agileware_Civicrm_Utilities();
+	$plugin = new Civicrm_Ux();
 	$plugin->run();
 
 }
 
-run_agileware_civicrm_utilities();
+run_civicrm_ux();

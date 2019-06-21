@@ -9,8 +9,8 @@
  * @link       https://agileware.com.au
  * @since      1.0.0
  *
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  */
 
 /**
@@ -23,17 +23,17 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Agileware_Civicrm_Utilities
- * @subpackage Agileware_Civicrm_Utilities/includes
+ * @package    Civicrm_Ux
+ * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Agileware_Civicrm_Utilities {
+class Civicrm_Ux {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @var      Agileware_Civicrm_Utilities_Loader $loader Maintains and registers all hooks for the plugin.
+	 * @var      Civicrm_Ux_Loader $loader Maintains and registers all hooks for the plugin.
 	 * @since    1.0.0
 	 * @access   protected
 	 */
@@ -42,7 +42,7 @@ class Agileware_Civicrm_Utilities {
 	/**
 	 * The helper class that provide helper function to all other class
 	 *
-	 * @var      Agileware_Civicrm_Utilities_Helper $helper The helper class that provide helper function to all other class
+	 * @var      Civicrm_Ux_Helper $helper The helper class that provide helper function to all other class
 	 * @since    1.0.0
 	 * @access   public
 	 */
@@ -51,11 +51,11 @@ class Agileware_Civicrm_Utilities {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @var      string $agileware_civicrm_utilities The string used to uniquely identify this plugin.
+	 * @var      string $civicrm_ux The string used to uniquely identify this plugin.
 	 * @since    1.0.0
 	 * @access   protected
 	 */
-	protected $agileware_civicrm_utilities;
+	protected $civicrm_ux;
 
 	/**
 	 * The current version of the plugin.
@@ -76,12 +76,12 @@ class Agileware_Civicrm_Utilities {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'AGILEWARE_CIVICRM_UTILITIESVERSION' ) ) {
-			$this->version = AGILEWARE_CIVICRM_UTILITIESVERSION;
+		if ( defined( 'CIVICRM_UXVERSION' ) ) {
+			$this->version = CIVICRM_UXVERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->agileware_civicrm_utilities = 'agileware-civicrm-utilities';
+		$this->civicrm_ux = 'agileware-civicrm-utilities';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -100,10 +100,10 @@ class Agileware_Civicrm_Utilities {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Agileware_Civicrm_Utilities_Loader. Orchestrates the hooks of the plugin.
-	 * - Agileware_Civicrm_Utilities_i18n. Defines internationalization functionality.
-	 * - Agileware_Civicrm_Utilities_Admin. Defines all hooks for the admin area.
-	 * - Agileware_Civicrm_Utilities_Public. Defines all hooks for the public side of the site.
+	 * - Civicrm_Ux_Loader. Orchestrates the hooks of the plugin.
+	 * - Civicrm_Ux_i18n. Defines internationalization functionality.
+	 * - Civicrm_Ux_Admin. Defines all hooks for the admin area.
+	 * - Civicrm_Ux_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -148,15 +148,15 @@ class Agileware_Civicrm_Utilities {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-agileware-civicrm-utilities-public.php';
 
-		$this->loader = new Agileware_Civicrm_Utilities_Loader();
-		$this->helper = new Agileware_Civicrm_Utilities_Helper( $this );
+		$this->loader = new Civicrm_Ux_Loader();
+		$this->helper = new Civicrm_Ux_Helper( $this );
 
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Agileware_Civicrm_Utilities_i18n class in order to set the domain and to register the hook
+	 * Uses the Civicrm_Ux_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -164,7 +164,7 @@ class Agileware_Civicrm_Utilities {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Agileware_Civicrm_Utilities_i18n();
+		$plugin_i18n = new Civicrm_Ux_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -179,7 +179,7 @@ class Agileware_Civicrm_Utilities {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Agileware_Civicrm_Utilities_Admin( $this->get_agileware_civicrm_utilities(), $this->get_version() );
+		$plugin_admin = new Civicrm_Ux_Admin( $this->get_civicrm_ux(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -195,7 +195,7 @@ class Agileware_Civicrm_Utilities {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Agileware_Civicrm_Utilities_Public( $this->get_agileware_civicrm_utilities(), $this->get_version() );
+		$plugin_public = new Civicrm_Ux_Public( $this->get_civicrm_ux(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -210,14 +210,14 @@ class Agileware_Civicrm_Utilities {
 	 */
 	private function define_shortcodes() {
 
-		$shortcode_manager = new Agileware_Civicrm_Utilities_Shortcode_Manager( $this );
+		$shortcode_manager = new Civicrm_Ux_Shortcode_Manager( $this );
 
 		$this->loader->add_action( 'init', $shortcode_manager, 'register_shortcodes' );
 	}
 
 	private function define_rest() {
 
-		$manager = new Agileware_Civicrm_Utilities_REST_Manager( $this );
+		$manager = new Civicrm_Ux_REST_Manager( $this );
 
 		$this->loader->add_action( 'rest_api_init', $manager, 'register_rest_routes' );
 	}
@@ -242,8 +242,8 @@ class Agileware_Civicrm_Utilities {
 	 * @return    string    The name of the plugin.
 	 * @since     1.0.0
 	 */
-	public function get_agileware_civicrm_utilities() {
-		return $this->agileware_civicrm_utilities;
+	public function get_civicrm_ux() {
+		return $this->civicrm_ux;
 	}
 
 	public function civicrm_init() {
@@ -253,7 +253,7 @@ class Agileware_Civicrm_Utilities {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @return    Agileware_Civicrm_Utilities_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Civicrm_Ux_Loader    Orchestrates the hooks of the plugin.
 	 * @since     1.0.0
 	 */
 	public function get_loader() {
