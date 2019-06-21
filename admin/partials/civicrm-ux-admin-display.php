@@ -27,7 +27,7 @@ function civicrm_ux_create_menu() {
 
 function civicrm_ux_register_settings() {
 	//register our settings
-	register_setting( 'agileware-civicrm-utilities-settings-group', Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION );
+	register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION );
 }
 
 function civicrm_ux_settings_page() {
@@ -43,8 +43,8 @@ function civicrm_ux_settings_page() {
         <h1>CiviCRM UX</h1>
 
         <form method="post" action="options.php">
-			<?php settings_fields( 'agileware-civicrm-utilities-settings-group' ); ?>
-			<?php do_settings_sections( 'agileware-civicrm-utilities-settings-group' ); ?>
+			<?php settings_fields( 'civicrm-ux-settings-group' ); ?>
+			<?php do_settings_sections( 'civicrm-ux-settings-group' ); ?>
             <ul>
                 <li>
                     <label>ICal Hash

@@ -81,7 +81,7 @@ class Civicrm_Ux {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->civicrm_ux = 'agileware-civicrm-utilities';
+		$this->civicrm_ux = 'civicrm-ux';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -117,36 +117,36 @@ class Civicrm_Ux {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-loader.php';
 
 		/**
 		 * The helper class.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-helper.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
 
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-shortcode-manager.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-rest-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-shortcode-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-rest-manager.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-agileware-civicrm-utilities-shortcode.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-agileware-civicrm-utilities-rest.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-shortcode.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-rest.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-agileware-civicrm-utilities-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-agileware-civicrm-utilities-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-civicrm-ux-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-agileware-civicrm-utilities-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-civicrm-ux-public.php';
 
 		$this->loader = new Civicrm_Ux_Loader();
 		$this->helper = new Civicrm_Ux_Helper( $this );

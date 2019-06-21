@@ -74,7 +74,7 @@ class Civicrm_Ux_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'css/agileware-civicrm-utilities-public.css', [], $this->version, 'all' );
+		wp_enqueue_style( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'css/civicrm-ux-public.css', [], $this->version, 'all' );
 
 	}
 
@@ -97,7 +97,7 @@ class Civicrm_Ux_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-public.js', [ 'jquery' ], $this->version, false );
+		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/civicrm-ux-public.js', [ 'jquery' ], $this->version, false );
 
 	}
 

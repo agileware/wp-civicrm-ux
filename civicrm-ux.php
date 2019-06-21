@@ -14,7 +14,7 @@
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       agileware-civicrm-utilities
+ * Text Domain:       civicrm-ux
  * Domain Path:       /languages
  * GitHub Plugin URI: todo
  */
@@ -37,19 +37,19 @@ define( 'CIVICRM_UXVERSION', '0.0.4' );
 
 /**
  * The code that runs during plugin activation.
- * This action is documented in includes/class-agileware-civicrm-utilities-activator.php
+ * This action is documented in includes/class-civicrm-ux-activator.php
  */
 function activate_civicrm_ux() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilities-activator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux-activator.php';
 	Civicrm_Ux_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
- * This action is documented in includes/class-agileware-civicrm-utilities-deactivator.php
+ * This action is documented in includes/class-civicrm-ux-deactivator.php
  */
 function deactivate_civicrm_ux() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilities-deactivator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux-deactivator.php';
 	Civicrm_Ux_Deactivator::deactivate();
 }
 
@@ -60,7 +60,7 @@ register_deactivation_hook( __FILE__, 'deactivate_civicrm_ux' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-agileware-civicrm-utilities.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux.php';
 
 /**
  * Begins execution of the plugin.

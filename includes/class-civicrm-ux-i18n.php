@@ -35,7 +35,7 @@ class Civicrm_Ux_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'agileware-civicrm-utilities',
+			'civicrm-ux',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);

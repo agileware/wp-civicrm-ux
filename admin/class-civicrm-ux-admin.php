@@ -53,7 +53,7 @@ class Civicrm_Ux_Admin {
 		$this->civicrm_ux = $civicrm_ux;
 		$this->version                     = $version;
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/agileware-civicrm-utilities-admin-display.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/civicrm-ux-admin-display.php';
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Civicrm_Ux_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'css/agileware-civicrm-utilities-admin.css', [], $this->version, 'all' );
+		wp_enqueue_style( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'css/civicrm-ux-admin.css', [], $this->version, 'all' );
 
 	}
 
@@ -98,7 +98,7 @@ class Civicrm_Ux_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/agileware-civicrm-utilities-admin.js', [ 'jquery' ], $this->version, false );
+		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/civicrm-ux-admin.js', [ 'jquery' ], $this->version, false );
 
 	}
 
