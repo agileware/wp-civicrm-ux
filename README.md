@@ -45,7 +45,7 @@ Shortcodes return formatted html with styling.
 Parameters:
  - `type`: activity type id. Support multiple values separated by comma without space. Default empty
  - `limit`: the max number for result. Default `PHP_INT_MAX`
- - `relationship-id`: by supplying this parameter, related contacts' activities will be in the result.
+ - `relationship-id`: by supplying this parameter, related contacts' activities will be added into the result.
  - `field`:fields to return. Separated by comma without space. Default return contact name and activity subject. 
     The order of the output fields will be the same here.
  - `format`: set to `table` for a tabular layout
