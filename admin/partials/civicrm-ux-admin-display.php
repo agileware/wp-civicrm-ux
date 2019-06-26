@@ -20,7 +20,7 @@ add_action( 'admin_init', 'civicrm_ux_register_settings' );
 function civicrm_ux_create_menu() {
 
 	//create new top-level menu
-	add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', __FILE__, 'civicrm_ux_settings_page' );
+	add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', 'civicrm-ux-setting.php', 'civicrm_ux_settings_page' );
 }
 
 
@@ -40,23 +40,26 @@ function civicrm_ux_settings_page() {
 	?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
-
         <form method="post" action="options.php">
 			<?php settings_fields( 'civicrm-ux-settings-group' ); ?>
 			<?php do_settings_sections( 'civicrm-ux-settings-group' ); ?>
-            <ul>
-                <li>
-                    <label>ICal Hash
-                        <input id="ical-hash-field" type="text" name="ical_hash"
-                               value="<?php echo esc_attr( get_option( Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION ) ); ?>"/>
-                    </label>
-                    <button id="generate-ical-hash">GENERATE</button>
-                </li>
-                <li>
-                    <span>The internal feed url is: </span>
-                    <a id="ical-internal-url" href="<?php echo $url ?>"><?php echo $url ?></a>
-                </li>
-            </ul>
+            <div>
+                <h2>iCal Feed</h2>
+                <ul>
+                    <li>
+                        <label>Hash
+                            <input id="ical-hash-field" type="text" name="ical_hash" size="40"
+                                   value="<?php echo esc_attr( get_option( Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION ) ); ?>"/>
+                        </label>
+                        <!-- TODO fix button -->
+                        <button id="generate-ical-hash">GENERATE</button>
+                    </li>
+                    <li>
+                        <span>The internal feed url is: </span>
+                        <a id="ical-internal-url" href="<?php echo $url ?>"><?php echo $url ?></a>
+                    </li>
+                </ul>
+            </div>
             <?php submit_button(); ?>
         </form>
     </div>

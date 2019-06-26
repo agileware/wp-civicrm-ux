@@ -30,6 +30,7 @@ class Civicrm_Ux_Shortcode_ICal_Feed implements iCivicrm_Ux_Shortcode {
 	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
 		$this->manager = $manager;
 
+		// TODO move this part
 		add_option( self::HASH_OPTION, '' );
 		if ( empty( get_option( self::HASH_OPTION ) ) ) {
 			update_option( self::HASH_OPTION, $this->manager->get_plugin()->helper->generate_hash() );
