@@ -46,8 +46,19 @@ Parameters:
  - `type`: activity type id. Support multiple values separated by comma without space. Default empty
  - `limit`: the max number for result. Default `PHP_INT_MAX`
  - `relationship-id`: by supplying this parameter, related contacts' activities will be in the result.
- - `field`:fields to return. Separated by comma without space. Default return contact name and activity subject
+ - `field`:fields to return. Separated by comma without space. Default return contact name and activity subject. 
+    The order of the output fields will be the same here.
  - `format`: set to `table` for a tabular layout
+ - `sort`: field name with `ASC` or `DESC`. Default `activity_date_time DESC`
+ 
+example:  
+```
+[civicrm-activities-listing 
+    type='Test' 
+    relationship-id=5 
+    field='custom_60,custom_61,custom_67,custom_74,custom_77,custom_57,custom_78,custom_79,custom_80,custom_81,custom_82,custom_83,custom_84'
+]
+```
 
 ### REST API
  - ICalFeed/event

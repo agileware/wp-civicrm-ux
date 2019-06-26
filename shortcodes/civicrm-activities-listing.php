@@ -53,6 +53,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 			'relationship-id' => '',
 			'field'           => '',
 			'format'          => 'default',
+			'sort'            => 'activity_date_time DESC',
 		], $atts, $tag );
 
 		$cid = [ CRM_Core_Session::singleton()->getLoggedInContactID() ];
@@ -118,7 +119,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 			'sequential' => 1,
 			'contact_id' => [ 'IN' => $cid ],
 			'return'     => array_merge( [ "target_contact_id", "subject" ], $fields ),
-			'options'    => [ 'limit' => PHP_INT_MAX ],
+			'options'    => [ 'limit' => $mod_atts['limit'], 'sort' => $mod_atts['sort'] ],
 		];
 		if ( ! empty( $mod_atts['type'] ) ) {
 			$types                      = explode( ',', $mod_atts['type'] );
@@ -140,6 +141,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 
 	/**
 	 * Take data in and output the html
+	 *
 	 * @param array $info
 	 * @param array $header
 	 * @param string $format Set to table for a tabular layout
