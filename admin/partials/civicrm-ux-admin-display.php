@@ -15,13 +15,12 @@
 // create custom plugin settings menu
 add_action( 'admin_menu', 'civicrm_ux_create_menu' );
 
+//call register settings function
+add_action( 'admin_init', 'civicrm_ux_register_settings' );
 function civicrm_ux_create_menu() {
 
 	//create new top-level menu
-	add_menu_page( 'ACU Settings', 'ACU Settings', 'administrator', __FILE__, 'civicrm_ux_settings_page' );
-
-	//call register settings function
-	add_action( 'admin_init', 'civicrm_ux_register_settings' );
+	add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', __FILE__, 'civicrm_ux_settings_page' );
 }
 
 
@@ -58,7 +57,7 @@ function civicrm_ux_settings_page() {
                     <a id="ical-internal-url" href="<?php echo $url ?>"><?php echo $url ?></a>
                 </li>
             </ul>
-
+            <?php submit_button(); ?>
         </form>
     </div>
 <?php }
