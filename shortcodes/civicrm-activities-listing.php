@@ -14,17 +14,26 @@
  * Class Civicrm_Ux_Shortcode_Activities_Listing
  */
 class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
-	/**
-	 * @var
-	 */
-	private $manager;
 
+	/**
+	 *
+	 */
 	const FIELD_ALIAS = [
 		'contact_name' => [
 			'return'    => 'target_contact_name',
 			'api_param' => 'target_contact_id'
 		],
 	];
+
+	/**
+	 * @var
+	 */
+	private $manager;
+
+	/**
+	 * @var
+	 */
+	private $sort_by;
 
 	/**
 	 * @param \Civicrm_Ux_Shortcode_Manager $manager
@@ -115,10 +124,10 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 					$result = [];
 				}
 				if ( ! $result['is_error'] ) {
-					$header[ $field ] = $result['label'];
+					$header[ $field ] = ucfirst( $result['label'] );
 				}
 			} else {
-				$header[ $field ] = str_replace( '_', ' ', $field );
+				$header[ $field ] = ucfirst( str_replace( '_', ' ', $field ) );
 			}
 		}
 
@@ -130,6 +139,11 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 					break;
 				}
 			}
+		}
+
+		if ( strpos( $mod_atts['sort'], 'custom_' ) !== false ) {
+			$this->sort_by    = $mod_atts['sort'];
+			$mod_atts['sort'] = '';
 		}
 
 		// get activity information
@@ -151,6 +165,9 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 
 		if ( $result['count'] <= 0 ) {
 			return 'No activity found.';
+		}
+		if ( isset( $this->sort_by ) ) {
+			usort( $result['values'], [ $this, 'sort' ] );
 		}
 
 		// render table
@@ -253,11 +270,21 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 		return '<tr>' . $html . '</tr>';
 	}
 
-	private function get_return_value_in_string( $value ) {
-		if ( is_array( $value ) ) {
-			$value = implode( ', ', $value );
-		}
 
-		return $value;
+	/**
+	 * Sorting the result with given order in the class field
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return int
+	 */
+	private function sort( $a, $b ) {
+		$sort_by = explode( ' ', $this->sort_by );
+		if ( $sort_by[1] == 'ASC' ) {
+			return strcmp( $a[ $sort_by[0] ], $b[ $sort_by[0] ] );
+		} else {
+			return strcmp( $b[ $sort_by[0] ], $a[ $sort_by[0] ] );
+		}
 	}
 }
