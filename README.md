@@ -47,7 +47,7 @@ Parameters:
  - `limit`: the max number for result. Default `PHP_INT_MAX`
  - `relationship-id`: by supplying this parameter, related contacts' activities will be in the result.
  - `field`:fields to return. Separated by comma without space. Default return contact name and activity subject
- - `format`:
+ - `format`: set to `table` for a tabular layout
 
 ### REST API
  - ICalFeed/event
