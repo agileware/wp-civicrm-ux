@@ -19,6 +19,13 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 	 */
 	private $manager;
 
+	const FIELD_ALIAS = [
+		'contact_name' => [
+			'return'    => 'target_contact_name',
+			'api_param' => 'target_contact_id'
+		],
+	];
+
 	/**
 	 * @param \Civicrm_Ux_Shortcode_Manager $manager
 	 *
@@ -114,6 +121,17 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 				$header[ $field ] = str_replace( '_', ' ', $field );
 			}
 		}
+
+		// Solve alias
+		foreach ( self::FIELD_ALIAS as $key => $value ) {
+			foreach ( $fields as $index => $field ) {
+				if ( $field == $key ) {
+					$fields[ $index ] = $value['api_param'];
+					break;
+				}
+			}
+		}
+
 		// get activity information
 		$params = [
 			'sequential' => 1,
@@ -151,14 +169,14 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 	function render( $info, $header, $format = 'default' ) {
 		$html = '';
 		if ( $format == 'table' ) {
-			$header_html = '<th>Contact Name</th><th>Subject</th>';
+			$header_html = '';
 			foreach ( $header as $key => $value ) {
 				$header_html .= '<th>' . $value . '</th>';
 			}
 			$html = '<thead><tr>' . $header_html . '</tr></thead>';
 			foreach ( $info as $data ) {
 				$title = $data['subject'];
-				$org   = array_pop( $data['target_contact_name'] );
+				$org   = end( $data['target_contact_name'] );
 				$html  .= $this->get_table_row( $title, $org, $data, $header );
 			}
 
@@ -166,11 +184,11 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 		} else {
 			foreach ( $info as $data ) {
 				$title = $data['subject'];
-				$org   = array_pop( $data['target_contact_name'] );
+				$org   = end( $data['target_contact_name'] );
 				$html  .= $this->get_item_html( $title, $org, $data, $header );
 			}
 
-			return '<div class="civicrm-activicties-wrap">' . $html . '</div>';
+			return '<div class="civicrm-activities-wrap">' . $html . '</div>';
 		}
 	}
 
@@ -187,16 +205,23 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 
 		$fields_html = '';
 		foreach ( $header as $key => $value ) {
-			if ( array_key_exists( $key, $info ) && ( ! empty( $info[ $key ] || $info[ $key ] == '0' ) ) ) {
-				$fields_html .= '<label class="civicrm-activicties-info-label">' . $value . ': <span>' . $info[ $key ] . '</span></label>';
+			if ( array_key_exists( $key, self::FIELD_ALIAS ) ) {
+				$key = self::FIELD_ALIAS[ $key ]['return'];
+			}
+			$data = array_key_exists( $key, $info ) ? $info[ $key ] : '';
+			if ( is_array( $data ) ) {
+				$data = implode( ', ', $data );
+			}
+			if ( ! empty( $data ) || $data == '0' ) {
+				$fields_html .= '<label class="civicrm-activities-info-label">' . $value . ': <span>' . $data . '</span></label>';
 			}
 		}
 
-		$html .= '<div class="civicrm-activicties-item">' .
-		         '<div class="civicrm-activicties-header">' .
+		$html .= '<div class="civicrm-activities-item">' .
+		         '<div class="civicrm-activities-header">' .
 		         '<h2>' . $org . ': ' . $title . '</h2>' .
 		         '</div>' .
-		         '<div class="civicrm-activicties-information">' .
+		         '<div class="civicrm-activities-information">' .
 		         $fields_html .
 		         '</div>' .
 		         '</div>';
@@ -213,12 +238,26 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 	 * @return string
 	 */
 	private function get_table_row( $title, $org, $info, $header ) {
-		$html = '<td>' . $org . '</td>' .
-		        '<td>' . $title . '</td>';
+		$html = '';
 		foreach ( $header as $key => $value ) {
-			$html .= '<td>' . ( array_key_exists( $key, $info ) ? $info[ $key ] : '' ) . '</td>';
+			if ( array_key_exists( $key, self::FIELD_ALIAS ) ) {
+				$key = self::FIELD_ALIAS[ $key ]['return'];
+			}
+			$value = array_key_exists( $key, $info ) ? $info[ $key ] : '';
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', $value );
+			}
+			$html .= '<td>' . $value . '</td>';
 		}
 
 		return '<tr>' . $html . '</tr>';
+	}
+
+	private function get_return_value_in_string( $value ) {
+		if ( is_array( $value ) ) {
+			$value = implode( ', ', $value );
+		}
+
+		return $value;
 	}
 }
