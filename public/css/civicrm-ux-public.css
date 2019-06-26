@@ -87,3 +87,7 @@ div.civicrm-event-listing-item {
     font-weight: 800;
 }
 
+/*Chrush Statistics*/
+.civicrm-activicties-wrap label {
+    display: block;
+}
