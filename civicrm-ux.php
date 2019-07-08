@@ -9,7 +9,7 @@
  * Plugin Name:       CiviCRM UX
  * Plugin URI:        https://agileware.com.au
  * Description:       UX for CiviCRM
- * Version:           0.0.5
+ * Version:           0.0.6
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
@@ -18,6 +18,8 @@
  * Domain Path:       /languages
  * GitHub Plugin URI: todo
  */
+
+define( 'CIVICRM_UXVERSION', '0.0.6' );
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -33,7 +35,6 @@ require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CIVICRM_UXVERSION', '0.0.5' );
 
 /**
  * The code that runs during plugin activation.

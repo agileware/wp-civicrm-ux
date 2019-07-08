@@ -114,7 +114,7 @@ class Civicrm_Ux_REST_ICal_Feed_Internal implements iCivicrm_Ux_REST {
 				'is_active'  => 1,
 			] );
 
-			$civi_param['options'] = [ 'limit' => $count ];
+			$civi_param['options'] = [ 'limit' => $count, 'sort' => "start_date ASC" ];
 
 			if ( $opts['types'] ) {
 				$civi_param['event_type_id'] = [ 'IN' => $opts['types'] ];
@@ -163,10 +163,9 @@ class Civicrm_Ux_REST_ICal_Feed_Internal implements iCivicrm_Ux_REST {
 
 			// UID format: [date]EVENTID[id]@[site name]
 			$iCal .= "UID:" .
-			         $date->format( 'Ymd' ) . 'T' . $date->format( 'His' ) .
 			         'EVENTID' . $event['id'] .
 			         '@' .
-			         get_bloginfo( 'name' ) .
+			         $_SERVER['SERVER_NAME'] .
 			         "\r\n";
 
 			// Local timezone

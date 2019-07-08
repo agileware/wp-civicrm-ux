@@ -61,8 +61,16 @@ example:
 ```
 
 ### REST API
+#### iCal feed
  - ICalFeed/event
  - ICalFeed/manage
+ 
+##### Parameters
+`type`: filter for event type  
+For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
+
+##### Tips
+ - Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
 
 ## Development
 ### How to add shortcode
