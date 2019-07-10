@@ -51,26 +51,8 @@ class Civicrm_Ux_Shortcode_Campaign_Funds_Raised extends Abstract_Civicrm_Ux_Sho
 			return 'Campaign not found.';
 		}
 
-		$sum = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
+		$sum = (float) Civicrm_Ux_Campaign_Utils::sum_from_contributions( $result['api.Contribution.get']['values'] );
 
 		return CRM_Utils_Money::format( $sum );
-	}
-
-
-	/**
-	 * Sum up all contributions
-	 *
-	 * @param array $contributions
-	 *
-	 * @return float
-	 */
-	private function sum_from_contributions( $contributions = [] ) {
-		$sum = 0.0;
-
-		foreach ( $contributions as $data ) {
-			$sum += (float) $data['total_amount'];
-		}
-
-		return $sum;
 	}
 }

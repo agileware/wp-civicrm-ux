@@ -55,7 +55,7 @@ class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shor
 			return 'Campaign not found.';
 		}
 
-		$sum                   = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
+		$sum                   = (float) Civicrm_Ux_Campaign_Utils::sum_from_contributions( $result['api.Contribution.get']['values'] );
 		$goal_amount           = (float) $result['goal_revenue'];
 		$calculated_percentage = empty( $result['goal_revenue'] ) ? 100 : round( $sum / $goal_amount * 100 );
 		$percentage            = ( $calculated_percentage <= 100 ? $calculated_percentage : '100' ) . '%';
@@ -69,22 +69,5 @@ class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shor
 		          '</div>';
 
 		return $output;
-	}
-
-	/**
-	 * Sum up all contributions
-	 *
-	 * @param array $contributions
-	 *
-	 * @return float
-	 */
-	private function sum_from_contributions( $contributions = [] ) {
-		$sum = 0.0;
-
-		foreach ( $contributions as $data ) {
-			$sum += (float) $data['total_amount'];
-		}
-
-		return $sum;
 	}
 }

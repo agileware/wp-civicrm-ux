@@ -126,26 +126,34 @@ class Civicrm_Ux_Loader {
 	 *
 	 * @since    1.0.0
 	 */
-	public function load( $relative_path, $manager, $interface, $recursive = true ) {
-		$path                           = plugin_dir_path( dirname( __FILE__ ) ) . "/$relative_path";
-		$this->interfaces[ $interface ] = $manager;
+	public function load( $relative_path, $manager = null, $interface = null, $recursive = true ) {
+		$path = plugin_dir_path( dirname( __FILE__ ) ) . "/$relative_path";
+		if ( ! empty( $manager ) && ! empty( $interface ) ) {
+			$this->add_interface( $manager, $interface );
+		}
 
 		// If is a single file, add it
 		if ( ! is_dir( $path ) || $this->is_php_file( $path ) ) {
 			$this->add_file( $path );
+		} else if ( is_dir( $path ) ) {
+			foreach ( scandir( $path ) as $filename ) {
+				if ( in_array( $filename, [ '.', '..' ] ) ) {
+					continue;
+				}
+				$path = plugin_dir_path( dirname( __FILE__ ) ) . '/' . $relative_path . '/' . $filename;
+				// Recursive
+				if ( is_dir( $path ) && $recursive ) {
+					$this->load( $relative_path . '/' . $filename, $manager, $interface );
+				} else if ( $this->is_php_file( $path ) ) {
+					$this->add_file( $path );
+				}
+			}
 		}
+	}
 
-		foreach ( scandir( $path ) as $filename ) {
-			if ( in_array( $filename, [ '.', '..' ] ) ) {
-				continue;
-			}
-			$path = plugin_dir_path( dirname( __FILE__ ) ) . '/' . $relative_path . '/' . $filename;
-			// Recursive
-			if ( is_dir( $path ) && $recursive ) {
-				$this->load( $relative_path . '/' . $filename, $manager, $interface );
-			} else if ( $this->is_php_file( $path ) ) {
-				$this->add_file( $path );
-			}
+	public function add_interface( $manager, $interface ) {
+		if ( ! in_array( $interface, array_keys( $this->interfaces ) ) ) {
+			$this->interfaces[ $interface ] = $manager;
 		}
 	}
 

@@ -153,6 +153,8 @@ class Civicrm_Ux {
 		$this->loader = new Civicrm_Ux_Loader();
 		$this->helper = new Civicrm_Ux_Helper( $this );
 
+		// Add utility classes
+		$this->loader->load( 'includes/utils' );
 	}
 
 	/**

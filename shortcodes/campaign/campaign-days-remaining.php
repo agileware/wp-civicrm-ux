@@ -56,37 +56,12 @@ class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_S
 		}
 
 		$end_date      = $result['end_date'];
-		$day_remaining = $this->get_remaining_day( $end_date );
+		$day_remaining = Civicrm_Ux_Campaign_Utils::get_remaining_day( $end_date );
 
 		if ( $day_remaining === 0 ) {
 			return $mod_atts['end-text'];
 		}
 
 		return $day_remaining === 1 ? $day_remaining . ' day remaining' : $day_remaining . ' days remaining';
-	}
-
-	/**
-	 * Get the remaining day from now
-	 *
-	 * @param string $end_date
-	 *
-	 * @return int
-	 * @throws \Exception
-	 */
-	private function get_remaining_day( $end_date ) {
-		if ( empty( $end_date ) ) {
-			return 0;
-		}
-
-		$end = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date );
-		$now = new DateTime( 'now' );
-
-		if ( $now > $end ) {
-			return 0;
-		}
-
-		$interval = $now->diff( $end );
-
-		return $interval->d;
 	}
 }
