@@ -83,3 +83,23 @@ For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,
 ### CSS and JavaScript
 All css files should go to `public/css` or `admin/css`. If you create new css files, make sure you enqueue them.
 The same as javascript files. They should be in `public/js` or `admin/js`.
+
+
+About the Authors
+------
+
+This CiviCRM extension was developed by the team at [Agileware](https://agileware.com.au).
+
+[Agileware](https://agileware.com.au) provide a range of CiviCRM services including:
+
+  * CiviCRM migration
+  * CiviCRM integration
+  * CiviCRM extension development
+  * CiviCRM support
+  * CiviCRM hosting
+  * CiviCRM remote training services
+
+Support your Australian [CiviCRM](https://civicrm.org) developers, [contact Agileware](https://agileware.com.au/contact) today!
+
+
+![Agileware](logo/agileware-logo.png)
