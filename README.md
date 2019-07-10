@@ -53,11 +53,7 @@ Parameters:
  
 example:  
 ```
-[civicrm-activities-listing 
-    type='Test' 
-    relationship-id=5 
-    field='custom_60,custom_61,custom_67,custom_74,custom_77,custom_57,custom_78,custom_79,custom_80,custom_81,custom_82,custom_83,custom_84'
-]
+[civicrm-activities-listing type='Test' relationship-id=5 field='custom_60,custom_61,custom_67,custom_74,custom_77,custom_57,custom_78,custom_79,custom_80,custom_81,custom_82,custom_83,custom_84']
 ```
 
 ### REST API
@@ -69,7 +65,7 @@ example:
 `type`: filter for event type  
 For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
 
-##### Tips
+##### Note
  - Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
 
 ## Development

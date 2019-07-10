@@ -90,23 +90,21 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 				$result = [];
 			}
 
-			if ( $result['count'] <= 0 ) {
-				return 'No contact found with the given relationship id.';
-			}
+			if ( $result['count'] > 0 ) {
+				$oid = [];
+				foreach ( $result['values'] as $relationship ) {
+					$id_a = $relationship['contact_id_a'];
+					$id_b = $relationship['contact_id_b'];
+					if ( ! in_array( $id_a, $oid ) ) {
+						$oid[] = $id_a;
+					}
 
-			$oid = [];
-			foreach ( $result['values'] as $relationship ) {
-				$id_a = $relationship['contact_id_a'];
-				$id_b = $relationship['contact_id_b'];
-				if ( ! in_array( $id_a, $oid ) ) {
-					$oid[] = $id_a;
+					if ( ! in_array( $id_b, $oid ) ) {
+						$oid[] = $id_b;
+					}
 				}
-
-				if ( ! in_array( $id_b, $oid ) ) {
-					$oid[] = $id_b;
-				}
+				$cid = $oid;
 			}
-			$cid = $oid;
 		}
 
 		// parse fields
@@ -230,13 +228,13 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 				$data = implode( ', ', $data );
 			}
 			if ( ! empty( $data ) || $data == '0' ) {
-				$fields_html .= '<label class="civicrm-activities-info-label">' . $value . ': <span>' . $data . '</span></label>';
+				$fields_html .= '<label class="civicrm-activities-info-label">' . $value . ': <span>' . htmlentities($data) . '</span></label>';
 			}
 		}
 
 		$html .= '<div class="civicrm-activities-item">' .
 		         '<div class="civicrm-activities-header">' .
-		         '<h2>' . $org . ': ' . $title . '</h2>' .
+		         '<h2>' . htmlentities($org) . ': ' . htmlentities($title) . '</h2>' .
 		         '</div>' .
 		         '<div class="civicrm-activities-information">' .
 		         $fields_html .
@@ -264,7 +262,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 			if ( is_array( $value ) ) {
 				$value = implode( ', ', $value );
 			}
-			$html .= '<td>' . $value . '</td>';
+			$html .= '<td>' . htmlentities($value) . '</td>';
 		}
 
 		return '<tr>' . $html . '</tr>';
