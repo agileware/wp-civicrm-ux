@@ -65,7 +65,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
 			'type'            => '',
-			'limit'           => PHP_INT_MAX,
+			'limit'           => 0,
 			'relationship-id' => '',
 			'field'           => '',
 			'format'          => 'default',

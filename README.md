@@ -1,13 +1,15 @@
 # CiviCRM UX
 Tags: civicrm, shortcode, caldera-form  
 Requires at least: 5.1  
-Tested up to: 5.1  
-Stable tag: 5.1  
+Tested up to: 5.2.2  
+Stable tag: 5.2.2  
 License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html  
 
 ## Description
-Agileware CiviCRM plugin all in one.
+Agileware CiviCRM plugin all in one. This plugin adds many useful shortcodes and provides additional functionality to improve the user experience.
+
+Tested with CiviCRM 5.15.0
 
 ## General usages
 ### Shortcodes
@@ -44,10 +46,9 @@ Shortcodes return formatted html with styling.
 `[civicrm-activities-listing]`  
 Parameters:
  - `type`: activity type id. Support multiple values separated by comma without space. Default empty
- - `limit`: the max number for result. Default `PHP_INT_MAX`
+ - `limit`: the max number for result. Default 0 (unlimited)
  - `relationship-id`: by supplying this parameter, related contacts' activities will be added into the result.
- - `field`:fields to return. Separated by comma without space. Use `contact_name` for contact name.
-    The order of the output fields will be the same as here.
+ - `field`:fields to return. Separated by comma without space. Use `contact_name` for contact name. The order of the output fields will be the same as here.
  - `format`: set to `table` for a tabular layout
  - `sort`: field name with `ASC` or `DESC`. Default `activity_date_time DESC`
  

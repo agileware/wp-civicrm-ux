@@ -61,6 +61,9 @@ function civicrm_ux_settings_page() {
                 </ul>
             </div>
             <?php submit_button(); ?>
+            <div>
+                <a href="/wp-content/plugins/civicrm-ux/admin/partials/civicrm-ux-guide.html" target="_blank">CiviCRM UX guide</a>
+            </div>
         </form>
     </div>
 <?php }
