@@ -88,7 +88,7 @@ The same as javascript files. They should be in `public/js` or `admin/js`.
 About the Authors
 ------
 
-This CiviCRM extension was developed by the team at [Agileware](https://agileware.com.au).
+This WordPress plugin was developed by the team at [Agileware](https://agileware.com.au).
 
 [Agileware](https://agileware.com.au) provide a range of CiviCRM services including:
 
