@@ -19,6 +19,11 @@
  * GitHub Plugin URI: todo
  */
 
+/**
+ * Currently plugin version.
+ * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Rename this for your plugin and update it as you release new versions.
+ */
 define( 'CIVICRM_UXVERSION', '0.0.6' );
 
 // If this file is called directly, abort.
@@ -26,15 +31,19 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-//TODO check CiviCRM and Caldera Forms activated
+// check CiviCRM activated
+$active_plugins = apply_filters( 'active_plugins', get_option( 'active_plugins' ) );
+if ( ! in_array( 'civicrm/civicrm.php', $active_plugins ) ) {
+	deactivate_plugins( plugin_basename( __FILE__ ) );
+	add_action( 'admin_notices', 'agileware_caldera_forms_magic_tags_child_plugin_notice' );
+}
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
+function fail_check_dependency_civicrm_ux() {
+	?>
+	<div class="error"><p>Sorry, plugin CiviCRM UX requires the CiviCRM plugin to be installed and active.</p></div><?php
+}
 
 /**
  * The code that runs during plugin activation.
