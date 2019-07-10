@@ -3,21 +3,7 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Honour_Listing
  */
-class Civicrm_Ux_Shortcode_Campaign_Honour_Listing implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode

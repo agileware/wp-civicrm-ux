@@ -13,7 +13,7 @@
  *
  * Class Civicrm_Ux_Shortcode_Activities_Listing
  */
-class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
+class Civicrm_Ux_Shortcode_Activities_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 *
@@ -28,21 +28,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing implements iCivicrm_Ux_Shortcode {
 	/**
 	 * @var
 	 */
-	private $manager;
-
-	/**
-	 * @var
-	 */
 	private $sort_by;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
 
 	/**
 	 * @return string The name of shortcode

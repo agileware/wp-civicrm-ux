@@ -1,18 +1,7 @@
 <?php
 
 
-class Civicrm_Ux_Shortcode_Event_Listing implements iCivicrm_Ux_Shortcode {
-
-	protected $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode

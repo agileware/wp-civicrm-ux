@@ -1,29 +1,15 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number
+ * Class Civicrm_Ux_Shortcode_Campaign_Funds_Raised
  */
-class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Funds_Raised extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-total-contribution-number';
+		return 'campaign-funds-raised';
 	}
 
 	/**
@@ -32,6 +18,7 @@ class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number implements iCivicr
 	 * @param string $tag
 	 *
 	 * @return mixed Should be the html output of the shortcode
+	 * @throws \CRM_Core_Exception
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
@@ -64,8 +51,26 @@ class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number implements iCivicr
 			return 'Campaign not found.';
 		}
 
-		$number_contribution = $result['api.Contribution.get']['count'];
+		$sum = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
 
-		return $number_contribution;
+		return CRM_Utils_Money::format( $sum );
+	}
+
+
+	/**
+	 * Sum up all contributions
+	 *
+	 * @param array $contributions
+	 *
+	 * @return float
+	 */
+	private function sum_from_contributions( $contributions = [] ) {
+		$sum = 0.0;
+
+		foreach ( $contributions as $data ) {
+			$sum += (float) $data['total_amount'];
+		}
+
+		return $sum;
 	}
 }

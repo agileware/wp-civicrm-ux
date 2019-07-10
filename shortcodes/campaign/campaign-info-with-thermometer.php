@@ -4,27 +4,13 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Thermometer_Info
  */
-class Civicrm_Ux_Shortcode_Campaign_Thermometer implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Info_With_Thermometer extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-thermometer';
+		return 'campaign-info-with-thermometer';
 	}
 
 	/**
@@ -73,12 +59,44 @@ class Civicrm_Ux_Shortcode_Campaign_Thermometer implements iCivicrm_Ux_Shortcode
 		$goal_amount           = (float) $result['goal_revenue'];
 		$calculated_percentage = empty( $result['goal_revenue'] ) ? 100 : round( $sum / $goal_amount * 100 );
 		$percentage            = ( $calculated_percentage <= 100 ? $calculated_percentage : '100' ) . '%';
+		$end_date              = $result['end_date'];
+		$day_remaining         = $this->get_remaining_day( $end_date );
+		$number_contribution   = $result['api.Contribution.get']['count'];
+
+		// Hide remaining day
+		$remain_html = '';
+		if ( $day_remaining > 0 ) {
+			$remain_html = '<div><span class="campaign-bold">' . $day_remaining . '</span> day(s) left</div>';
+		}
+
+		// Hide donations
+		$donation_html = '';
+		if ( $number_contribution > 0 ) {
+			$donation_html = '<div><span class="campaign-bold">' . $number_contribution . '</span> donation(s)</div>';
+		}
+
+		// Hide thermometer and goal
+		$goal_html = '';
+		if ( ! empty( $result['goal_revenue'] ) ) {
+			$goal_html = '<div class="campaign-thermometer">' .
+			             '<div class="campaign-meter"><span style="width: ' . $percentage . '"></span></div>' .
+			             '<div class="campaign-target">' .
+			             '<span class="campaign-bold">' . $percentage . '</span>' .
+			             ' raised of ' .
+			             '<span class="campaign-bold">' . CRM_Utils_Money::format( $goal_amount ) . '</span>' .
+			             ' Goal' .
+			             '</div>' .
+			             '</div>';
+		}
 
 		$output = '<div class="campaign-thermometer-wrap">' .
 		          '<div class="campaign-thermometer-info">' .
-		          '<div class="campaign-thermometer">' .
-		          '<div class="campaign-meter"><span style="width: ' . $percentage . '"></span></div>' .
+		          '<div class="campaign-raised">' . CRM_Utils_Money::format( $sum ) . '</div>' .
+		          $goal_html .
 		          '</div>' .
+		          '<div class="campaign-stats">' .
+		          $remain_html .
+		          $donation_html .
 		          '</div>' .
 		          '</div>';
 
@@ -100,5 +118,30 @@ class Civicrm_Ux_Shortcode_Campaign_Thermometer implements iCivicrm_Ux_Shortcode
 		}
 
 		return $sum;
+	}
+
+	/**
+	 * Get the remaining day from now
+	 *
+	 * @param string $end_date
+	 *
+	 * @return int
+	 * @throws \Exception
+	 */
+	private function get_remaining_day( $end_date ) {
+		if ( empty( $end_date ) ) {
+			return 0;
+		}
+
+		$end = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date );
+		$now = new DateTime( 'now' );
+
+		if ( $now > $end ) {
+			return 0;
+		}
+
+		$interval = $now->diff( $end );
+
+		return $interval->d;
 	}
 }

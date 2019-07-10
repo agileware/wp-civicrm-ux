@@ -1,29 +1,16 @@
 <?php
 
+
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Funds_Raised
+ * Class Civicrm_Ux_Shortcode_Campaign_Thermometer_Info
  */
-class Civicrm_Ux_Shortcode_Campaign_Funds_Raised implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-funds-raised';
+		return 'campaign-thermometer';
 	}
 
 	/**
@@ -32,7 +19,7 @@ class Civicrm_Ux_Shortcode_Campaign_Funds_Raised implements iCivicrm_Ux_Shortcod
 	 * @param string $tag
 	 *
 	 * @return mixed Should be the html output of the shortcode
-	 * @throws \CRM_Core_Exception
+	 * @throws \Exception
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
@@ -52,7 +39,10 @@ class Civicrm_Ux_Shortcode_Campaign_Funds_Raised implements iCivicrm_Ux_Shortcod
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [ 'sequential' => 1, 'campaign_id' => "\$value.id" ],
+			'api.Contribution.get' => [
+				'sequential'  => 1,
+				'campaign_id' => "\$value.id",
+			],
 		];
 
 		try {
@@ -65,11 +55,21 @@ class Civicrm_Ux_Shortcode_Campaign_Funds_Raised implements iCivicrm_Ux_Shortcod
 			return 'Campaign not found.';
 		}
 
-		$sum = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
+		$sum                   = (float) $this->sum_from_contributions( $result['api.Contribution.get']['values'] );
+		$goal_amount           = (float) $result['goal_revenue'];
+		$calculated_percentage = empty( $result['goal_revenue'] ) ? 100 : round( $sum / $goal_amount * 100 );
+		$percentage            = ( $calculated_percentage <= 100 ? $calculated_percentage : '100' ) . '%';
 
-		return CRM_Utils_Money::format( $sum );
+		$output = '<div class="campaign-thermometer-wrap">' .
+		          '<div class="campaign-thermometer-info">' .
+		          '<div class="campaign-thermometer">' .
+		          '<div class="campaign-meter"><span style="width: ' . $percentage . '"></span></div>' .
+		          '</div>' .
+		          '</div>' .
+		          '</div>';
+
+		return $output;
 	}
-
 
 	/**
 	 * Sum up all contributions

@@ -1,29 +1,15 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_End_date
+ * Class Civicrm_Ux_Shortcode_Campaign_Goal_Amount
  */
-class Civicrm_Ux_Shortcode_Campaign_End_date implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Goal_Amount extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-end-date';
+		return 'campaign-goal-amount';
 	}
 
 	/**
@@ -64,12 +50,9 @@ class Civicrm_Ux_Shortcode_Campaign_End_date implements iCivicrm_Ux_Shortcode {
 			return 'Campaign not found.';
 		}
 
-		$end_date = $result['end_date'];
-		if ( empty( $end_date ) ) {
-			return '';
-		}
-		$end_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date )->format( 'j F Y' );
+		$goal_amount = (float) $result['goal_revenue'];
 
-		return $end_date;
+		return CRM_Utils_Money::format($goal_amount);
 	}
+
 }

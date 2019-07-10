@@ -7,7 +7,7 @@ use \Sabre\VObject;
  *
  * Class Civicrm_Ux_Shortcode_ICal_Feed
  */
-class Civicrm_Ux_Shortcode_ICal_Feed implements iCivicrm_Ux_Shortcode {
+class Civicrm_Ux_Shortcode_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode {
 
 	const HASH_OPTION = 'internal_ical_hash';
 
@@ -17,26 +17,13 @@ class Civicrm_Ux_Shortcode_ICal_Feed implements iCivicrm_Ux_Shortcode {
 
 	const INTERNAL_ENDPOINT = 'manage';
 
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager $manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-
+	public function __construct( $manager ) {
+		parent::__construct( $manager );
 		// TODO move this part
 		add_option( self::HASH_OPTION, '' );
 		if ( empty( get_option( self::HASH_OPTION ) ) ) {
 			update_option( self::HASH_OPTION, $this->manager->get_plugin()->helper->generate_hash() );
 		}
-
-		return;
 	}
 
 	/**

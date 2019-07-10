@@ -41,6 +41,10 @@ class Civicrm_Ux_Loader {
 	 */
 	protected $filters;
 
+	protected $files;
+
+	protected $interfaces;
+
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
@@ -48,8 +52,10 @@ class Civicrm_Ux_Loader {
 	 */
 	public function __construct() {
 
-		$this->actions = [];
-		$this->filters = [];
+		$this->actions    = [];
+		$this->filters    = [];
+		$this->files      = [];
+		$this->interfaces = [];
 
 	}
 
@@ -113,6 +119,74 @@ class Civicrm_Ux_Loader {
 	}
 
 	/**
+	 * @param string $relative_path the relative path. Plugin directory will be added inside this function
+	 * @param object $manager the manager instance
+	 * @param string $interface the interface or class for managed instance
+	 * @param bool $recursive
+	 *
+	 * @since    1.0.0
+	 */
+	public function load( $relative_path, $manager, $interface, $recursive = true ) {
+		$path                           = plugin_dir_path( dirname( __FILE__ ) ) . "/$relative_path";
+		$this->interfaces[ $interface ] = $manager;
+
+		// If is a single file, add it
+		if ( ! is_dir( $path ) || $this->is_php_file( $path ) ) {
+			$this->add_file( $path );
+		}
+
+		foreach ( scandir( $path ) as $filename ) {
+			if ( in_array( $filename, [ '.', '..' ] ) ) {
+				continue;
+			}
+			$path = plugin_dir_path( dirname( __FILE__ ) ) . '/' . $relative_path . '/' . $filename;
+			// Recursive
+			if ( is_dir( $path ) && $recursive ) {
+				$this->load( $relative_path . '/' . $filename, $manager, $interface );
+			} else if ( $this->is_php_file( $path ) ) {
+				$this->add_file( $path );
+			}
+		}
+	}
+
+	/**
+	 * Add the php path for loader to load
+	 *
+	 * @param string $path the absolute path
+	 */
+	private function add_file( $path ) {
+		if ( ! in_array( $path, $this->files ) ) {
+			$this->files[] = $path;
+		}
+	}
+
+	/**
+	 * @param string $path absolute path
+	 *
+	 * @return bool false if the path is not a php file
+	 */
+	private function is_php_file( $path ) {
+		$file_info = pathinfo( $path );
+
+		return is_file( $path ) && $file_info['extension'] == 'php';
+	}
+
+	/**
+	 * @param string $path absolute path
+	 *
+	 * @return bool false if failed
+	 */
+	private function require_php_file( $path ) {
+		if ( $this->is_php_file( $path ) ) {
+			require_once $path;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Register the filters and actions with WordPress.
 	 *
 	 * @since    1.0.0
@@ -133,6 +207,23 @@ class Civicrm_Ux_Loader {
 			], $hook['priority'], $hook['accepted_args'] );
 		}
 
-	}
+		// PHP files
+		foreach ( $this->files as $path ) {
+			$this->require_php_file( $path );
+		}
 
+		foreach ( $this->interfaces as $interface => $manager ) {
+			/** @var Abstract_Civicrm_Ux_Module_manager $manager */
+			foreach ( get_declared_classes() as $className ) {
+				if ( in_array( $interface, class_implements( $className ) )
+				     || is_subclass_of( $className, $interface ) ) {
+					/** @var iCivicrm_Ux_Managed_Instance $instance */
+					$instance = new $className( $manager );
+					$manager->add_instance( $instance );
+				}
+			}
+
+			$manager->after_instance_load();
+		}
+	}
 }

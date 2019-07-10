@@ -2,21 +2,7 @@
 
 use \Sabre\VObject;
 
-class Civicrm_Ux_REST_ICal_Feed_External implements iCivicrm_Ux_REST {
-
-	/**
-	 * @var \Civicrm_Ux_REST_Manager
-	 */
-	protected $manager;
-
-	/**
-	 * @param \Civicrm_Ux_REST_Manager $manage
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( $manage ) {
-		$this->manager = $manage;
-	}
+class Civicrm_Ux_REST_ICal_Feed_External extends Abstract_Civicrm_Ux_REST {
 
 	/**
 	 * @return string

@@ -17,74 +17,47 @@
  * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Civicrm_Ux_Shortcode_Manager {
+class Civicrm_Ux_Shortcode_Manager extends Abstract_Civicrm_Ux_Module_manager {
 
 	/**
-	 * @var \Civicrm_Ux $plugin the plugin instance
-	 */
-	protected $plugin;
-
-	/**
-	 * @var \iCivicrm_Ux_Shortcode[] A list of registered shortcodes.
-	 */
-	protected $registered_shortcodes;
-
-	/**
-	 * The directory
-	 */
-	protected const DIRECTORY = 'shortcodes';
-
-	/**
-	 * Initialize
 	 *
 	 * @param \Civicrm_Ux $plugin
 	 *
 	 * @since    1.0.0
 	 */
 	public function __construct( $plugin ) {
-		$this->plugin                = $plugin;
-		$this->registered_shortcodes = [];
-
-		$this->run();
-	}
-
-	/**
-	 *
-	 *
-	 * @since    1.0.0
-	 */
-	public function run() {
-		$paths = $this->plugin->helper->get_php_file_paths( self::DIRECTORY );
-		foreach ( $paths as $path ) {
-			if ( $this->plugin->helper->require_php_file( $path ) ) {
-				// Do something...
-			}
-		}
-
-		foreach ( get_declared_classes() as $className ) {
-			if ( in_array( 'iCivicrm_Ux_Shortcode', class_implements( $className ) ) ) {
-				/** @var \iCivicrm_Ux_Shortcode $instance */
-				$instance = new $className();
-				$instance->init_setup( $this );
-				$this->registered_shortcodes[] = $instance;
-			}
-		}
+		parent::__construct( $plugin );
 	}
 
 	/**
 	 * Hooked action init
 	 */
 	public function register_shortcodes() {
-		if ( empty( $this->registered_shortcodes ) ) {
+		if ( empty( $this->instances ) ) {
 			return;
 		}
 
-		foreach ( $this->registered_shortcodes as $instance ) {
+		foreach ( $this->instances as $instance ) {
 			add_shortcode( $instance->get_shortcode_name(), [ $instance, 'shortcode_callback' ] );
 		}
 	}
 
-	public function get_plugin() {
-		return $this->plugin;
+	/**
+	 * The root directory of the manager instance php file.
+	 * Should start from the root of plugin
+	 *
+	 * @return string
+	 */
+	public function get_directory() {
+		return 'shortcodes';
+	}
+
+	/**
+	 * The interface or class name to identify the instance
+	 *
+	 * @return string
+	 */
+	public function get_managed_interface() {
+		return 'Abstract_Civicrm_Ux_Shortcode';
 	}
 }

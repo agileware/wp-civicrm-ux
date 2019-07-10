@@ -72,12 +72,12 @@ For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,
 ## Development
 ### How to add shortcode
 1. Create a php file in **shortcodes** directory.
-1. Within the file, create a class which implement `iCivicrm_Ux_Shortcode`.
+1. Within the file, create a class which extends `Abstract_Civicrm_Ux_SHORTCODE`.
 1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
 
 ### How to add REST API route
 1. Create a php file in **rest** directory.
-1. Within the file, create a class which implement `iCivicrm_Ux_REST`.
+1. Within the file, create a class which extends `Abstract_Civicrm_Ux_REST`.
 1. Implement all functions defined in the interface. It will be easy if you are using PhpStorm.
 
 ### CSS and JavaScript

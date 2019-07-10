@@ -2,23 +2,8 @@
 
 use \Sabre\VObject;
 
-class Civicrm_Ux_REST_ICal_Feed_Internal implements iCivicrm_Ux_REST {
-
+class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {
 	const HASH_OPTION = 'internal_ical_hash';
-
-	/**
-	 * @var \Civicrm_Ux_REST_Manager
-	 */
-	protected $manager;
-
-	/**
-	 * @param \Civicrm_Ux_REST_Manager $manage
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( $manage ) {
-		$this->manager = $manage;
-	}
 
 	/**
 	 * @return string

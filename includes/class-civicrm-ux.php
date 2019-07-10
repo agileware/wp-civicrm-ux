@@ -124,12 +124,14 @@ class Civicrm_Ux {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
 
+		// All module mangers and instances class
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-managed-instance.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-rest.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-shortcode.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-module-manager.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-shortcode-manager.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-rest-manager.php';
-
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-shortcode.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-rest.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
@@ -223,7 +225,7 @@ class Civicrm_Ux {
 	}
 
 	private function register_options() {
-
+		// TODO move plugin options here
 	}
 
 	/**

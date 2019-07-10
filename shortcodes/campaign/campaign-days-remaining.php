@@ -1,29 +1,15 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Goal_Amount
+ * Class Civicrm_Ux_Shortcode_Campaign_Day_Remaining
  */
-class Civicrm_Ux_Shortcode_Campaign_Goal_Amount implements iCivicrm_Ux_Shortcode {
-
-	/**
-	 * @var \Civicrm_Ux_Shortcode_Manager
-	 */
-	private $manager;
-
-	/**
-	 * @param \Civicrm_Ux_Shortcode_Manager $manager
-	 *
-	 * @return mixed
-	 */
-	public function init_setup( Civicrm_Ux_Shortcode_Manager $manager ) {
-		$this->manager = $manager;
-	}
+class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-goal-amount';
+		return 'campaign-days-remaining';
 	}
 
 	/**
@@ -32,6 +18,7 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount implements iCivicrm_Ux_Shortcode
 	 * @param string $tag
 	 *
 	 * @return mixed Should be the html output of the shortcode
+	 * @throws Exception
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// normalize attribute keys, lowercase
@@ -40,6 +27,7 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount implements iCivicrm_Ux_Shortcode
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
 			'id' => '',
+			'end-text' => 'on-going'
 		], $atts, $tag );
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
@@ -51,7 +39,10 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount implements iCivicrm_Ux_Shortcode
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [ 'sequential' => 1, 'campaign_id' => "\$value.id" ],
+			'api.Contribution.get' => [
+				'sequential'  => 1,
+				'campaign_id' => "\$value.id",
+			],
 		];
 
 		try {
@@ -64,9 +55,38 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount implements iCivicrm_Ux_Shortcode
 			return 'Campaign not found.';
 		}
 
-		$goal_amount = (float) $result['goal_revenue'];
+		$end_date      = $result['end_date'];
+		$day_remaining = $this->get_remaining_day( $end_date );
 
-		return CRM_Utils_Money::format($goal_amount);
+		if ( $day_remaining === 0 ) {
+			return $mod_atts['end-text'];
+		}
+
+		return $day_remaining === 1 ? $day_remaining . ' day remaining' : $day_remaining . ' days remaining';
 	}
 
+	/**
+	 * Get the remaining day from now
+	 *
+	 * @param string $end_date
+	 *
+	 * @return int
+	 * @throws \Exception
+	 */
+	private function get_remaining_day( $end_date ) {
+		if ( empty( $end_date ) ) {
+			return 0;
+		}
+
+		$end = DateTime::createFromFormat( 'Y-m-d H:i:s', $end_date );
+		$now = new DateTime( 'now' );
+
+		if ( $now > $end ) {
+			return 0;
+		}
+
+		$interval = $now->diff( $end );
+
+		return $interval->d;
+	}
 }

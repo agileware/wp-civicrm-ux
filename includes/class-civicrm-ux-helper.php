@@ -36,6 +36,8 @@ class Civicrm_Ux_Helper {
 	}
 
 	/**
+	 * Deprecated
+	 * @deprecated
 	 * @param string $directory The relative directory
 	 *
 	 * @return array Array of paths (string)
