@@ -221,7 +221,7 @@ class Civicrm_Ux_Loader {
 		}
 
 		foreach ( $this->interfaces as $interface => $manager ) {
-			/** @var Abstract_Civicrm_Ux_Module_manager $manager */
+			/** @var Abstract_Civicrm_Ux_Module_Manager $manager */
 			foreach ( get_declared_classes() as $className ) {
 				if ( in_array( $interface, class_implements( $className ) )
 				     || is_subclass_of( $className, $interface ) ) {

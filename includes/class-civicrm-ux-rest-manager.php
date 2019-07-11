@@ -17,7 +17,7 @@
  * @subpackage Civicrm_Ux/includes
  * @author     Agileware <support@agileware.com.au>
  */
-class Civicrm_Ux_REST_Manager extends Abstract_Civicrm_Ux_Module_manager {
+class Civicrm_Ux_REST_Manager extends Abstract_Civicrm_Ux_Module_Manager {
 
 	public function __construct( $plugin ) {
 		parent::__construct( $plugin );

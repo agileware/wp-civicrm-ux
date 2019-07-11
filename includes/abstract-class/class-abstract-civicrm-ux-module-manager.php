@@ -1,6 +1,6 @@
 <?php
 
-abstract class Abstract_Civicrm_Ux_Module_manager {
+abstract class Abstract_Civicrm_Ux_Module_Manager {
 	/**
 	 * @var \Civicrm_Ux $plugin the plugin instance
 	 */

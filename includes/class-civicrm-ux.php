@@ -66,6 +66,10 @@ class Civicrm_Ux {
 	 */
 	protected $version;
 
+	protected const DEPENDENCIES = [
+		'caldera-forms/caldera-core.php'=> 'optional'
+	];
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -87,8 +91,10 @@ class Civicrm_Ux {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+
 		$this->define_shortcodes();
 		$this->define_rest();
+		$this->define_magic_tag();
 
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
 		$this->register_options();
@@ -128,10 +134,12 @@ class Civicrm_Ux {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-managed-instance.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-rest.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-shortcode.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-cf-magic-tag.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/abstract-class/class-abstract-civicrm-ux-module-manager.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-shortcode-manager.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-rest-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-cf-magic-tag-manager.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
@@ -224,6 +232,14 @@ class Civicrm_Ux {
 		$manager = new Civicrm_Ux_REST_Manager( $this );
 
 		$this->loader->add_action( 'rest_api_init', $manager, 'register_rest_routes' );
+	}
+
+	private function define_magic_tag() {
+
+		$manager = new Civicrm_Ux_Cf_Magic_Tag_Manager( $this );
+
+		$this->loader->add_filter( 'caldera_forms_get_magic_tags', $manager, 'register_tags', 10, 2 );
+		$this->loader->add_filter( 'caldera_forms_do_magic_tag', $manager, 'dispatch_callback', 10, 2 );
 	}
 
 	private function register_options() {
