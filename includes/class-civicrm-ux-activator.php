@@ -37,6 +37,7 @@ class Civicrm_Ux_Activator {
 	}
 
 	public static function check_dependency() {
+		// TODO
 		$active_plugins = apply_filters( 'active_plugins', get_option( 'active_plugins' ) );
 
 		return in_array( 'civicrm/civicrm.php', $active_plugins );

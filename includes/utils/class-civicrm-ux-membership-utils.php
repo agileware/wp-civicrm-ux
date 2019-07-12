@@ -211,4 +211,99 @@ class Civicrm_Ux_Membership_Utils {
 			}
 		}
 	}
+
+	/**
+	 * This function is merged from agileware/agileware-civicrm-membership-summary
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	static public function get_membership_summary() {
+		$opt = Civicrm_Ux::getInstance()->get_sotre()->get_option( 'civicrm_summary_options' );
+
+		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
+		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
+		$summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
+
+
+		$current_membership_statuses = [];
+
+		$membership_summary_message = '';
+
+		$membership_summary_status = '';
+
+		$membership_types = '';
+
+		$renewal_date = '';
+
+
+		if ( civicrm_initialize() ) {
+
+			try {
+
+				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
+
+				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
+
+				$membership_status_list = civicrm_api3( 'MembershipStatus', 'get', array() );
+
+				//If membership status gives a current membership, add it to the array
+				foreach ( $membership_status_list['values'] as $membership_status ) {
+
+					if ( $membership_status['is_current_member'] ) {
+
+						array_push( $current_membership_statuses, $membership_status['id'] );
+
+					}
+
+				}
+
+				foreach ( $memberships["values"] as $membership ) {
+
+					$membership_types    = $membership['membership_name'];
+					$membership_end_date = new DateTime( $membership['end_date'] );
+					$end_date_before     = new DateTime( $membership['end_date'] );
+					$renewal_date        = $end_date_before->modify( '-' . (string) ( $summary_show_renewal_date ) . 'day' );
+					$renewal_date_format = $renewal_date->format( 'd/m/Y' );
+					$today_date          = new DateTime( 'now' );
+
+					if ( in_array( (int) $membership['status_id'], $current_membership_statuses ) ) {
+						$membership_summary_status .= $membership_status_list['values'][ (int) $membership['status_id'] ]['label'];
+						if ( $today_date < $renewal_date ) {
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . ', next renewal date ' . $renewal_date->format( 'd/m/Y' ) . '</div>';
+							break;
+						} elseif ( ( $today_date >= $renewal_date ) && ( $today_date <= $membership_end_date ) ) {
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '. Your membership expires on ' . $membership_end_date->format( 'd/m/Y' ) . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
+							break;
+						} elseif ( ( $today_date > $membership_end_date ) ) {
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '.' . $membership_end_date->format( 'd/m/Y' ) . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
+							break;
+						}
+					}
+
+				}
+
+				return ( array(
+					$membership_summary_message,
+					$membership_types,
+					$membership_summary_status,
+					$renewal_date_format,
+					$summary_show_join_URL,
+					$summary_show_renewal_URL
+				) );
+
+			} catch ( CiviCRM_API3_Exception $e ) {
+
+				if ( isset( $cid ) ) {
+
+					error_log( 'Unable to obtain membership for ' . $cid );
+
+				}
+
+			}
+
+		}
+
+	}
+
 }

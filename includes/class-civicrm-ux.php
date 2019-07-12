@@ -29,6 +29,8 @@
  */
 class Civicrm_Ux {
 
+	static private $singleton = null;
+
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
@@ -67,8 +69,20 @@ class Civicrm_Ux {
 	protected $version;
 
 	protected const DEPENDENCIES = [
-		'caldera-forms/caldera-core.php'=> 'optional'
+		'caldera-forms/caldera-core.php' => 'optional'
 	];
+	/**
+	 * @var Civicrm_Ux_Option_Store
+	 */
+	protected $store;
+
+	static public function getInstance() {
+		if ( self::$singleton == null ) {
+			self::$singleton = new Civicrm_Ux();
+		}
+
+		return self::$singleton;
+	}
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -79,7 +93,7 @@ class Civicrm_Ux {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
+	private function __construct() {
 		if ( defined( 'CIVICRM_UXVERSION' ) ) {
 			$this->version = CIVICRM_UXVERSION;
 		} else {
@@ -129,6 +143,7 @@ class Civicrm_Ux {
 		 * The helper class.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-option-store.php';
 
 		// All module mangers and instances class
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-managed-instance.php';
@@ -160,6 +175,7 @@ class Civicrm_Ux {
 
 		$this->loader = new Civicrm_Ux_Loader();
 		$this->helper = new Civicrm_Ux_Helper( $this );
+		$this->store = new Civicrm_Ux_Option_Store();
 
 		// Add utility classes
 		$this->loader->load( 'includes/utils' );
@@ -195,6 +211,8 @@ class Civicrm_Ux {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
 	}
 
@@ -278,6 +296,10 @@ class Civicrm_Ux {
 	 */
 	public function get_loader() {
 		return $this->loader;
+	}
+
+	public function get_sotre() {
+		return $this->store;
 	}
 
 	/**

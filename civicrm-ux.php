@@ -83,7 +83,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux.php';
  */
 function run_civicrm_ux() {
 
-	$plugin = new Civicrm_Ux();
+	$plugin = Civicrm_Ux::getInstance();
 	$plugin->run();
 
 }

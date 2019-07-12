@@ -39,11 +39,12 @@
         return Array.from(arr, dec2hex).join('')
     }
 
-    $('#generate-ical-hash').on('click', function (event) {
-        event.preventDefault();
-        let hash = generateId(16);
-        $('#ical-hash-field').val(hash);
-        console.log(hash);
-    })
+    $(document).ready(function() {
+        $("#generate-ical-hash").on('click', function (event) {
+            event.preventDefault();
+            let hash = generateId(16);
+            $('#ical-hash-field').val(hash);
+        })
+    });
 
 })(jQuery);

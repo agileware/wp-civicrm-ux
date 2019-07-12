@@ -51,7 +51,7 @@ class Civicrm_Ux_Admin {
 	public function __construct( $civicrm_ux, $version ) {
 
 		$this->civicrm_ux = $civicrm_ux;
-		$this->version                     = $version;
+		$this->version    = $version;
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/civicrm-ux-admin-display.php';
 	}
@@ -102,4 +102,13 @@ class Civicrm_Ux_Admin {
 
 	}
 
+	public function create_menu() {
+		add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', 'civicrm-ux-setting.php', 'civicrm_ux_settings_page' );
+	}
+
+	public function register_settings() {
+		//register our settings
+		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION );
+		register_setting( 'civicrm-ux-settings-group', 'civicrm_summary_options' );
+	}
 }
