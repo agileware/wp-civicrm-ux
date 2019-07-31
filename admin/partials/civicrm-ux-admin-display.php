@@ -49,7 +49,7 @@ function civicrm_ux_settings_page() {
                     </tr>
                 </table>
                 <h2>Membership Summary</h2>
-                <p>View the <a href="/wp-content/plugins/agileware-civicrm-ux/admin/partials/civicrm-ux-membership_summary_guide.html" target="_blank">Membership Summary documentation</a> to learn more about short-codes.</p>
+                <p>View the <a href="/wp-content/plugins/agileware-civicrm-ux/admin/partials/civicrm-ux-guide.html#Membership" target="_blank">Membership Summary documentation</a> to learn more about short-codes.</p>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="civicrm_summary_show_renewal_date">The number of days to show the
