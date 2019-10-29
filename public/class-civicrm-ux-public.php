@@ -51,7 +51,7 @@ class Civicrm_Ux_Public {
 	public function __construct( $civicrm_ux, $version ) {
 
 		$this->civicrm_ux = $civicrm_ux;
-		$this->version                     = $version;
+		$this->version    = $version;
 
 	}
 
