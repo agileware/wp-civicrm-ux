@@ -9,7 +9,7 @@
  * Plugin Name:       CiviCRM UX
  * Plugin URI:        https://agileware.com.au
  * Description:       UX for CiviCRM
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
