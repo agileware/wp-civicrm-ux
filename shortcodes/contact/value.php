@@ -25,14 +25,27 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
-			'id'      => CRM_Core_Session::singleton()->getLoggedInContactID(),
-			'field'   => '',
-			'default' => ''
+			'id'          => CRM_Core_Session::singleton()->getLoggedInContactID(),
+			'permission'  => 'View All Contacts',
+			'bool_value'  => null,
+			'id_from_url' => '',
+			'field'       => '',
+			'default'     => ''
 		], $atts, $tag );
-		if ( empty( $mod_atts['id'] ) || empty( $mod_atts['field'] ) ) {
+		$id       = $mod_atts['id'];
+		if ( $mod_atts['id_from_url'] || $_GET[ $mod_atts['id_from_url'] ] ) {
+			$id = $_GET[ $mod_atts['id_from_url'] ];
+		}
+		if ( empty( $id ) || empty( $mod_atts['field'] ) ) {
 			return '(Not enough attributes)';
 		}
-		$id = $mod_atts['id'];
+		// check permission
+		if ( ! empty( $mod_atts['permission'] ) ) {
+			$permissions = explode( ',', $mod_atts['permission'] );
+			if ( ! CRM_Core_Permission::check( $permissions ) ) {
+				return '(permission deny)';
+			}
+		}
 
 		$civi_param = [
 			'return' => $mod_atts['field'],
@@ -45,6 +58,17 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			return $e->getMessage();
 		}
 
-		return $result;
+		// display bool value
+		if ( $mod_atts['bool_value'] ) {
+			$values = explode( ':', $mod_atts['bool_value'] );
+
+			return $result ? $values[0] : $values[1];
+		}
+
+		return $this->no_value( $result ) ? $mod_atts['default'] : $result;
+	}
+
+	function no_value( $value ) {
+		return empty( $value ) && $value != 0;
 	}
 }
