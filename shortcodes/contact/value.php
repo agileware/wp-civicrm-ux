@@ -59,24 +59,44 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 
 		// get the label of the value if any
 		try {
-			$labels = civicrm_api3('Contact', 'getoptions', [
+			$labels = civicrm_api3( 'Contact', 'getoptions', [
 				'field' => $mod_atts['field'],
-			]);
+			] );
 		} catch ( CiviCRM_API3_Exception $e ) {
 			$labels = [];
 		}
 
 		if ( $labels['is_error'] ) {
-			return $this->no_value( $result ) ? $mod_atts['default'] : $result;
+			return $this->no_value( $result ) ? $mod_atts['default'] : $this->get_display_values( $result );
 		}
 		if ( $labels['values'][ $result ] ) {
-			$result = $labels['values'][ $result ];
+			if ( is_array( $result ) ) {
+				foreach ( $result as $key => $item ) {
+					$result[$key] = $labels['values'][ $result[$item] ];
+				}
+			} else {
+				$result = $labels['values'][ $result ];
+			}
 		}
 
-		return $this->no_value( $result ) ? $mod_atts['default'] : $result;
+		return $this->no_value( $result ) ? $mod_atts['default'] : $this->get_display_values( $result );
 	}
 
 	function no_value( $value ) {
 		return empty( $value ) && $value != 0;
+	}
+
+	/**
+	 * convert array into one string
+	 * @param $values
+	 *
+	 * @return string
+	 */
+	function get_display_values( $values ) {
+		if ( ! is_array( $values ) ) {
+			return $values;
+		}
+
+		return implode( ', ', $values );
 	}
 }
