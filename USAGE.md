@@ -74,7 +74,7 @@ The type is optional. If the type is not specified, there will be an event listi
 The value of 'count' decides how many events will be displayed in upcoming event listings.  
 This shortcode has been formatted in html with styling.
 
-### Activity
+#### Activity
 `[civicrm-activities-listing]`  
 Parameters:
  - `$type`: activity type id or activity type label. Support multiple values separated by a comma without space. The default is empty.
@@ -88,6 +88,14 @@ Parameters:
 For example:  
 `[civicrm-activities-listing type='Test' relationship-id=5 field='status,source_contact_name,activity_date_time']`
 
+#### Contact
+`[contact-value]`
+Parameters:
+ - `id`             the contact id. Default is the current login user
+ - `permission`     what permissions to check. Separated by comma. Default is 'View All Contacts'
+ - `id_from_url`    if given any name, the shortcode will get contact id from url with the given name
+ - `field`          what field to display **required**
+ - `default`        the value to display if empty
 ### REST API
 #### iCal feed
  - ICalFeed/event

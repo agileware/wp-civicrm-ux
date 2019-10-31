@@ -27,7 +27,6 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 		$mod_atts = shortcode_atts( [
 			'id'          => CRM_Core_Session::singleton()->getLoggedInContactID(),
 			'permission'  => 'View All Contacts',
-			'bool_value'  => null,
 			'id_from_url' => '',
 			'field'       => '',
 			'default'     => ''
@@ -58,11 +57,20 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			return $e->getMessage();
 		}
 
-		// display bool value
-		if ( $mod_atts['bool_value'] ) {
-			$values = explode( ':', $mod_atts['bool_value'] );
+		// get the label of the value if any
+		try {
+			$labels = civicrm_api3('Contact', 'getoptions', [
+				'field' => $mod_atts['field'],
+			]);
+		} catch ( CiviCRM_API3_Exception $e ) {
+			$labels = [];
+		}
 
-			return $result ? $values[0] : $values[1];
+		if ( $labels['is_error'] ) {
+			return $this->no_value( $result ) ? $mod_atts['default'] : $result;
+		}
+		if ( $labels['values'][ $result ] ) {
+			$result = $labels['values'][ $result ];
 		}
 
 		return $this->no_value( $result ) ? $mod_atts['default'] : $result;
