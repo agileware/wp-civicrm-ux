@@ -4,6 +4,7 @@
  * Class Civicrm_Ux_Shortcode_Contact_value
  */
 class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
+	protected $mod_atts = [];
 
 	/**
 	 * @return string The name of shortcode
@@ -24,11 +25,12 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		// override default attributes with user attributes
-		$mod_atts = shortcode_atts( [
+		$this->mod_atts = $mod_atts = shortcode_atts( [
 			'id'          => CRM_Core_Session::singleton()->getLoggedInContactID(),
 			'permission'  => 'View All Contacts',
 			'id_from_url' => '',
 			'field'       => '',
+			'check_url'   => 0,
 			'default'     => ''
 		], $atts, $tag );
 		$id       = $mod_atts['id'];
@@ -72,7 +74,7 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 		if ( $labels['values'][ $result ] ) {
 			if ( is_array( $result ) ) {
 				foreach ( $result as $key => $item ) {
-					$result[$key] = $labels['values'][ $result[$item] ];
+					$result[ $key ] = $labels['values'][ $result[ $item ] ];
 				}
 			} else {
 				$result = $labels['values'][ $result ];
@@ -88,12 +90,18 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * convert array into one string
+	 *
 	 * @param $values
 	 *
 	 * @return string
 	 */
 	function get_display_values( $values ) {
 		if ( ! is_array( $values ) ) {
+			if ( $this->mod_atts['check_url'] ) {
+				if ( strpos( $values, 'http' ) !== 0 ) {
+					$values = 'https://' . $values;
+				}
+			}
 			return $values;
 		}
 
