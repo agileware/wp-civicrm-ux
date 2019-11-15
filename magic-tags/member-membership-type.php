@@ -13,6 +13,7 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership_Type extends Abstract_Civicrm_Ux
 
 	/**
 	 * The callback function. Should return $value if no changes.
+	 * WPCIVIUX-70
 	 * 1. Current membership with the most earliest End Date (eg. If there are 3 current memberships and have end dates of Jan, March, Dec then return Jan) or
 	 * 2. If no current membership exists then return the expired membership with the latest End Date (eg. If there are 3 expired memberships and have end dates of Jan, March, Dec then return Dec).
 	 *
