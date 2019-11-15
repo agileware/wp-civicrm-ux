@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @link              https://agileware.com.au
+ * @link              https://github.com/agileware/wp-civicrm-ux
  * @since             1.0.0
  * @package           Civicrm_Ux
  *
  * @wordpress-plugin
- * Plugin Name:       CiviCRM UX
- * Plugin URI:        https://agileware.com.au
- * Description:       UX for CiviCRM
+ * Plugin Name:       WP CiviCRM UX
+ * Plugin URI:        https://github.com/agileware/wp-civicrm-ux
+ * Description:       A better user experience for integrating WordPress and CiviCRM
  * Version:           1.0.4
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
@@ -16,7 +16,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       civicrm-ux
  * Domain Path:       /languages
- * GitHub Plugin URI: agileware/wordpress-civicrm-ux
+ * GitHub Plugin URI: agileware/wp-civicrm-ux
  */
 
 /**
