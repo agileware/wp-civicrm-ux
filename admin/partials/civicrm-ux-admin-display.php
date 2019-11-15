@@ -14,12 +14,12 @@
 
 function civicrm_ux_settings_page() {
 	$url_param = [
-		'hash' => get_option( Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION ),
+		'hash' => get_option( Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION ),
 	];
 	$url       = add_query_arg(
 		$url_param,
 		get_rest_url( null,
-			'/' . Civicrm_Ux_Shortcode_ICal_Feed::API_NAMESPACE . '/' . Civicrm_Ux_Shortcode_ICal_Feed::INTERNAL_ENDPOINT ) );
+			'/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::API_NAMESPACE . '/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::INTERNAL_ENDPOINT ) );
 	$opt       = Civicrm_Ux::getInstance()->get_sotre()->get_option( 'civicrm_summary_options' );
 	?>
     <div class="wrap">
@@ -32,8 +32,8 @@ function civicrm_ux_settings_page() {
                     <tr>
                         <th scope="row"><label for="ical-hash-field">Hash</label></th>
                         <td><input id="ical-hash-field" type="text"
-                                   name=<?php echo '"' . Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION . '"' ?> size="40"
-                                   value="<?php echo esc_attr( get_option( Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION ) ); ?>"/>
+                                   name=<?php echo '"' . Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION . '"' ?> size="40"
+                                   value="<?php echo esc_attr( get_option( Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION ) ); ?>"/>
                             <!-- TODO fix button -->
                             <button id="generate-ical-hash" type="button">GENERATE</button>
                         </td>
