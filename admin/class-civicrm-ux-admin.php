@@ -108,7 +108,7 @@ class Civicrm_Ux_Admin {
 
 	public function register_settings() {
 		//register our settings
-		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_ICal_Feed::HASH_OPTION );
+		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION );
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_summary_options' );
 	}
 }
