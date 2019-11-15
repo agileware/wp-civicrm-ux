@@ -1,4 +1,4 @@
-# CiviCRM UX
+# WordPress CiviCRM UX - A better user experience for integrating WordPress and CiviCRM
 ## Description
 Agileware CiviCRM plugin all in one. This plugin adds many useful shortcodes and provides additional functionality to improve the user experience.
 
