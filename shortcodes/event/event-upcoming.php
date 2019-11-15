@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Upcoming_Event extends Abstract_Civicrm_Ux_Shortcode{
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'civicrm-upcoming-events';
+		return 'ux_event_upcoming';
 	}
 
 	/**

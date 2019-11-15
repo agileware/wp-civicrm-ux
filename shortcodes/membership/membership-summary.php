@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Summary extends Abstract_Civicrm_Ux_Shortc
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'membership-summary';
+		return 'ux_membership_summary';
 	}
 
 	/**

@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_S
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-honour-listing';
+		return 'ux_campaign_honour_listing';
 	}
 
 	/**

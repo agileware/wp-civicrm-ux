@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Status extends Abstract_Civicrm_Ux_Shortco
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'membership-status';
+		return 'ux_membership_status';
 	}
 
 	/**

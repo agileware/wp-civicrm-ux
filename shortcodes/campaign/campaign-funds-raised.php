@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_Funds_Raised extends Abstract_Civicrm_Ux_Sho
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-funds-raised';
+		return 'ux_campaign_total_raised';
 	}
 
 	/**

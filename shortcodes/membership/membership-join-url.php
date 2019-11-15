@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Join_Url extends Abstract_Civicrm_Ux_Short
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'membership-join-url';
+		return 'ux_membership_join_url';
 	}
 
 	/**

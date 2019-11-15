@@ -30,7 +30,7 @@ class Civicrm_Ux_Shortcode_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode {
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'ical-feed';
+		return 'ux_event_ical_feed';
 	}
 
 	/**

@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_End_date extends Abstract_Civicrm_Ux_Shortco
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-end-date';
+		return 'ux_campaign_end_date';
 	}
 
 	/**

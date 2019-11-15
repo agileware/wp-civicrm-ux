@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Renewal_Date extends Abstract_Civicrm_Ux_S
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'membership-renewal-date';
+		return 'ux_membership_renewal_date';
 	}
 
 	/**

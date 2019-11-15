@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Wordpress_CF extends Abstract_Civicrm_Ux_Shortcode {
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'ux-cf-value';
+		return 'ux_cf_value';
 	}
 
 	/**

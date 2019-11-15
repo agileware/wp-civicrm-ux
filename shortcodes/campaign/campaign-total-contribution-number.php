@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number extends Abstract_C
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-total-contribution-number';
+		return 'ux_campaign_number_contributions';
 	}
 
 	/**

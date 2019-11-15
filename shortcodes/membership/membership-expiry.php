@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Expiry extends Abstract_Civicrm_Ux_Shortco
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'agileware_utility_shortcode_custom_membership_expiry';
+		return 'ux_membership_expiry';
 	}
 
 	/**

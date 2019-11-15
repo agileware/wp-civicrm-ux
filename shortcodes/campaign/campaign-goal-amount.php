@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount extends Abstract_Civicrm_Ux_Shor
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-goal-amount';
+		return 'ux_campaign_goal_amount';
 	}
 
 	/**

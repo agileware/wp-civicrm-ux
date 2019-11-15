@@ -34,7 +34,7 @@ class Civicrm_Ux_Shortcode_Activities_Listing extends Abstract_Civicrm_Ux_Shortc
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'civicrm-activities-listing';
+		return 'ux_activity_listing';
 	}
 
 	/**

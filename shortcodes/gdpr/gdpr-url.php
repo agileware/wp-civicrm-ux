@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Gdpr_Url extends Abstract_Civicrm_Ux_Shortcode {
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'agileware_utility_shortcode_custom_gdpr_url';
+		return 'ux_gdpr_url';
 	}
 
 	/**

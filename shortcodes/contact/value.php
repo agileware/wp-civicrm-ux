@@ -10,7 +10,7 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'contact-value';
+		return 'ux_contact_value';
 	}
 
 	/**

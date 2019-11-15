@@ -9,7 +9,7 @@ class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_S
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-days-remaining';
+		return 'ux_campaign_days_remaining';
 	}
 
 	/**

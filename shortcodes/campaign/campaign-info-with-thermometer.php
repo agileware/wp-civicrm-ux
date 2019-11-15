@@ -10,7 +10,7 @@ class Civicrm_Ux_Shortcode_Campaign_Info_With_Thermometer extends Abstract_Civic
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'campaign-info-with-thermometer';
+		return 'ux_campaign_info_thermometer';
 	}
 
 	/**
