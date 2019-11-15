@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Day_Remaining
+ * Class Civicrm_Ux_Shortcode_Campaign_Days_Remaining
  */
 class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_Shortcode {
 

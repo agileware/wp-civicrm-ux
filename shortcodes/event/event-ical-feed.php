@@ -5,9 +5,9 @@ use \Sabre\VObject;
 /**
  * Provide shortcode for iCal feed link and generate the iCal content
  *
- * Class Civicrm_Ux_Shortcode_ICal_Feed
+ * Class Civicrm_Ux_Shortcode_Event_ICal_Feed
  */
-class Civicrm_Ux_Shortcode_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode {
+class Civicrm_Ux_Shortcode_Event_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode {
 
 	const HASH_OPTION = 'internal_ical_hash';
 

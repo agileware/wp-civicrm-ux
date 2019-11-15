@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number
+ * Class Civicrm_Ux_Shortcode_Campaign_Number_Contributions
  */
-class Civicrm_Ux_Shortcode_Campaign_Total_Contribution_Number extends Abstract_Civicrm_Ux_Shortcode{
+class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Shortcode 'civicrm-activities-listing'
+ * Shortcode 'ux_activity_listing'
  * Accept parameters:
  * 'type'            => ''
  * 'limit'           => PHP_INT_MAX
@@ -11,9 +11,9 @@
  *
  *
  *
- * Class Civicrm_Ux_Shortcode_Activities_Listing
+ * Class Civicrm_Ux_Shortcode_Activity_Listing
  */
-class Civicrm_Ux_Shortcode_Activities_Listing extends Abstract_Civicrm_Ux_Shortcode {
+class Civicrm_Ux_Shortcode_Activity_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 *

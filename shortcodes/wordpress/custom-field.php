@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class Civicrm_Ux_Shortcode_Wordpress_CF
+ * Class Civicrm_Ux_Shortcode_Wordpress_CF_Value
  */
-class Civicrm_Ux_Shortcode_Wordpress_CF extends Abstract_Civicrm_Ux_Shortcode {
+class Civicrm_Ux_Shortcode_Wordpress_CF_Value extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * @return string The name of shortcode

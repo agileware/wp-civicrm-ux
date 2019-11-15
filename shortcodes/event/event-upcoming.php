@@ -1,6 +1,6 @@
 <?php
 
-class Civicrm_Ux_Shortcode_Upcoming_Event extends Abstract_Civicrm_Ux_Shortcode{
+class Civicrm_Ux_Shortcode_Event_Upcoming extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
 	 * @return string The name of shortcode

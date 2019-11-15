@@ -2,7 +2,7 @@
 
 
 /**
- * Class Civicrm_Ux_Shortcode_Campaign_Thermometer_Info
+ * Class Civicrm_Ux_Shortcode_Campaign_Thermometer
  */
 class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shortcode{
 
