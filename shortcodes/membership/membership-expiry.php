@@ -48,7 +48,7 @@ class Civicrm_Ux_Shortcode_Membership_Expiry extends Abstract_Civicrm_Ux_Shortco
 					$membership_end_date = new DateTime( $membership['end_date'] );
 
 					if ( in_array( (int) $membership['status_id'], $current_membership_statuses ) ) {
-
+                        // TODO - Include the membership type with the expiry message and use the CiviCRM date format to format date output
 						$membership_expiry_message .= '<div>' . 'Your membership expires on ' . $membership_end_date->format( 'F j, Y' ) . '</div>';
 
 						break;
