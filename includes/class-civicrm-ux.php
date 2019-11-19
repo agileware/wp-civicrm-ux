@@ -258,6 +258,7 @@ class Civicrm_Ux {
 
 		$this->loader->add_filter( 'caldera_forms_get_magic_tags', $manager, 'register_tags', 10, 2 );
 		$this->loader->add_filter( 'caldera_forms_do_magic_tag', $manager, 'dispatch_callback', 10, 2 );
+		$this->loader->add_filter( 'caldera_forms_render_start', $manager, 'set_form', 10, 1 );
 	}
 
 	private function register_options() {

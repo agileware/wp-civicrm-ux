@@ -52,8 +52,27 @@ class Civicrm_Ux_Membership_Utils {
 		return $memberships;
 	}
 
+	public static function getForContact( $contact_id ) {
+		$params = [
+			'contact_id' => $contact_id,
+			'sequential' => 1,
+			'sort'       => 'end_date ASC'
+		];
+
+		$current = civicrm_api3( 'Membership', 'get', [
+			'status_id.is_current_member' => 1,
+		] + $params );
+
+		$past = civicrm_api3( 'Membership', 'get', [
+			'status_id.is_current_member' => 0,
+			'sort'                        => 'end_date DESC',
+		] + $params );
+
+		return array_merge($current['values'], $past['values']);
+	}
+
 	/**
-	 * Get set of option values from form fields.
+	 * Get set of option values from first form price field.
 	 *
 	 * @param $fields
 	 *
@@ -64,11 +83,11 @@ class Civicrm_Ux_Membership_Utils {
 			$fieldConfig = $field['config'];
 			if ( isset( $fieldConfig['auto_type'] ) && strpos( $fieldConfig['auto_type'], 'price_field' ) !== false ) {
 				$optionValues = $fieldConfig['option'];
-				$optionValues = array_keys( $optionValues );
+				return array_keys( $optionValues );
 			}
 		}
 
-		return $optionValues;
+		return [];
 	}
 
 	/**

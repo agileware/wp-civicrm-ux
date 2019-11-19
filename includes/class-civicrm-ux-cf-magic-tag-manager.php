@@ -1,6 +1,7 @@
 <?php
 
 class Civicrm_Ux_Cf_Magic_Tag_Manager extends Abstract_Civicrm_Ux_Module_Manager {
+    private static $form;
 
 	/**
 	 * The root directory of the manager instance php file.
@@ -54,4 +55,18 @@ class Civicrm_Ux_Cf_Magic_Tag_Manager extends Abstract_Civicrm_Ux_Module_Manager
 
 		return $value;
 	}
+
+    /**
+     * Set the Caldera form storage.
+     */
+    public static function set_form( $form ) {
+        static::$form = $form;
+    }
+
+    /** Get the Caldera form,
+     *
+     */
+    public static function form() {
+        return static::$form;
+    }
 }
