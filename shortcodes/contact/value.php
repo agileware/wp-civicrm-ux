@@ -48,6 +48,12 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			}
 		}
 
+		if($mod_atts['field'] == 'address_formatted') {
+			$address = CRM_Core_BAO_Address::getValues(['contact_id' => $id]);;
+
+			return nl2br(reset($address)['display_text']);
+		}
+
 		$civi_param = [
 			'return' => $mod_atts['field'],
 			'id'     => $id,
