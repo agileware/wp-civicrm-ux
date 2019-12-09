@@ -41,7 +41,7 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			return '(Not enough attributes)';
 		}
 		// check permission
-		if ( ! empty( $mod_atts['permission'] ) ) {
+		if ( $id != CRM_Core_Session::singleton()->getLoggedInContactID() && ! empty( $mod_atts['permission'] ) ) {
 			$permissions = explode( ',', $mod_atts['permission'] );
 			if ( ! CRM_Core_Permission::check( $permissions ) ) {
 				return '(permission deny)';
