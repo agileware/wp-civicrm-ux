@@ -20,7 +20,7 @@ function civicrm_ux_settings_page() {
 		$url_param,
 		get_rest_url( null,
 			'/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::API_NAMESPACE . '/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::INTERNAL_ENDPOINT ) );
-	$opt       = Civicrm_Ux::getInstance()->get_sotre()->get_option( 'civicrm_summary_options' );
+	$opt       = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
 	?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>

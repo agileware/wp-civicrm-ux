@@ -238,7 +238,7 @@ class Civicrm_Ux_Membership_Utils {
 	 * @throws Exception
 	 */
 	static public function get_membership_summary() {
-		$opt = Civicrm_Ux::getInstance()->get_sotre()->get_option( 'civicrm_summary_options' );
+		$opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
 
 		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
 		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];

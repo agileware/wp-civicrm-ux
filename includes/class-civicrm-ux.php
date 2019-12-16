@@ -299,7 +299,7 @@ class Civicrm_Ux {
 		return $this->loader;
 	}
 
-	public function get_sotre() {
+	public function get_store() {
 		return $this->store;
 	}
 
