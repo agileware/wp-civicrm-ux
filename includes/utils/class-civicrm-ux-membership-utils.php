@@ -16,10 +16,10 @@ class Civicrm_Ux_Membership_Utils {
 				} else {
 					foreach ( $memberships["values"] as $membership ) {
 
-						$membership_end_date    = new DateTime( $membership['end_date'] );
-						$today_date             = new DateTime( 'now' );
+						$membership_end_date	= new DateTime( $membership['end_date'] );
+						$today_date				= new DateTime( 'now' );
 						$three_month_from_today = $today_date->modify( '+3 month' );
-						$is_renewal             = ( $three_month_from_today >= $membership_end_date );
+						$is_renewal				= ( $three_month_from_today >= $membership_end_date );
 						if ( $is_renewal ) {
 							return $is_renewal;
 							break;
@@ -43,7 +43,7 @@ class Civicrm_Ux_Membership_Utils {
 		$memberships = civicrm_api3( 'Membership', 'get', [
 			'sequential' => 1,
 			'contact_id' => "user_contact_id",
-			'status_id'  => array(
+			'status_id'	 => array(
 				'IN' => $membershipStatues,
 			),
 		] );
@@ -56,7 +56,7 @@ class Civicrm_Ux_Membership_Utils {
 		$params = [
 			'contact_id' => $contact_id,
 			'sequential' => 1,
-			'sort'       => 'end_date ASC'
+			'sort'		 => 'end_date ASC'
 		];
 
 		$current = civicrm_api3( 'Membership', 'get', [
@@ -65,7 +65,7 @@ class Civicrm_Ux_Membership_Utils {
 
 		$past = civicrm_api3( 'Membership', 'get', [
 			'status_id.is_current_member' => 0,
-			'sort'                        => 'end_date DESC',
+			'sort'						  => 'end_date DESC',
 		] + $params );
 
 		return array_merge($current['values'], $past['values']);
@@ -101,7 +101,7 @@ class Civicrm_Ux_Membership_Utils {
 			return [];
 		}
 		$membershipStatues = civicrm_api3( 'MembershipStatus', 'get', [
-			'sequential'        => 1,
+			'sequential'		=> 1,
 			'is_current_member' => 1,
 		] );
 
@@ -123,13 +123,13 @@ class Civicrm_Ux_Membership_Utils {
 	 */
 	static public function getPriceFieldOptionsOfForm( $currentMembershipTypeId, $optionValues ) {
 		$priceFieldOptions = civicrm_api3( 'PriceFieldValue', 'get', [
-			'sequential'                            => 1,
-			'membership_type_id'                    => $currentMembershipTypeId,
-			'is_active'                             => 1,
-			'price_field_id.is_active'              => 1,
-			'return'                                => [ "price_field_id.expire_on", "price_field_id.active_on" ],
+			'sequential'							=> 1,
+			'membership_type_id'					=> $currentMembershipTypeId,
+			'is_active'								=> 1,
+			'price_field_id.is_active'				=> 1,
+			'return'								=> [ "price_field_id.expire_on", "price_field_id.active_on" ],
 			'price_field_id.price_set_id.is_active' => 1,
-			'id'                                    => [ 'IN' => $optionValues ],
+			'id'									=> [ 'IN' => $optionValues ],
 		] );
 
 		$priceFieldOptions = $priceFieldOptions['values'];
@@ -147,8 +147,8 @@ class Civicrm_Ux_Membership_Utils {
 	 */
 	static public function isPriceFieldActive( $priceFieldOption ) {
 		$currentDate = new DateTime();
-		$activeOn    = ( isset( $priceFieldOption['price_field_id.active_on'] ) ) ? $priceFieldOption['price_field_id.active_on'] : null;
-		$expireOn    = ( isset( $priceFieldOption['price_field_id.expire_on'] ) ) ? $priceFieldOption['price_field_id.expire_on'] : null;
+		$activeOn	 = ( isset( $priceFieldOption['price_field_id.active_on'] ) ) ? $priceFieldOption['price_field_id.active_on'] : null;
+		$expireOn	 = ( isset( $priceFieldOption['price_field_id.expire_on'] ) ) ? $priceFieldOption['price_field_id.expire_on'] : null;
 
 		$isAfterStartDate = false;
 		$isBeforeEndDate  = false;
@@ -241,7 +241,7 @@ class Civicrm_Ux_Membership_Utils {
 		$opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
 
 		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
-		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
+		$summary_show_join_URL	   = $opt['civicrm_summary_membership_join_URL'];
 		$summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
 
 
@@ -262,40 +262,31 @@ class Civicrm_Ux_Membership_Utils {
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
-
-				$membership_status_list = civicrm_api3( 'MembershipStatus', 'get', array() );
-
-				//If membership status gives a current membership, add it to the array
-				foreach ( $membership_status_list['values'] as $membership_status ) {
-
-					if ( $membership_status['is_current_member'] ) {
-
-						array_push( $current_membership_statuses, $membership_status['id'] );
-
-					}
-
-				}
+				$memberships = civicrm_api3( 'Membership', 'get', array(
+					'contact_id' => $cid,
+					'return' => [ 'membership_type_id.name', 'end_date', 'status_id.label', 'status_id.is_current_member' ]
+				) );
 
 				foreach ( $memberships["values"] as $membership ) {
 
-					$membership_types    = $membership['membership_name'];
+					$membership_types	 = $membership['membership_type_id.name'];
 					$membership_end_date = new DateTime( $membership['end_date'] );
-					$end_date_before     = new DateTime( $membership['end_date'] );
-					$renewal_date        = $end_date_before->modify( '-' . (string) ( $summary_show_renewal_date ) . 'day' );
-					$renewal_date_format = $renewal_date->format( 'd/m/Y' );
-					$today_date          = new DateTime( 'now' );
+					$end_date_format	 = CRM_Utils_Date::customFormat($membership_end_date->format( 'Y-m-d' ));
+					$end_date_before	 = new DateTime( $membership['end_date'] );
+					$renewal_date		 = $end_date_before->modify( '-' . (string) ( $summary_show_renewal_date ) . 'day' );
+					$renewal_date_format = CRM_Utils_Date::customFormat($renewal_date->format( 'Y-m-d' ));
+					$today_date			 = new DateTime( 'now' );
 
-					if ( in_array( (int) $membership['status_id'], $current_membership_statuses ) ) {
-						$membership_summary_status .= $membership_status_list['values'][ (int) $membership['status_id'] ]['label'];
+					if ( $membership['status_id.is_current_member'] ) {
+						$membership_summary_status .= $membership['status_id.label'];
 						if ( $today_date < $renewal_date ) {
-							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . ', next renewal date ' . $renewal_date->format( 'd/m/Y' ) . '</div>';
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . ', next renewal date ' . $renewal_date_format . '</div>';
 							break;
 						} elseif ( ( $today_date >= $renewal_date ) && ( $today_date <= $membership_end_date ) ) {
-							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '. Your membership expires on ' . $membership_end_date->format( 'd/m/Y' ) . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '. Your membership expires on ' . $end_date_format . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
 							break;
 						} elseif ( ( $today_date > $membership_end_date ) ) {
-							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '.' . $membership_end_date->format( 'd/m/Y' ) . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '.' . $end_date_format . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
 							break;
 						}
 					}

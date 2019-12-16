@@ -28,28 +28,16 @@ class Civicrm_Ux_Shortcode_Membership_Expiry extends Abstract_Civicrm_Ux_Shortco
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
-
-				$membership_status_list = civicrm_api3( 'MembershipStatus', 'get', array() );
-
-				//If membership status gives a current membership, add it to the array
-				foreach ( $membership_status_list['values'] as $membership_status ) {
-
-					if ( $membership_status['is_current_member'] ) {
-
-						array_push( $current_membership_statuses, $membership_status['id'] );
-
-					}
-
-				}
+				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid, 'return' => [ 'end_date', 'status_id.is_current_member', 'membership_type_id.name' ] ) );
 
 				foreach ( $memberships["values"] as $membership ) {
 
-					$membership_end_date = new DateTime( $membership['end_date'] );
+					if ( $membership['status_id.is_current_member'] ) {
+						// TODO - Include the membership type with the expiry message
 
-					if ( in_array( (int) $membership['status_id'], $current_membership_statuses ) ) {
-                        // TODO - Include the membership type with the expiry message and use the CiviCRM date format to format date output
-						$membership_expiry_message .= '<div>' . 'Your membership expires on ' . $membership_end_date->format( 'F j, Y' ) . '</div>';
+						$membership_end_date = CRM_Utils_Date::customFormat($membership['end_date']);
+
+						$membership_expiry_message .= '<div>' . 'Your membership expires on ' . $membership_end_date . '</div>';
 
 						break;
 
