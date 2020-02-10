@@ -4,7 +4,7 @@ Agileware CiviCRM plugin all in one. This plugin adds many useful shortcodes and
 
 
 ## Usage
-You can find the documentation [here](USAGE.md) or in the setting page.
+You can find the documentation [here](USAGE.md) or in the WordPress Settings page.
 
 ## Development
 ### How to add shortcode
