@@ -36,36 +36,36 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership_Value extends Abstract_Civicrm_U
 
 		if ( $loggedInContact ) {
 
-            // Get current memberships of logged in contact
-            $memberships = Civicrm_Ux_Membership_Utils::getForContact( $loggedInContact );
-            
-            if ( count( $memberships ) ) {
-                
-                // Consider only first membership and its type.
-                $currentMembership       = $memberships[0];
-                $currentMembershipTypeId = $currentMembership['membership_type_id'];
-                
-                // Go through all fields and check if any of them using Priceset.
-                $fields = Civicrm_Ux_Cf_Magic_Tag_Manager::form()['fields'];
-                
-                // Get all possible option values of the form.
-                $optionValues = Civicrm_Ux_Membership_Utils::getOptionValuesFromFields( $fields );
-                
-                if ( count( $optionValues ) ) {
-                    
-                    // get price field options of selected membership type and option fields.
-                    $priceFieldOptions = Civicrm_Ux_Membership_Utils::getPriceFieldOptionsOfForm( $currentMembershipTypeId, $optionValues );
-                    
-                    foreach ( $priceFieldOptions as $priceFieldOption ) {
-                            
-                        // If option field is active return the id.
-                        if ( Civicrm_Ux_Membership_Utils::isPriceFieldActive( $priceFieldOption ) ) {
-                            return $priceFieldOption['id'];
-                        }
-                    }
-                }
-            }
-        }
+			// Get current memberships of logged in contact
+			$memberships = Civicrm_Ux_Membership_Utils::getForContact( $loggedInContact );
+
+			if ( count( $memberships ) ) {
+
+				// Consider only first membership and its type.
+				$currentMembership       = $memberships[0];
+				$currentMembershipTypeId = $currentMembership['membership_type_id'];
+
+				// Go through all fields and check if any of them using Priceset.
+				$fields = Civicrm_Ux_Cf_Magic_Tag_Manager::form()['fields'];
+
+				// Get all possible option values of the form.
+				$optionValues = Civicrm_Ux_Membership_Utils::getOptionValuesFromFields( $fields );
+
+				if ( count( $optionValues ) ) {
+
+					// get price field options of selected membership type and option fields.
+					$priceFieldOptions = Civicrm_Ux_Membership_Utils::getPriceFieldOptionsOfForm( $currentMembershipTypeId, $optionValues );
+
+					foreach ( $priceFieldOptions as $priceFieldOption ) {
+
+						// If option field is active return the id.
+						if ( Civicrm_Ux_Membership_Utils::isPriceFieldActive( $priceFieldOption ) ) {
+							return $priceFieldOption['id'];
+						}
+					}
+				}
+			}
+		}
 
 		return '';
 	}
