@@ -22,8 +22,8 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Renewal extends Abstract_Civicrm_Ux_Cf_Magi
 		if ( ! is_user_logged_in() ) {
 			return $value;
 		} else {
-			$membership_legal = Civicrm_Ux_Membership_Utils::renewal_membership_check();
-			$value            = implode( ',', [ $membership_legal ] );
+            $memberships = Civicrm_Ux_Membership_Utils::renewal_membership_check();
+			$value            = implode( ',', [ $memberships ] );
 
 		}
 

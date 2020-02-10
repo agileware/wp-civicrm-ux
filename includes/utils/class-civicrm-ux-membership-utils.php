@@ -39,12 +39,12 @@ class Civicrm_Ux_Membership_Utils {
 		return function_exists( 'civicrm_initialize' );
 	}
 
-	static public function getMembershipsByStatues( $membershipStatues ) {
+	static public function getMembershipsByStatus( $membershipStatus ) {
 		$memberships = civicrm_api3( 'Membership', 'get', [
 			'sequential' => 1,
 			'contact_id' => "user_contact_id",
 			'status_id'	 => array(
-				'IN' => $membershipStatues,
+				'IN' => $membershipStatus,
 			),
 		] );
 		$memberships = $memberships['values'];
@@ -91,24 +91,24 @@ class Civicrm_Ux_Membership_Utils {
 	}
 
 	/**
-	 * Get all current membership statues.
+	 * Get all current membership status.
 	 *
 	 * @return array
 	 * @throws CiviCRM_API3_Exception
 	 */
-	static public function getCurrentMembershipStatues() {
+	static public function getCurrentMembershipStatus() {
 		if ( ! self::is_civi_enable() ) {
 			return [];
 		}
-		$membershipStatues = civicrm_api3( 'MembershipStatus', 'get', [
+		$membershipStatus = civicrm_api3( 'MembershipStatus', 'get', [
 			'sequential'		=> 1,
 			'is_current_member' => 1,
 		] );
 
-		$membershipStatues = $membershipStatues['values'];
-		$membershipStatues = array_column( $membershipStatues, 'name' );
+		$membershipStatus = $membershipStatus['values'];
+		$membershipStatus = array_column( $membershipStatus, 'name' );
 
-		return $membershipStatues;
+		return $membershipStatus;
 	}
 
 	/**
@@ -189,9 +189,9 @@ class Civicrm_Ux_Membership_Utils {
 				} else {
 					foreach ( $memberships["values"] as $membership ) {
 
-						$membership_status = $membership['membership_name'];
+                        $membership_name = $membership['membership_name'];
 
-						return $membership_status;
+						return $membership_name;
 						break;
 					}
 				}
@@ -232,7 +232,7 @@ class Civicrm_Ux_Membership_Utils {
 	}
 
 	/**
-	 * This function is merged from agileware/agileware-civicrm-membership-summary
+     * This function is merged from agileware/agileware-civicrm-membership-summary
 	 *
 	 * @return array
 	 * @throws Exception

@@ -22,8 +22,8 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership extends Abstract_Civicrm_Ux_Cf_M
 		if ( ! is_user_logged_in() ) {
 			return $value;
 		} else {
-			$membership_legal = Civicrm_Ux_Membership_Utils::membership_check();
-			$value            = implode( ',', [ $membership_legal ] );
+            $membership = Civicrm_Ux_Membership_Utils::membership_check();
+			$value            = implode( ',', [ $membership ] );
 
 		}
 
