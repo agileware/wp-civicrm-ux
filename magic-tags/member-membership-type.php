@@ -22,8 +22,15 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership_Type extends Abstract_Civicrm_Ux
 	 * @return string
 	 */
 	function callback( $value ) {
+		$helper  = CiviCRM_Caldera_Forms::instance()->helper;
+		$contact = $helper->current_contact_data_get();
+		// this magic tag should return nothing with no contact.
+		if ( ! $contact ) {
+			return "";
+		}
 		// Get login contact id
-		$cid               = CRM_Core_Session::singleton()->getLoggedInContactID();
+		$cid = $contact['id'];
+
 		$result_membership = civicrm_api3( 'Membership', 'get', [
 			'contact_id'                   => $cid,
 			'status_id'                    => [ 'IN' => [ "Current", "New" ] ],
