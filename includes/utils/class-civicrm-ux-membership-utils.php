@@ -39,19 +39,6 @@ class Civicrm_Ux_Membership_Utils {
 		return function_exists( 'civicrm_initialize' );
 	}
 
-	static public function getMembershipsByStatus( $membershipStatus ) {
-		$memberships = civicrm_api3( 'Membership', 'get', [
-			'sequential' => 1,
-			'contact_id' => "user_contact_id",
-			'status_id'  => array(
-				'IN' => $membershipStatus,
-			),
-		] );
-		$memberships = $memberships['values'];
-
-		return $memberships;
-	}
-
 	public static function getForContact( $contact_id ) {
 		$params = [
 			'contact_id' => $contact_id,
@@ -89,27 +76,6 @@ class Civicrm_Ux_Membership_Utils {
 		}
 
 		return [];
-	}
-
-	/**
-	 * Get all current membership status.
-	 *
-	 * @return array
-	 * @throws CiviCRM_API3_Exception
-	 */
-	static public function getCurrentMembershipStatus() {
-		if ( ! self::is_civi_enable() ) {
-			return [];
-		}
-		$membershipStatus = civicrm_api3( 'MembershipStatus', 'get', [
-			'sequential'        => 1,
-			'is_current_member' => 1,
-		] );
-
-		$membershipStatus = $membershipStatus['values'];
-		$membershipStatus = array_column( $membershipStatus, 'name' );
-
-		return $membershipStatus;
 	}
 
 	/**
