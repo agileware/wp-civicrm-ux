@@ -6,8 +6,15 @@ class Civicrm_Ux_Membership_Utils {
 		if ( self::is_civi_enable() && civicrm_initialize() ) {
 
 			try {
-
-				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
+				// login user or checksum provided
+				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
+				$contact = $helper->current_contact_data_get();
+				// this magic tag should return false with no contact.
+				if ( ! $contact ) {
+					return 0;
+				}
+				// Get login contact id
+				$cid = $contact['id'];
 
 				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
 
@@ -180,8 +187,15 @@ class Civicrm_Ux_Membership_Utils {
 		if ( civicrm_initialize() ) {
 
 			try {
-
-				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
+				// login user or checksum provided
+				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
+				$contact = $helper->current_contact_data_get();
+				// this magic tag should return false with no contact.
+				if ( ! $contact ) {
+					return 0;
+				}
+				// Get login contact id
+				$cid = $contact['id'];
 
 				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
 
@@ -209,9 +223,15 @@ class Civicrm_Ux_Membership_Utils {
 		if ( self::is_civi_enable() && civicrm_initialize() ) {
 
 			try {
-
-				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
-
+				// login user or checksum provided
+				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
+				$contact = $helper->current_contact_data_get();
+				// this magic tag should return false with no contact.
+				if ( ! $contact ) {
+					return 0;
+				}
+				// Get login contact id
+				$cid = $contact['id'];
 				$contacts = civicrm_api3( 'Contact', 'get', array( 'contact_id' => $cid ) );
 
 				if ( $contacts["count"] == 0 ) {

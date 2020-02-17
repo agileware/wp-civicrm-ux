@@ -22,7 +22,7 @@ class Civicrm_Ux_Cf_Magic_Tag_Contact_Subtype extends Abstract_Civicrm_Ux_Cf_Mag
 		if ( ! is_user_logged_in() ) {
 			return $value;
 		}
-		$contact_legal = contact_subtype_check();
+		$contact_legal = Civicrm_Ux_Membership_Utils::contact_subtype_check();
 		$value         = implode( ',', [ $contact_legal ] );
 
 		return $value;

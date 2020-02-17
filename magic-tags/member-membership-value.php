@@ -31,8 +31,15 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership_Value extends Abstract_Civicrm_U
 		// Initializing CiviCRM.
 		civi_wp()->initialize();
 
-		// Get logged in Contact Id
-		$loggedInContact = CRM_Core_Session::singleton()->getLoggedInContactID();
+		// login user or checksum provided
+		$helper  = CiviCRM_Caldera_Forms::instance()->helper;
+		$contact = $helper->current_contact_data_get();
+		// this magic tag should return nothing with no contact.
+		if ( ! $contact ) {
+			return '';
+		}
+		// Get login contact id
+		$loggedInContact = $contact['id'];
 
 		if ( $loggedInContact ) {
 
