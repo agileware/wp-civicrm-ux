@@ -101,6 +101,29 @@ Parameters:
  - ICalFeed/event
  - ICalFeed/manage
  
+### Caldera magic tag
+1. `contact:related_subtype`  
+Return the sub-type of the related contact.  
+This magic tag is designed for a specific website (the relationship type is hardcoded). You can change the code if you know what you are doing.
+
+1. `contact:subtype`  
+Return all sub-types of the login user.
+
+1. `member:membership`  
+Return all memberships of the login user.
+
+1. `member:membership_type`  
+Return the membership type of the login user. Also work with checksum.
+
+1. `member:membership_value`  
+Return the price field value id of the login user's membership.
+
+1. `member:renewal`  
+Return 0 if there is no membership for the login user; 1 if the membership of the login user is going to expire in three months.
+
+1. `user:roles`  
+Return the user role of the login user.
+
 ##### Parameters
 `type`: filter for event type  
 For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
