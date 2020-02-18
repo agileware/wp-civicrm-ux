@@ -3,7 +3,7 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Honour_Listing
  */
-class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_Shortcode{
+class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * @return string The name of shortcode
@@ -44,10 +44,11 @@ class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_S
 			'id'                   => $id,
 			'is_active'            => 1,
 			'api.Contribution.get' => [
-				'sequential'            => 1,
-				'campaign_id'           => "\$value.id",
-				'options'               => [ 'sort' => "receive_date DESC", 'limit' => 100 ],
-				'api.Contact.getsingle' => [ 'return' => [ "display_name" ], 'id' => "\$value.contact_id" ],
+				'sequential'             => 1,
+				'campaign_id'            => "\$value.id",
+				'contribution_status_id' => "Completed",
+				'options'                => [ 'sort' => "receive_date DESC", 'limit' => 100 ],
+				'api.Contact.getsingle'  => [ 'return' => [ "display_name" ], 'id' => "\$value.contact_id" ],
 			],
 		];
 

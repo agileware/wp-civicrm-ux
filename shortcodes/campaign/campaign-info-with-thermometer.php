@@ -4,7 +4,7 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Info_Thermometer
  */
-class Civicrm_Ux_Shortcode_Campaign_Info_Thermometer extends Abstract_Civicrm_Ux_Shortcode{
+class Civicrm_Ux_Shortcode_Campaign_Info_Thermometer extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * @return string The name of shortcode
@@ -40,8 +40,9 @@ class Civicrm_Ux_Shortcode_Campaign_Info_Thermometer extends Abstract_Civicrm_Ux
 			'id'                   => $id,
 			'is_active'            => 1,
 			'api.Contribution.get' => [
-				'sequential'  => 1,
-				'campaign_id' => "\$value.id",
+				'sequential'             => 1,
+				'contribution_status_id' => "Completed",
+				'campaign_id'            => "\$value.id",
 			],
 		];
 

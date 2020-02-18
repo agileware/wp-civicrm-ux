@@ -3,7 +3,7 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Number_Contributions
  */
-class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicrm_Ux_Shortcode{
+class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
 	 * @return string The name of shortcode
@@ -37,7 +37,11 @@ class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicr
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [ 'sequential' => 1, 'campaign_id' => "\$value.id" ],
+			'api.Contribution.get' => [
+				'sequential'             => 1,
+				'campaign_id'            => "\$value.id",
+				'contribution_status_id' => "Completed",
+			],
 		];
 
 		try {
