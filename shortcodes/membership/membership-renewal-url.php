@@ -6,7 +6,7 @@ class Civicrm_Ux_Shortcode_Membership_Renewal_Url extends Abstract_Civicrm_Ux_Sh
 	 * @return string The name of shortcode
 	 */
 	public function get_shortcode_name() {
-		return 'ux-membership-renewal-url';
+		return 'ux_membership_renewal_url';
 	}
 
 	/**

@@ -74,6 +74,31 @@ The type is optional. If the type is not specified, there will be an event listi
 The value of 'count' decides how many events will be displayed in upcoming event listings.  
 This shortcode has been formatted in html with styling.
 
+### Membership
+1. `ux_membership_expiry`  
+Return a HTML tag with the membership expiry date of the login user.
+
+1. `ux_membership_id`  
+Return the membership id of the login user.
+
+1. `ux_membership_join_url`  
+Return the join form URL. The URL can be configured in the settings page.
+
+1. `ux_membership_renewal_date`  
+Return the renewal date of the membership for the login user
+
+1. `ux_membership_renewal_url`  
+Return the renewal form URL. The URL can be configured in the settings page.
+
+1. `ux_membership_status`  
+Return the membership status of the login user.
+
+1. `ux_membership_summary`  
+Return the membership summary of the login user.
+
+1. `ux_membership_type`  
+Return the membership type of the login user.
+
 #### CiviCRM
 1. `ux_civicrm_listing`  
  - **dpid**: data processor id
@@ -105,11 +130,45 @@ Parameters:
  - `id_from_url`    if given any name, the shortcode will get contact id from url with the given name
  - `field`          what field to display **required**
  - `default`        the value to display if empty
+
+#### WordPress
+`ux_cf_value`  
+ - `type`
+ - `id`
+ - `field`
+ - `single`
+ - `default` not used yet.
+
+This shortcode is designed for developer. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
+
 ### REST API
 #### iCal feed
  - ICalFeed/event
  - ICalFeed/manage
  
+### Caldera magic tag
+1. `contact:related_subtype`  
+Return the sub-type of the related contact.  
+This magic tag is designed for a specific website (the relationship type is hardcoded). You can change the code if you know what you are doing.
+
+1. `contact:subtype`  
+Return all sub-types of the login user.
+
+1. `member:membership`  
+Return all memberships of the login user.
+
+1. `member:membership_type`  
+Return the membership type of the login user. Also work with checksum.
+
+1. `member:membership_value`  
+Return the price field value id of the login user's membership.
+
+1. `member:renewal`  
+Return 0 if there is no membership for the login user; 1 if the membership of the login user is going to expire in three months.
+
+1. `user:roles`  
+Return the user role of the login user.
+
 ##### Parameters
 `type`: filter for event type  
 For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
