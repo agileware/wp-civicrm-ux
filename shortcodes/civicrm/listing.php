@@ -79,8 +79,12 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		$html .= "<thead><tr>$header_html</tr></thead>";
 		foreach ( $values as $record ) {
 			$row_html = "";
-			foreach ( $record as $value ) {
-				$row_html .= "<td>" . htmlentities( $value ) . "</td>";
+			foreach ( $record as $key => $value ) {
+				if ( $key == 'website' ) {
+					$row_html .= "<td><a href='" . htmlentities( $value ) . "'>" . htmlentities( $value ) . "</a></td>";
+				} else {
+					$row_html .= "<td>" . htmlentities( $value ) . "</td>";
+				}
 			}
 			$tbody_html .= "<tr>$row_html</tr>";
 		}
