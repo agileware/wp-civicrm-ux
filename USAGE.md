@@ -74,6 +74,15 @@ The type is optional. If the type is not specified, there will be an event listi
 The value of 'count' decides how many events will be displayed in upcoming event listings.  
 This shortcode has been formatted in html with styling.
 
+#### CiviCRM
+1. `ux_civicrm_listing`  
+ - **dpid**: data processor id
+ - **limit**: the limit of result default is 0(no limit)
+ - **sort**: the order of result
+ - **format**: default is table
+ 
+ This shortcode required data processor extension
+
 #### Activity
 `[ux_activity_listing]`  
 Parameters:
