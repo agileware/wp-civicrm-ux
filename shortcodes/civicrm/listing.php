@@ -95,7 +95,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 
 			$tbody_html .= "<tr>$row_html</tr>";
 		}
-		$html = "<table class='ux-cv-listing'>$header_html<tbody>$tbody_html</tbody></table>";
+		$html = "<table class='ux-cv-listing'><thead>$header_html</thead><tbody>$tbody_html</tbody></table>";
 
 		return $html;
 	}
