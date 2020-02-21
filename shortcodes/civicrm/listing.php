@@ -52,23 +52,22 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		];
 		$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );
 
-		return $this->render( $result, $header, $mod_atts['format'] );
+		return $this->render( $result, $header, $content, $mod_atts['format'] );
 	}
 
-	function render( $info, $header, $format = 'default' ) {
+	function render( $info, $header, $template = null, $format = 'default' ) {
 		if ( count( $info ) == 0 ) {
 			return "empty data";
 		}
 
 		switch ( $format ) {
 			default:
-				return $this->renderTable( $info['values'], $header );
+				return $this->renderTable( $info['values'], $template, $header );
 				break;
 		}
 	}
 
-	function renderTable( $values, $header ) {
-		$html        = "";
+	function renderTable( $values, $template, $header ) {
 		$header_html = "";
 		$tbody_html  = "";
 		foreach ( $header as $key => $value ) {
@@ -76,16 +75,24 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 				$header_html .= "<th>{$value['title']}</th>";
 			}
 		}
-		$html .= "<thead><tr>$header_html</tr></thead>";
 		foreach ( $values as $record ) {
 			$row_html = "";
-			foreach ( $record as $key => $value ) {
-				if ( $key == 'website' ) {
-					$row_html .= "<td><a href='" . htmlentities( $value ) . "'>" . htmlentities( $value ) . "</a></td>";
-				} else {
-					$row_html .= "<td>" . htmlentities( $value ) . "</td>";
+			if ( $template ) {
+				// use template
+				$row_html = preg_replace_callback( '/\{\$(.*)\}/', function ( $matches ) use ( $record ) {
+					return htmlentities( $record[ $matches[1] ] );
+				}, $template );
+			} else {
+				// fixme deprecated - used on SPA listing
+				foreach ( $record as $key => $value ) {
+					if ( $key == 'website' ) {
+						$row_html .= "<td><a href='" . htmlentities( $value ) . "'>" . htmlentities( $value ) . "</a></td>";
+					} else {
+						$row_html .= "<td>" . htmlentities( $value ) . "</td>";
+					}
 				}
 			}
+
 			$tbody_html .= "<tr>$row_html</tr>";
 		}
 		$html = "<table class='ux-cv-listing'>$header_html<tbody>$tbody_html</tbody></table>";
