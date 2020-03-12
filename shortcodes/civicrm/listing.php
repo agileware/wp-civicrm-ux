@@ -50,6 +50,14 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'sequential' => 1,
 			'options'    => [ 'limit' => $mod_atts['limit'], 'sort' => $mod_atts['sort'] ],
 		];
+
+		foreach($_REQUEST as $key => $query) {
+			$key = sanitize_key($key);
+			if(in_array($key, array_keys($header)) && $header[$key]['api.filter']) {
+				$params[$key] = $query;
+			}
+		}
+
 		$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );
 
 		return $this->render( $result, $header, $content, $mod_atts['format'] );
