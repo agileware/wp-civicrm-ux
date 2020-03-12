@@ -79,7 +79,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			$row_html = "";
 			if ( $template ) {
 				// use template
-				$row_html = preg_replace_callback( '/\{\$(.*)\}/', function ( $matches ) use ( $record ) {
+				$row_html = preg_replace_callback( '/\{\$(.*)\}/mU', function ( $matches ) use ( $record ) {
 					return htmlentities( $record[ $matches[1] ] );
 				}, $template );
 			} else {
