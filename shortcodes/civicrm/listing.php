@@ -29,20 +29,29 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		], $atts, $tag );
 
 		// get data processor information
-		$dp = civicrm_api3( "DataProcessorOutput", 'get', [
-			'sequential'        => 1,
-			'type'              => "api",
-			'data_processor_id' => $mod_atts['dpid']
-		] );
+		try {
+			$dp = civicrm_api3( "DataProcessorOutput", 'get', [
+				'sequential'        => 1,
+				'type'              => "api",
+				'data_processor_id' => $mod_atts['dpid']
+			] );
+		} catch ( CiviCRM_API3_Exception $e ) {
+			return "CiviCRM API error.";
+		}
+
 		if ( ! $dp['count'] ) {
 			return 'No data processor found';
 		}
 		$dp = array_shift( $dp['values'] );
 
 		// the header
-		$header = civicrm_api3( $dp['api_entity'], 'getfields', [
-			'api_action' => "get",
-		] );
+		try {
+			$header = civicrm_api3( $dp['api_entity'], 'getfields', [
+				'api_action' => "get",
+			] );
+		} catch ( CiviCRM_API3_Exception $e ) {
+			return "CiviCRM API error.";
+		}
 		$header = $header['values'];
 
 		// the main data
@@ -51,14 +60,18 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'options'    => [ 'limit' => $mod_atts['limit'], 'sort' => $mod_atts['sort'] ],
 		];
 
-		foreach($_REQUEST as $key => $query) {
-			$key = sanitize_key($key);
-			if(in_array($key, array_keys($header)) && $header[$key]['api.filter']) {
-				$params[$key] = $query;
+		foreach ( $_REQUEST as $key => $query ) {
+			$key = sanitize_key( $key );
+			if ( in_array( $key, array_keys( $header ) ) && $header[ $key ]['api.filter'] ) {
+				$params[ $key ] = $query;
 			}
 		}
 
-		$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );
+		try {
+			$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );
+		} catch ( CiviCRM_API3_Exception $e ) {
+			return "CiviCRM API error.";
+		}
 
 		return $this->render( $result, $header, $content, $mod_atts['format'] );
 	}
