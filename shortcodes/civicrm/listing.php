@@ -26,6 +26,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'limit'  => 0,
 			'format' => 'default',
 			'sort'   => '',
+			'autopop_user_id' => false
 		], $atts, $tag );
 
 		// get data processor information
@@ -60,11 +61,18 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'options'    => [ 'limit' => $mod_atts['limit'], 'sort' => $mod_atts['sort'] ],
 		];
 
+		// get the parameters from http request
 		foreach ( $_REQUEST as $key => $query ) {
 			$key = sanitize_key( $key );
 			if ( in_array( $key, array_keys( $header ) ) && $header[ $key ]['api.filter'] ) {
 				$params[ $key ] = $query;
 			}
+		}
+
+		// get the contact id if the user login
+		// todo checksum?
+		if ( $mod_atts['autopop_user_id'] ) {
+			$params[$mod_atts['autopop_user_id']] = CRM_Core_Session::getLoggedInContactID();
 		}
 
 		try {

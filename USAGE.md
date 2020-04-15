@@ -104,6 +104,7 @@ Return the membership type of the login user.
  - **dpid**: data processor id
  - **limit**: the limit of result default is 0(no limit)
  - **sort**: the order of result
+ - **autopop_user_id**: get the logged in user id and pass it to the parameter. State the parameter name, like *contact_id*
  - **format**: default is table
  
  This shortcode required data processor extension
