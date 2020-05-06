@@ -13,6 +13,7 @@ class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode
 	 * @param string $tag
 	 *
 	 * @return mixed Should be the html output of the shortcode
+
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' )
 	{
@@ -23,18 +24,18 @@ class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode
 			'return_timezone' => '',
 			'timezone' => '',
 		], $atts, $tag );
+		$date = DateTime::createFromFormat('d/m/Y g:ia', $content);
 		try{
-			date_default_timezone_set('Australia/Sydney');
-			$date = DateTime::createFromFormat('d/m/Y g:ia', $content);
-			if($date == false)
-			{
-				throw new Exception('Failed to parse date');
-			}
-		}catch (Exception $e)
-		{echo "There is an error in your input: " . $e;}
+			$t = new DateTime($date->format('d-m-Y g:ia'), new DateTimeZone($mod_atts['timezone']));
+			$t->setTimeZone( new DateTimeZone($mod_atts['return_timezone']));
+			return $t->format("d/m/Y g:ia");
 
-		$t = new DateTime($date->format('d-m-Y g:ia'), new DateTimeZone($mod_atts['timezone']));
-		$t->setTimeZone( new DateTimeZone($mod_atts['return_timezone']));
-		return $t->format("d/m/Y g:ia");
+		}catch(Exception $exc){
+			return 'Fatal exception catched: '.$exc->getMessage();
+			exit(1);
+		}catch (Error $err) {
+			return 'There is an error with the input given: '.$err->getMessage();
+			exit(1);
+		}
 	}
 }
