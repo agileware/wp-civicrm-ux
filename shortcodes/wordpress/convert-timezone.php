@@ -23,11 +23,17 @@ class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode {
 			'return_timezone' => '',
 			'timezone'        => '',
 		], $atts, $tag );
-		$date     = DateTime::createFromFormat( 'd/m/Y g:ia', $content, new DateTimeZone( $mod_atts['timezone'] ) );
+		try {
+			$inputTimezone = new DateTimeZone( $mod_atts['timezone'] );
+			$outputTimezone = new DateTimeZone( $mod_atts['return_timezone'] );
+		} catch ( Exception $exception ) {
+			 return 'Failed to read the timezone string';
+		}
+		$date     = DateTime::createFromFormat( 'd/m/Y g:ia', $content, $inputTimezone );
 		if ( ! $date ) {
 			return 'Failed to read the time string';
 		}
-		$date->setTimeZone( new DateTimeZone( $mod_atts['return_timezone'] ) );
+		$date->setTimeZone( new DateTimeZone( $outputTimezone ) );
 
 		return $date->format( "d/m/Y g:ia" );
 	}
