@@ -22,19 +22,20 @@ class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode {
 		$mod_atts = shortcode_atts( [
 			'return_timezone' => '',
 			'timezone'        => '',
+			'return_format'   => 'd/m/Y g:ia'
 		], $atts, $tag );
 		try {
-			$inputTimezone = new DateTimeZone( $mod_atts['timezone'] );
+			$inputTimezone  = new DateTimeZone( $mod_atts['timezone'] );
 			$outputTimezone = new DateTimeZone( $mod_atts['return_timezone'] );
 		} catch ( Exception $exception ) {
-			 return 'Failed to read the timezone string';
+			return 'Failed to read the timezone string';
 		}
-		$date     = DateTime::createFromFormat( 'd/m/Y g:ia', $content, $inputTimezone );
+		$date = DateTime::createFromFormat( 'd/m/Y g:ia', $content, $inputTimezone );
 		if ( ! $date ) {
 			return 'Failed to read the time string';
 		}
-		$date->setTimeZone( new DateTimeZone( $outputTimezone ) );
+		$date->setTimeZone( $outputTimezone );
 
-		return $date->format( "d/m/Y g:ia" );
+		return $date->format( $mod_atts['return_format'] );
 	}
 }
