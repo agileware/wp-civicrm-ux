@@ -174,6 +174,8 @@ The date format for both input and output is `d/m/Y g:ia`
  
 ### Caldera magic tags
 
+Provides additional Caldera magic tags when using both [Caldera Forms](https://wordpress.org/plugins/caldera-forms/) and [Caldera Forms CiviCRM](https://wordpress.org/plugins/cf-civicrm/) plugins to integrate CiviCRM with WordPress.
+
 1. `{contact:related_subtype}`  
 Return the sub-type of the related contact.  
 This magic tag is designed for a specific website (the relationship type is hardcoded). You can change the code if you know what you are doing.
