@@ -4,6 +4,7 @@ CiviCRM UX plugin provides shortcodes for integrating CiviCRM with your website.
 ## General usages
 ### Shortcodes
 #### Campaign
+
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
 1. `[ux_campaign_info_thermometer id=3]`  
  The id of shortcode is the Campaign ID which you could find in **CiviCRM Dashboard >> Campaigns >> Campaign Dashboard**.  
@@ -53,6 +54,7 @@ Id for the campaign id is required.
 Shortcodes return the raw string value except first 2 shortcodes.
 
 #### Event
+
 Event shortcodes accepts a CiviCRM Event type as a parameter and displays the event listings.
 1. `[ux_event_ical_feed type="Meeting,Exhibition"]display text[/ical-feed]`  
 This shortcode allows downloading the calendar of CiviCRM events.   
@@ -74,42 +76,60 @@ The type is optional. If the type is not specified, there will be an event listi
 The value of 'count' decides how many events will be displayed in upcoming event listings.  
 This shortcode has been formatted in html with styling.
 
+##### Parameters
+`type`: filter for event type  
+For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
+
+##### Note
+ - Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
+ 
+### REST API
+
+@TODO Documentation in this section is incomplete
+
+#### iCal feed
+ - ICalFeed/event
+ - ICalFeed/manage
+
 ### Membership
-1. `ux_membership_expiry`  
+
+1. `[ux_membership_expiry]`  
 Return a HTML tag with the membership expiry date of the login user.
 
-1. `ux_membership_id`  
+1. `[ux_membership_id]`  
 Return the membership id of the login user.
 
-1. `ux_membership_join_url`  
+1. `[ux_membership_join_url`  
 Return the join form URL. The URL can be configured in the settings page.
 
-1. `ux_membership_renewal_date`  
+1. `[ux_membership_renewal_date]`  
 Return the renewal date of the membership for the login user
 
-1. `ux_membership_renewal_url`  
+1. `[ux_membership_renewal_url]`  
 Return the renewal form URL. The URL can be configured in the settings page.
 
-1. `ux_membership_status`  
+1. `[ux_membership_status]`  
 Return the membership status of the login user.
 
-1. `ux_membership_summary`  
+1. `[ux_membership_summary]`  
 Return the membership summary of the login user.
 
-1. `ux_membership_type`  
+1. `[ux_membership_type]`  
 Return the membership type of the login user.
 
-#### CiviCRM
-1. `ux_civicrm_listing`  
+#### CiviCRM Data List using the CiviCRM Data Processor
+
+`[ux_civicrm_listing]`
  - **dpid**: data processor id
  - **limit**: the limit of result default is 0(no limit)
  - **sort**: the order of result
  - **autopop_user_id**: get the logged in user id and pass it to the parameter. State the parameter name, like *contact_id*
  - **format**: default is table
  
- This shortcode required data processor extension
+This shortcode requires the [CiviCRM Data Processor](https://lab.civicrm.org/extensions/dataprocessor) extension to be installed on the CiviCRM site.
 
 #### Activity
+
 `[ux_activity_listing]`  
 Parameters:
  - `$type`: activity type id or activity type label. Support multiple values separated by a comma without space. The default is empty.
@@ -124,6 +144,7 @@ For example:
 `[ux_activity_listing type='Test' relationship-id=5 field='status,source_contact_name,activity_date_time']`
 
 #### Contact
+
 `[ux_contact_value]`
 Parameters:
  - `id`             the contact id. Default is the current login user
@@ -132,8 +153,11 @@ Parameters:
  - `field`          what field to display **required**
  - `default`        the value to display if empty
 
-#### WordPress
-`ux_cf_value`  
+#### WordPress helper shortcodes
+
+@TODO Documentation in this section is incomplete
+
+`[ux_cf_value]`  
  - `type`
  - `id`
  - `field`
@@ -142,47 +166,38 @@ Parameters:
 
 This shortcode is designed for developer. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
 
-`ux_convert_date`
+`[ux_convert_date]`
  - `return_timezone` the 'to' timezone
  - `timezone` the 'from' timezone
 
 The date format for both input and output is `d/m/Y g:ia`
-### REST API
-#### iCal feed
- - ICalFeed/event
- - ICalFeed/manage
  
-### Caldera magic tag
-1. `contact:related_subtype`  
+### Caldera magic tags
+
+1. `{contact:related_subtype}`  
 Return the sub-type of the related contact.  
 This magic tag is designed for a specific website (the relationship type is hardcoded). You can change the code if you know what you are doing.
 
-1. `contact:subtype`  
+1. `{contact:subtype}`  
 Return all sub-types of the login user.
 
-1. `member:membership`  
+1. `{member:membership}`  
 Return all memberships of the login user.
 
-1. `member:membership_type`  
+1. `{member:membership_type}`  
 Return the membership type of the login user. Also work with checksum.
 
-1. `member:membership_value`  
+1. `{member:membership_value}`  
 Return the price field value id of the login user's membership.
 
-1. `member:renewal`  
+1. `{member:renewal}`  
 Return 0 if there is no membership for the login user; 1 if the membership of the login user is going to expire in three months.
 
-1. `user:roles`  
-Return the user role of the login user.
-
-##### Parameters
-`type`: filter for event type  
-For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
-
-##### Note
- - Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
+1. `{user:roles}`  
+Return the user roles of the logged in user, each role is comma separated
 
 ## Development
+
 ### How to add shortcode
 1. Create a php file in **shortcodes** directory.
 2. Within the file, create a class which implements `iCivicrm_Ux_Shortcode`.
