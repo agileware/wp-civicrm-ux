@@ -21,7 +21,7 @@ class Civicrm_Ux_Shortcode_Membership_Id extends Abstract_Civicrm_Ux_Shortcode{
 		$mod_atts = $mod_atts = shortcode_atts( [
 			'type' => '',
 			'status' => '',
-			'cid' => CRM_Core_Session::singleton()->getLoggedInContactID(),
+			'contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID(),
 		], $atts, $tag );
 		$params = array_filter( $mod_atts, function ( $value ) {
 			return !empty($value) || $value === 0;
