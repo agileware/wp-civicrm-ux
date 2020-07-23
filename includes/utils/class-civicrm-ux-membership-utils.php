@@ -16,7 +16,7 @@ class Civicrm_Ux_Membership_Utils {
 				// Get login contact id
 				$cid = $contact['id'];
 
-				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
+				$memberships = civicrm_api3( 'Membership', 'get', [ 'contact_id' => $cid, 'status_id' => [ '<>' => 'Cancelled' ] ] );
 
 				if ( $memberships["count"] == 0 ) {
 					return 0;
@@ -50,6 +50,7 @@ class Civicrm_Ux_Membership_Utils {
 		$params = [
 			'contact_id' => $contact_id,
 			'sequential' => 1,
+			'status_id'  => [ '<>' => 'Cancelled' ],
 			'sort'       => 'end_date ASC'
 		];
 
@@ -163,7 +164,7 @@ class Civicrm_Ux_Membership_Utils {
 				// Get login contact id
 				$cid = $contact['id'];
 
-				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid ) );
+				$memberships = civicrm_api3( 'Membership', 'get', [ 'contact_id' => $cid, 'status_id.is_current_member' => 1 ] );
 
 				if ( $memberships["count"] == 0 ) {
 					return 0;
