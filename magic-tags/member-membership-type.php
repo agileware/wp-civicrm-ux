@@ -31,32 +31,41 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Membership_Type extends Abstract_Civicrm_Ux
 		// Get login contact id
 		$cid = $contact['id'];
 
+		// Current memberships, soonest to expire
 		$result_membership = civicrm_api3( 'Membership', 'get', [
-			'contact_id'                   => $cid,
-			'status_id'                    => [ 'IN' => [ "Current", "New" ] ],
-			'options'                      => [ 'sort' => "end_date ASC" ],
-			'api.MembershipType.getsingle' => [ 'sequential' => 1, 'id' => "\$value.membership_type_id" ],
+			'contact_id'                  => $cid,
+			'status_id.is_current_member' => TRUE,
+			'end_date'                    => [ '>' => 'now' ],
+			'options'                     => [ 'sort' => "end_date ASC" ],
+			'sequential'                  => TRUE,
+			'return'                      => 'membership_type_id.name',
 		] );
 
-		// not current membership
+		// Past memberships, latest to expire
 		if ( $result_membership['count'] == 0 ) {
 			$result_membership = civicrm_api3( 'Membership', 'get', [
-				'contact_id'                   => $cid,
-				'options'                      => [ 'sort' => "end_date DESC" ],
-				'api.MembershipType.getsingle' => [ 'sequential' => 1, 'id' => "\$value.membership_type_id" ],
+				'contact_id' => $cid,
+				'status_id'  => [ '<>' => 'Cancelled' ],
+				'end_date'   => [ '<='  => 'now'],
+				'options'    => [ 'sort' => "end_date DESC" ],
+				'sequential' => TRUE,
+				'return'     => 'membership_type_id.name',
 			] );
 		}
 
 		// no membership at all
 		if ( $result_membership['count'] == 0 ) {
-			return 'No membership found the user.';
+			return 'No membership found for user.';
 		}
+		$result_membership = $result_membership['values'][0];
 
-		$membership_type = reset( $result_membership['values'] )['api.MembershipType.getsingle'];
-		if ( isset( $membership_type['is_error'] ) ) {
-			return 'No information about the membership type';
+		if (empty($result_membership['membership_type_id.name'])) {
+			// This shouldn't happen
+			return json_encode($result_membership);
+			// return 'No information about the membership type';
 		}
-
-		return $membership_type['name'];
+		else {
+			return $result_membership['membership_type_id.name'];
+ 		}
 	}
 }
