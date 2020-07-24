@@ -15,6 +15,10 @@ class Civicrm_Ux_Cf_Magic_Tag_Member_Current extends Abstract_Civicrm_Ux_Cf_Magi
 		$helper  = CiviCRM_Caldera_Forms::instance()->helper;
 		$contact = $helper->current_contact_data_get();
 
+		if(empty($contact['id'])) {
+			return '';
+		}
+
 		$memberships = civicrm_api3('Membership', 'getcount', [
 			'contact_id' => $contact['id'],
 			'status_id.is_current_member' => TRUE,
