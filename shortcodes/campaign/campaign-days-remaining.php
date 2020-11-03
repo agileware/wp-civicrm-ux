@@ -39,10 +39,6 @@ class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_S
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [
-				'sequential'  => 1,
-				'campaign_id' => "\$value.id",
-			],
 		];
 
 		try {

@@ -37,7 +37,6 @@ class Civicrm_Ux_Shortcode_Campaign_Goal_Amount extends Abstract_Civicrm_Ux_Shor
 			'return'               => [ "name", "title", "end_date", "goal_revenue" ],
 			'id'                   => $id,
 			'is_active'            => 1,
-			'api.Contribution.get' => [ 'sequential' => 1, 'campaign_id' => "\$value.id" ],
 		];
 
 		try {

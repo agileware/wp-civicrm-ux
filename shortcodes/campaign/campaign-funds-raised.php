@@ -42,6 +42,7 @@ class Civicrm_Ux_Shortcode_Campaign_Total_Raised extends Abstract_Civicrm_Ux_Sho
 				'sequential'             => 1,
 				'campaign_id'            => "\$value.id",
 				'contribution_status_id' => "Completed",
+				'options'                => ['limit' => 0],
 			],
 		];
 

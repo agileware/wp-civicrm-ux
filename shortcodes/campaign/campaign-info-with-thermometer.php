@@ -43,6 +43,7 @@ class Civicrm_Ux_Shortcode_Campaign_Info_Thermometer extends Abstract_Civicrm_Ux
 				'sequential'             => 1,
 				'contribution_status_id' => "Completed",
 				'campaign_id'            => "\$value.id",
+				'options'                => ['limit' => 0],
 			],
 		];
 

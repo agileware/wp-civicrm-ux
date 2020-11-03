@@ -41,6 +41,7 @@ class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicr
 				'sequential'             => 1,
 				'campaign_id'            => "\$value.id",
 				'contribution_status_id' => "Completed",
+				'options'                => ['limit' => 0],
 			],
 		];
 
