@@ -35,14 +35,15 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode{
 		], $atts, $tag );
 
 		if ( ! empty( $mod_atts['type'] ) ) {
-			$types                       = explode( ',', $mod_atts['type'] );
+			$types = explode( ',', $mod_atts['type'] );
 			$civi_param['event_type_id'] = [ 'IN' => $types ];
 		}
 
 		try {
 			$result = civicrm_api3( 'Event', 'get', $civi_param );
 		} catch ( CiviCRM_API3_Exception $e ) {
-			return "error";
+		    Civi::log()->error($e->getMessage(), $e->getTrace());
+			return '';
 		}
 
 		$current_time_group = '';
