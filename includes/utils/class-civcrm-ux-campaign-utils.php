@@ -23,7 +23,7 @@ class Civicrm_Ux_Campaign_Utils {
 
 		$interval = $now->diff( $end );
 
-		return $interval->d;
+		return $interval->days;
 	}
 
 	/**
