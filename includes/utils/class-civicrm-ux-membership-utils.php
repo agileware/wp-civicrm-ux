@@ -67,23 +67,22 @@ class Civicrm_Ux_Membership_Utils {
 	}
 
 	/**
-	 * Get set of option values from first form price field.
+	 * Get set of option values from all form price fields.
 	 *
 	 * @param $fields
 	 *
 	 * @return array
 	 */
 	static public function getOptionValuesFromFields( $fields ) {
+        $optionValues = [];
 		foreach ( $fields as $fieldId => $field ) {
 			$fieldConfig = $field['config'];
 			if ( isset( $fieldConfig['auto_type'] ) && strpos( $fieldConfig['auto_type'], 'price_field' ) !== false ) {
-				$optionValues = $fieldConfig['option'];
-
-				return array_keys( $optionValues );
-			}
+				$optionValues = array_merge($optionValues, array_keys($fieldConfig['option']));
+            }
 		}
 
-		return [];
+		return array_unique($optionValues);
 	}
 
 	/**
