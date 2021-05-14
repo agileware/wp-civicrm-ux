@@ -230,6 +230,8 @@ class Civicrm_Ux {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		// Use the title as set for WordPress in the Avada page titlebar.
+		$this->loader->add_filter( 'avada_page_title_bar_contents', $plugin_public, 'avada_page_title_bar_contents' );
 	}
 
 	/**

@@ -101,4 +101,14 @@ class Civicrm_Ux_Public {
 
 	}
 
+    /**
+     * Use the title as set for WordPress in the Avada page titlebar.
+     *
+     * @since 1.1.6
+     */
+	public function avada_page_title_bar_contents($parts) {
+		[ $title, $subtitle, $secondary_content ] = $parts;
+
+		return [ get_the_title(), $subtitle, $secondary_content ];
+	}
 }
