@@ -111,4 +111,32 @@ class Civicrm_Ux_Public {
 
 		return [ get_the_title(), $subtitle, $secondary_content ];
 	}
+
+	/**
+	 * Override the timezone of Event Organiser event date/times to that of the linked event.
+	 *
+	 * @since 1.2.0
+	 */
+	function event_organiser_timezone_filter ( $formatted, \DateTime $date, $format, $post_id, $occurrence_id ) {
+		$civi_id = reset(civicrm_eo()->db->get_civi_event_ids_by_eo_event_id($post_id));
+
+		try {
+			$civi_event = $civi_id ? (\Civi\Api4\Event::get(FALSE)
+			                          ->addSelect('id', 'event_tz')
+			                          ->addWhere('id', '=', $civi_id)
+			                          ->execute())[0] : NULL;
+
+			if(!empty($civi_event['event_tz'])) {
+				$timezone = new \DateTimeZone( $civi_event['event_tz'] );
+
+				$date->setTimeZone( $timezone );
+
+				return eo_format_datetime($date, $format);
+			}
+		} catch( \API_Exception $e ) {
+			\Civi::log()->error("Could not set timezone for event {$post_id}: {$e->getMessage()}");
+		}
+
+		return $formatted;
+	}
 }
