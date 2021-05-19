@@ -31,11 +31,12 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
     try {
       $results = \Civi\Api4\Event::get()
+        ->addSelect('id', 'title', 'start_date', 'end_date', 'event_tz', 'event_type_id', 'is_online_registration')
         ->addWhere('start_date', '>=', 'today')
         ->addWhere('is_public', '=', TRUE)
         ->addWhere('is_active', '=', TRUE)
-        ->setCheckPermissions(FALSE)
-        ->addOrderBy('start_date', 'ASC');
+        ->addOrderBy('start_date', 'ASC')
+        ->setCheckPermissions(FALSE);
 
       if (!empty($mod_atts['days'])) {
         $results->addWhere('start_date', '<=', 'today + ' . $mod_atts['days'] . ' days');
