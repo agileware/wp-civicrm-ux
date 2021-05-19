@@ -3,32 +3,22 @@
  * included in this file.
  */
 
-.civicrm-event-listing-wrap h2, .civicrm-event-listing-wrap h3,
-.civicrm-event-listing-wrap p {
+.civicrm-event-listing h2, .civicrm-event-listing h3,
+.civicrm-event-listing p {
     margin: 0;
 }
 
-.civicrm-event-listing-wrap p {
+.civicrm-event-listing p {
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
-.civicrm-event-listing-wrap h3 {
+.civicrm-event-listing h3 {
     font-size: 18px;
 }
 
 div.civicrm-event-listing-item {
     margin: 0 0 1.8em 0;
-}
-
-/*Upcoming event*/
-.civicrm-upcoming-event-item p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.civicrm-upcoming-event-item a {
-
 }
 
 /* Campaign shortcodes */

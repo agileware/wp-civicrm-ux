@@ -7,7 +7,7 @@ This plugin adds many useful shortcodes, some new Caldera Forms smart tags and p
 
 ## Usage
 
-You can find the documentation [here](USAGE.md) or in the WordPress Settings page.
+You can find the [documentation](USAGE.md) or in the WordPress Settings page.
 
 ## Development
 ### How to add shortcode

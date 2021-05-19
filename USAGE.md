@@ -62,26 +62,13 @@ The type of shortcode is the Event Type which you could find in **CiviCRM Dashbo
 The type is optional. If the type is not specified, the calendar will include all types of events.  
 The 'display text' can be changed to any text as well.
 
-2. `[ux_event_listing type="Training"]`  
-This shortcode is to display the event listing of the CiviCRM event type.   
+2. `[ux_event_listing days=5 type="Training"]`  
+This shortcode will display upcoming CiviCRM events which have a start date of today or a future date.
 The type of shortcode is the Event Type which you could find in **CiviCRM Dashboard >> CiviEvent >> Event Types**.   
-The event listing displays the start date, the end date, the event name, the registration link, the brief description of event and the link for more information.   
-The type is optional. If the type is not specified, there will be an event listing of all types of events.  
+The event listing displays the start date, the end date, the event name, the registration link, the brief description of event and the link for more information.
+The 'days' parameter is optional. This can be used to limit the upcoming events to only those with a event start date in the next 'days'.
+The 'type' is optional. If the type is not specified, there will be an event listing of all types of events.
 This shortcode has been formatted in html with styling.
-
-3. `[ux_event_upcoming count=5 type="Meeting"]`  
-This shortcode is to display the upcoming event listing of the CiviCRM event type.   
-The type of shortcode is the Event Type which you could find in **CiviCRM Dashboard >> CiviEvent >> Event Types**.   
-The type is optional. If the type is not specified, there will be an event listing of all types of events.   
-The value of 'count' decides how many events will be displayed in upcoming event listings.  
-This shortcode has been formatted in html with styling.
-
-##### Parameters
-`type`: filter for event type  
-For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
-
-##### Note
- - Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
  
 ### REST API
 
@@ -90,6 +77,13 @@ For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,
 #### iCal feed
  - ICalFeed/event
  - ICalFeed/manage
+
+##### Parameters
+`type`: filter for event type  
+For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
+
+##### Note
+- Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
 
 ### Membership
 
