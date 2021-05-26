@@ -71,19 +71,28 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
   private function get_event_item_html(array $event) {
     $config = CRM_Core_Config::singleton();
 
-    $start_date = new DateTime($event['start_date']);
-    $end_date = new DateTime($event['end_date']);
-    $start_date_text = CRM_Utils_Date::customFormat($event['start_date'], $config->dateformatDatetime);
+    $local_tz = new DateTimeZone(CRM_Core_Config::singleton()->userSystem->getTimeZoneString());
+
+    $start_date = new DateTime($event['start_date'], $local_tz);
+    $end_date = new DateTime($event['end_date'], $local_tz);
+
+    if(!empty($event['event_tz'])) {
+        $time_zone = new DateTimeZone($event['event_tz']);
+        $start_date->setTimeZone($time_zone);
+        $end_date->setTimeZone($time_zone);
+    }
+
+    $start_date_text = CRM_Utils_Date::customFormat($start_date->format('Y-m-d H:i:s'), $config->dateformatDatetime);
     $end_date_text = '';
 
     // Check if end date has been set
-    if (!empty($event['end_date'])) {
+    if (!empty($event['end_date']) && ($start_date != $end_date)) {
       // Check if end date is the same day as start date
       if ($end_date->format('j F Y') == $start_date->format('j F Y')) {
-        $end_date_text = ' to ' . CRM_Utils_Date::customFormat($event['end_date'], $config->dateformatTime);
+        $end_date_text = ' to ' . CRM_Utils_Date::customFormat($end_date->format('Y-m-d H:i:s'), $config->dateformatTime);
       }
       else {
-        $end_date_text = ' to ' . CRM_Utils_Date::customFormat($event['end_date'], $config->dateformatDatetime);
+        $end_date_text = ' to ' . CRM_Utils_Date::customFormat($end_date->format('Y-m-d H:i:s'), $config->dateformatDatetime);
       }
 
       $end_date_text .= (!empty($event['event_tz']) ? ' ' . $event['event_tz'] : '');
