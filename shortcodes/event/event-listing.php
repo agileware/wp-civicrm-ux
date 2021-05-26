@@ -94,12 +94,9 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
       else {
         $end_date_text = ' to ' . CRM_Utils_Date::customFormat($end_date->format('Y-m-d H:i:s'), $config->dateformatDatetime);
       }
+    }
 
-      $end_date_text .= (!empty($event['event_tz']) ? ' ' . $event['event_tz'] : '');
-    }
-    else {
-      $start_date_text .= (!empty($event['event_tz']) ? ' ' . $event['event_tz'] : '');
-    }
+    $end_date_text .= ' ' . (!empty($event['event_tz']) ? $event['event_tz'] : CRM_Core_Config::singleton()->userSystem->getTimeZoneString());
 
     $output = '<div class="civicrm-event-listing-item"><h3 class="civicrm-event-item-header">' . $this->get_event_info_link_html($event['id'], $event['title']) . '</h3><p class="civicrm-event-item-date">' . $start_date_text . $end_date_text . '</p>';
 
