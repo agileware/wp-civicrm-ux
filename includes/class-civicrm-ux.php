@@ -111,6 +111,9 @@ class Civicrm_Ux {
 		$this->define_magic_tag();
 
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
+
+        $this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
+        
 		$this->register_options();
 
 	}
@@ -295,6 +298,15 @@ class Civicrm_Ux {
 	public function civicrm_init() {
 		civicrm_initialize();
 	}
+
+    /**
+     * Actions to take during CiviCRM config hook.
+     */
+    public function civicrm_config() {
+      if((strpos($_GET['q'] ?? '', 'civicrm/ajax') === 0) && !defined('DOING_AJAX')) {
+        define('DOING_AJAX', true);
+      }
+    }
 
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
