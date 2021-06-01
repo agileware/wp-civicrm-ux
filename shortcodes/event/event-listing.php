@@ -110,12 +110,14 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
   }
 
   private function get_event_register_link_html(string $event_id) {
-    $url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event_id]);
+    // URLs must be absolute as this shortcode may be used by the au.com.agileware.evaluatewpshortcode extension
+    $url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event_id],TRUE,NULL,TRUE,TRUE);
     return '<a target=_blank href="' . $url . '">Register now</a>';
   }
 
   private function get_event_info_link_html(string $event_id, string $text = 'More information') {
-    $url = CRM_Utils_System::url('civicrm/event/info', ['id' => $event_id]);
+    // URLs must be absolute as this shortcode may be used by the au.com.agileware.evaluatewpshortcode extension
+    $url = CRM_Utils_System::url('civicrm/event/info', ['id' => $event_id],TRUE,NULL,TRUE,TRUE);
     return '<a target=_blank href="' . $url . '">' . $text . '</a>';
   }
 
