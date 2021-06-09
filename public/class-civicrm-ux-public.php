@@ -99,6 +99,14 @@ class Civicrm_Ux_Public {
 
 		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/civicrm-ux-public.js', [ 'jquery' ], $this->version, false );
 
+		$options_map = [];
+
+		$opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_contribution_ux' );
+
+		$options_map['is_recur_default'] = !! $opt['is_recur_default'];
+
+		wp_add_inline_script($this->civicrm_ux, 'window.wp = window.wp || ({}); window.wp.CiviCRM_UX = (' . json_encode($options_map) . ')', 'before');
+
 	}
 
     /**

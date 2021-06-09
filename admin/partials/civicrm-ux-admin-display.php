@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provide a admin area view for the plugin
+ * Provide a admin area view for CiviCRM UX
  *
  * This file is used to markup the admin-facing aspects of the plugin.
  *
@@ -21,6 +21,7 @@ function civicrm_ux_settings_page() {
 		get_rest_url( null,
 			'/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::API_NAMESPACE . '/' . Civicrm_Ux_Shortcode_Event_ICal_Feed::INTERNAL_ENDPOINT ) );
 	$opt       = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
+	$opt_c     = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_contribution_ux' );
 	?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
@@ -67,11 +68,16 @@ function civicrm_ux_settings_page() {
                                    value="<?php echo $opt['civicrm_summary_membership_renew_URL']; ?>"/></td>
                     </tr>
                 </table>
+                <h2>Contribution Page Tweaks</h2>
+                <table>
+                    <tr vlign="top">
+                        <td colspan="2"><label><input type="checkbox" name="civicrm_contribution_ux[is_recur_default]"<?php if ($opt_c['is_recur_default']) echo ' checked="checked"'; ?>>Set contributions as recurring by default</label></td>
+                    </tr>
+                </table>
             </div>
 			<?php submit_button(); ?>
             <div>
-                <a href="/wp-content/plugins/civicrm-ux/admin/partials/civicrm-ux-guide.html" target="_blank">CiviCRM UX
-                    guide</a>
+                <a href="/wp-content/plugins/civicrm-ux/admin/partials/civicrm-ux-guide.html" target="_blank">CiviCRM UX guide</a>
             </div>
         </form>
     </div>
