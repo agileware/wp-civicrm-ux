@@ -113,6 +113,8 @@ class Civicrm_Ux {
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
 
         $this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
+
+        $this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
         
 		$this->register_options();
 
@@ -306,6 +308,21 @@ class Civicrm_Ux {
       if((strpos($_GET['q'] ?? '', 'civicrm/ajax') === 0) && !defined('DOING_AJAX')) {
         define('DOING_AJAX', true);
       }
+    }
+
+    public function civicrm_shortcode_filter( $output, $tag, $attr ) {
+        global $civicrm_wp_title;
+        global $post;
+        
+        if( $tag == 'civicrm' && $attr['set_title'] && !empty( $civicrm_wp_title ) ) {
+            $post->post_title = $civicrm_wp_title;
+
+            add_filter( 'single_post_title', [ civi_wp()->shortcodes, 'single_page_title' ], 50, 2 );
+
+            return civi_wp()->shortcodes->get_content($output);
+        }
+
+        return $output;
     }
 
 	/**
