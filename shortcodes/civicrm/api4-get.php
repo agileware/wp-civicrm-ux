@@ -58,7 +58,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$match = [];
 
-		$output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][:space:][{}]+ ) (?(1) \] | }} ) /sx';
+		$output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][[:space:]:{}]+ ) (?: : (?<format>[^][{}]+ ) )? (?(1) \] | }} ) /sx';
 
 		if( preg_match_all( $output_regex, $content, $match )) {
 			$params['select'] = array_values($match['field']);
@@ -89,6 +89,13 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					}
 					elseif( $field[ 'fk_entity' ] == 'File' ) {
 						$output = htmlentities(civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] ));
+
+						if( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match[ 'format' ], $m ) ) {
+							$output = '<img src="' . $output . '"'
+									. ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
+									' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
+									'">';
+						}
 					}
 
 					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
