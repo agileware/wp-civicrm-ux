@@ -58,31 +58,49 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$match = [];
 
-		$output_regex = '{ \[ api4: (?<field> [^][:space:][]+ ) \] }sx';
+		$output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][:space:][{}]+ ) (?(1) \] | }} ) /sx';
 
 		if( preg_match_all( $output_regex, $content, $match )) {
-			foreach($match['field'] as $field) {
-				$params['select'][] = $field;
-			}
+			$params['select'] = array_values($match['field']);
 		}
 
-		try { 
+		try {
 			$all = '';
-			
+
+			$fields = \Civi\Api4\Event::getFields(FALSE)
+					->addSelect( 'name', 'data_type', 'fk_entity' )
+					->execute()
+					->indexBy( 'name' );
+
 			$results = civicrm_api4( $atts['entity'], 'get', $params );
 
-			foreach($results as $r) {
-				$output = preg_replace_callback( $output_regex, function( $m ) use( $r ){
-					return apply_filters( 'esc_html', wp_check_invalid_utf8( $r[$m['field']] ?? '' ) );
+			foreach($results as $result) {
+				$output = preg_replace_callback( $output_regex, function( $match ) use( $result, $fields ){
+					$output = $result[ $match[ 'field' ] ] ?? '';
+
+					if(!$output) {
+						return '';
+					}
+
+					$field = &$fields[ $match[ 'field' ] ];
+
+					if( ($field[ 'data_type' ] == 'Date') || ($field[ 'data_type' ] == 'Timestamp') ) {
+						$output = CRM_Utils_Date::customFormat($output, $match['format'] ?? NULL);
+					}
+					elseif( $field[ 'fk_entity' ] == 'File' ) {
+						$output = htmlentities(civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] ));
+					}
+
+					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
 				}, $content );
-			
+
 				$all .= do_shortcode( $output );
 			}
 
 			return trim($all);
 		} catch (API_Exception $e) {
 			\Civi::log()->error('Error with API$ Shortcode on post #' . get_the_ID(). ': ' . $e->getMessage());
-			
+
 			return '';
 		}
 	}
