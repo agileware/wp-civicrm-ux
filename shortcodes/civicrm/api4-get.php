@@ -24,16 +24,16 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		// override default attributes with user attributes
 		$atts = $atts + [
-            'entity'  => 'Contact',
+			'entity'  => 'Contact',
 		];
 
 		// If "id" attritbute exists but isn't an integer, replaced it with a GET parameter with that name.
-        if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
+		if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
 			$atts['id'] = (int) $_GET[$atts['id']];
 			if($atts['id'] < 1) {
 				return __('Invalid ID');
 			}
-        }
+		}
 
 		$params = [];
 
@@ -88,7 +88,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						$output = CRM_Utils_Date::customFormat($output, $match['format'] ?? NULL);
 					}
 					elseif( $field[ 'fk_entity' ] == 'File' ) {
-						$output = htmlentities(civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] ));
+						$output = Civicrm_Ux::in_basepage( function() use ($output) { return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] )); } );
 
 						if( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match[ 'format' ], $m ) ) {
 							$output = '<img src="' . $output . '"'

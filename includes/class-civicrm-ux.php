@@ -115,7 +115,7 @@ class Civicrm_Ux {
         $this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
 
         $this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
-        
+
 		$this->register_options();
 
 	}
@@ -313,7 +313,7 @@ class Civicrm_Ux {
     public function civicrm_shortcode_filter( $output, $tag, $attr ) {
         global $civicrm_wp_title;
         global $post;
-        
+
         if( $tag == 'civicrm' && $attr['set_title'] && !empty( $civicrm_wp_title ) ) {
             $post->post_title = $civicrm_wp_title;
 
@@ -324,6 +324,25 @@ class Civicrm_Ux {
 
         return $output;
     }
+
+	/**
+	 * Fake the current post being the CiviCRM basepage for one callback.
+	 *
+	 * @param Closure $callback
+	 * @return any
+	 */
+	public static function in_basepage(Closure $callback) {
+		global $post;
+		$actual_post = $post;
+
+		$post = get_page_by_path( strtolower( CRM_Core_Config::singleton()->wpBasePage ?? 'civicrm' ) ) ?? $post;
+
+		$return = $callback();
+
+		$post = $actual_post;
+
+		return $return;
+	}
 
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
