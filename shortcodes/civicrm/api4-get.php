@@ -39,11 +39,22 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		// Interpret attributes as where clauses.
 		foreach( $atts as $k => $v ) {
+            $v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', fn($matches) => $matches[value], $v));
+			$k = preg_replace('/-(\w+)/', ':$1', $k);
+
 			switch($k) {
 				case 'entity':
 					break;
 				case 'limit':
-					$params['limit'] = (int) $v;
+				case 'offset':
+					$params[$k] = (int) $v;
+					break;
+				case 'sort':
+				case 'orderby':
+					list($sort, $dir) = explode(':', $v, 2);
+					if($dir != 'DESC')
+						$dir = 'ASC';
+					$params['orderBy'][$sort] = $dir;
 					break;
 				default:
 					list($op, $value) = explode(':', $v, 2);
@@ -51,7 +62,14 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						$value = $op;
 						$op = '=';
 					}
-					$params['where'][] = [$k, $op, $value];
+
+					switch($k) {
+						case 'event_type':
+						case 'financial_type':
+						default:
+							$params['where'][] = [$k, $op, $value];
+							break;
+					}
 					break;
 			}
 		}
@@ -67,7 +85,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		try {
 			$all = '';
 
-			$fields = \Civi\Api4\Event::getFields(FALSE)
+			$class = "\\Civi\\Api4\\{$atts['entity']}";
+
+			$fields = $class::getFields(FALSE)
 					->addSelect( 'name', 'data_type', 'fk_entity' )
 					->execute()
 					->indexBy( 'name' );
