@@ -116,6 +116,8 @@ class Civicrm_Ux {
 
         $this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
 
+        $this->loader->add_action( 'civicrm_basepage_parsed', $this, 'civicrm_basepage_actions' );
+
 		$this->register_options();
 
 	}
@@ -323,6 +325,30 @@ class Civicrm_Ux {
         }
 
         return $output;
+    }
+
+    /**
+     * Tweak wordpress state on basepage parse.
+     */
+    public function civicrm_basepage_actions() {
+        global $civicrm_wp_title;
+        $title_copy = $civicrm_wp_title;
+
+        $title_func = function( $title, $id ) use( $title_copy ) {
+            $p = get_post(is_numeric($id) ? $id : NULL);
+
+            if( $p->post_name == CRM_Core_Config::singleton()->wpBasePage ) {
+                return $title_copy ?: $title;
+            } else {
+                return $title;
+            }
+        };
+
+        // Current post title. CiviCRM should call this one in the first place.
+        add_filter( 'the_title', $title_func, 10, 2 );
+
+        // Support "The SEO Framework" title generation.
+        add_filter( 'the_seo_framework_title_from_generation', $title_func, 10, 2 );
     }
 
 	/**
