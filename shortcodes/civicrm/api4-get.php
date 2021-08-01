@@ -35,7 +35,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			}
 		}
 
-		$params = [];
+		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
+		$params = [ 'checkPermissions' => FALSE ];
 
 		// Interpret attributes as where clauses.
 		foreach( $atts as $k => $v ) {
@@ -48,6 +49,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				case 'limit':
 				case 'offset':
 					$params[$k] = (int) $v;
+					break;
+				case 'checkPermissions':
+					$params[$k] = (bool) $v;
 					break;
 				case 'sort':
 				case 'orderby':
