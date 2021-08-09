@@ -73,12 +73,15 @@ function civicrm_ux_settings_page() {
                     <tr vlign="top">
                         <td colspan="2"><label><input type="checkbox" name="civicrm_contribution_ux[is_recur_default]"<?php if ($opt_c['is_recur_default']) echo ' checked="checked"'; ?>>Set contributions as recurring by default</label></td>
                     </tr>
+                    <tr vlign="top">
+                        <td colspan="2"><label><input type="checkbox" name="civicrm_contribution_ux[is_autorenew_default]"<?php if ($opt_c['is_autorenew_default']) echo ' checked="checked"'; ?>>Set memberships as autorenewal by default</label></td>
+                    </tr>
                 </table>
             </div>
 			<?php submit_button(); ?>
-            <div>
-                <a href="/wp-content/plugins/civicrm-ux/admin/partials/civicrm-ux-guide.html" target="_blank">CiviCRM UX guide</a>
-            </div>
+            <?php /** The documentation in this file is outdated <div>
+                <a href="<?php echo plugin_dir_url(__FILE__) . 'civicrm-ux-guide.html'; ?>" target="_blank">CiviCRM UX guide</a>
+            </div> /**/ ?>
         </form>
     </div>
 <?php }
