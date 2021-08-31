@@ -241,9 +241,10 @@ class Civicrm_Ux {
 		$this->loader->add_filter( 'avada_page_title_bar_contents', $plugin_public, 'avada_page_title_bar_contents' );
 
 		// Use the event time zone from Civi when displaying times in Event Organiser.
-		$this->loader->add_action( 'eventorganiser_get_the_start', $plugin_public, 'event_organiser_timezone_filter', 10, 5 );
-		$this->loader->add_action( 'eventorganiser_get_the_end', $plugin_public, 'event_organiser_timezone_filter', 10, 5 );
-
+    if (class_exists('CiviCRM_WP_Event_Organiser')) {
+      $this->loader->add_action('eventorganiser_get_the_start', $plugin_public, 'event_organiser_timezone_filter', 10, 5);
+      $this->loader->add_action('eventorganiser_get_the_end', $plugin_public, 'event_organiser_timezone_filter', 10, 5);
+    }
 	}
 
 	/**
