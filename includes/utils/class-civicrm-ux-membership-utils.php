@@ -22,10 +22,10 @@ class Civicrm_Ux_Membership_Utils {
 					'status_id'  => [ '<>' => 'Cancelled' ],
 				] );
 
-				if ( $memberships["count"] == 0 ) {
+				if ( $memberships['count'] == 0 ) {
 					return 0;
 				} else {
-					foreach ( $memberships["values"] as $membership ) {
+					foreach ( $memberships['values'] as $membership ) {
 
 						$membership_end_date    = new DateTime( $membership['end_date'] );
 						$today_date             = new DateTime( 'now' );
@@ -106,8 +106,8 @@ class Civicrm_Ux_Membership_Utils {
 			'is_active'                             => 1,
 			'price_field_id.is_active'              => 1,
 			'return'                                => [
-				"price_field_id.expire_on",
-				"price_field_id.active_on",
+				'price_field_id.expire_on',
+				'price_field_id.active_on',
 			],
 			'price_field_id.price_set_id.is_active' => 1,
 			'id'                                    => [ 'IN' => $optionValues ],
@@ -175,10 +175,10 @@ class Civicrm_Ux_Membership_Utils {
 					'status_id.is_current_member' => 1,
 				] );
 
-				if ( $memberships["count"] == 0 ) {
+				if ( $memberships['count'] == 0 ) {
 					return 0;
 				} else {
-					foreach ( $memberships["values"] as $membership ) {
+					foreach ( $memberships['values'] as $membership ) {
 
 						$membership_name = $membership['membership_name'];
 
@@ -210,10 +210,10 @@ class Civicrm_Ux_Membership_Utils {
 				$cid      = $contact['id'];
 				$contacts = civicrm_api3( 'Contact', 'get', [ 'contact_id' => $cid ] );
 
-				if ( $contacts["count"] == 0 ) {
+				if ( $contacts['count'] == 0 ) {
 					return 0;
 				} else {
-					foreach ( $contacts["values"][2]["contact_sub_type"] as $contact ) {
+					foreach ( $contacts['values'][2]['contact_sub_type'] as $contact ) {
 						if ( $contact ) {
 							return $contact;
 							break;
@@ -264,7 +264,7 @@ class Civicrm_Ux_Membership_Utils {
 					],
 				] );
 
-				foreach ( $memberships["values"] as $membership ) {
+				foreach ( $memberships['values'] as $membership ) {
 
 					$membership_types    = $membership['membership_type_id.name'];
 					$membership_end_date = new DateTime( $membership['end_date'] );
