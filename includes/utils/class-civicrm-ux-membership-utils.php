@@ -225,25 +225,17 @@ class Civicrm_Ux_Membership_Utils {
 	 * @throws Exception
 	 */
 	static public function get_membership_summary() {
-		$opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
-
-		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
-		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
-		$summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
-
-
-		$current_membership_statuses = [];
-
 		$membership_summary_message = '';
-
+    $membership_types = '';
 		$membership_summary_status = '';
-
-		$membership_types = '';
-
     $renewal_date_format = '';
 
+    $opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
+    $summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
+    $summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
+    $summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
 
-		if ( civicrm_initialize() ) {
+    if ( civicrm_initialize() ) {
 
 			try {
 
