@@ -240,7 +240,7 @@ class Civicrm_Ux_Membership_Utils {
 
 		$membership_types = '';
 
-		$renewal_date = '';
+    $renewal_date_format = '';
 
 
 		if ( civicrm_initialize() ) {
