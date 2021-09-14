@@ -6,10 +6,12 @@
  * Class Civicrm_Ux_Option_Store
  */
 class Civicrm_Ux_Option_Store {
+
 	/**
 	 * array[option name]
 	 *      ['instance']
 	 *      ['default']
+	 *
 	 * @var array
 	 */
 	protected $options;
@@ -18,16 +20,16 @@ class Civicrm_Ux_Option_Store {
 		$this->options = [];
 
 		// For membership
-		$this->register_option( 'civicrm_summary_options', null, [
+		$this->register_option( 'civicrm_summary_options', NULL, [
 			'civicrm_summary_show_renewal_date'    => '30',
 			'civicrm_summary_membership_join_URL'  => '/join/',
-			'civicrm_summary_membership_renew_URL' => '/renew/'
+			'civicrm_summary_membership_renew_URL' => '/renew/',
 		] );
 
 		// For contributions
-		$this->register_option( 'civicrm_contribution_ux', null, [
-			'is_recur_default'    => FALSE,
-			'is_autorenew_default'  => FALSE
+		$this->register_option( 'civicrm_contribution_ux', NULL, [
+			'is_recur_default'     => FALSE,
+			'is_autorenew_default' => FALSE,
 		] );
 	}
 
@@ -39,7 +41,7 @@ class Civicrm_Ux_Option_Store {
 
 		$this->options[ $name ] = [
 			'instance' => $instance,
-			'default'  => $default
+			'default'  => $default,
 		];
 	}
 
@@ -58,4 +60,5 @@ class Civicrm_Ux_Option_Store {
 	public function get_options() {
 		return $this->options;
 	}
+
 }
