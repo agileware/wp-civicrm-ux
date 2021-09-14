@@ -1,6 +1,7 @@
 <?php
 
 class Civicrm_Ux_Membership_Utils {
+
 	static public function renewal_membership_check() {
 
 		if ( self::is_civi_enable() && civicrm_initialize() ) {
@@ -16,7 +17,10 @@ class Civicrm_Ux_Membership_Utils {
 				// Get login contact id
 				$cid = $contact['id'];
 
-				$memberships = civicrm_api3( 'Membership', 'get', [ 'contact_id' => $cid, 'status_id' => [ '<>' => 'Cancelled' ] ] );
+				$memberships = civicrm_api3( 'Membership', 'get', [
+					'contact_id' => $cid,
+					'status_id'  => [ '<>' => 'Cancelled' ],
+				] );
 
 				if ( $memberships["count"] == 0 ) {
 					return 0;
@@ -51,7 +55,7 @@ class Civicrm_Ux_Membership_Utils {
 			'contact_id' => $contact_id,
 			'sequential' => 1,
 			'status_id'  => [ '<>' => 'Cancelled' ],
-			'sort'       => 'end_date ASC'
+			'sort'       => 'end_date ASC',
 		];
 
 		$current = civicrm_api3( 'Membership', 'get', [
@@ -74,20 +78,20 @@ class Civicrm_Ux_Membership_Utils {
 	 * @return array
 	 */
 	static public function getOptionValuesFromFields( $fields ) {
-        $optionValues = [];
+		$optionValues = [];
 		foreach ( $fields as $fieldId => $field ) {
 			$fieldConfig = $field['config'];
-			if ( isset( $fieldConfig['auto_type'] ) && strpos( $fieldConfig['auto_type'], 'price_field' ) !== false ) {
-				$optionValues = array_merge($optionValues, array_keys($fieldConfig['option']));
-            }
+			if ( isset( $fieldConfig['auto_type'] ) && strpos( $fieldConfig['auto_type'], 'price_field' ) !== FALSE ) {
+				$optionValues = array_merge( $optionValues, array_keys( $fieldConfig['option'] ) );
+			}
 		}
 
-		return array_unique($optionValues);
+		return array_unique( $optionValues );
 	}
 
 	/**
-	 * Get price field values based on given membership type and set of option values.
-	 * It only returns active price set and price field values.
+	 * Get price field values based on given membership type and set of option
+	 * values. It only returns active price set and price field values.
 	 *
 	 * @param $currentMembershipTypeId
 	 * @param $optionValues
@@ -101,7 +105,10 @@ class Civicrm_Ux_Membership_Utils {
 			'membership_type_id'                    => $currentMembershipTypeId,
 			'is_active'                             => 1,
 			'price_field_id.is_active'              => 1,
-			'return'                                => [ "price_field_id.expire_on", "price_field_id.active_on" ],
+			'return'                                => [
+				"price_field_id.expire_on",
+				"price_field_id.active_on",
+			],
 			'price_field_id.price_set_id.is_active' => 1,
 			'id'                                    => [ 'IN' => $optionValues ],
 		] );
@@ -121,27 +128,27 @@ class Civicrm_Ux_Membership_Utils {
 	 */
 	static public function isPriceFieldActive( $priceFieldOption ) {
 		$currentDate = new DateTime();
-		$activeOn    = ( isset( $priceFieldOption['price_field_id.active_on'] ) ) ? $priceFieldOption['price_field_id.active_on'] : null;
-		$expireOn    = ( isset( $priceFieldOption['price_field_id.expire_on'] ) ) ? $priceFieldOption['price_field_id.expire_on'] : null;
+		$activeOn    = ( isset( $priceFieldOption['price_field_id.active_on'] ) ) ? $priceFieldOption['price_field_id.active_on'] : NULL;
+		$expireOn    = ( isset( $priceFieldOption['price_field_id.expire_on'] ) ) ? $priceFieldOption['price_field_id.expire_on'] : NULL;
 
-		$isAfterStartDate = false;
-		$isBeforeEndDate  = false;
+		$isAfterStartDate = FALSE;
+		$isBeforeEndDate  = FALSE;
 
 		if ( ! $activeOn ) {
-			$isAfterStartDate = true;
+			$isAfterStartDate = TRUE;
 		} else {
 			$activeOn = DateTime::createFromFormat( 'Y-m-d H:i:s', $activeOn );
 			if ( $currentDate >= $activeOn ) {
-				$isAfterStartDate = true;
+				$isAfterStartDate = TRUE;
 			}
 		}
 
 		if ( ! $expireOn ) {
-			$isBeforeEndDate = true;
+			$isBeforeEndDate = TRUE;
 		} else {
 			$expireOn = DateTime::createFromFormat( 'Y-m-d H:i:s', $expireOn );
 			if ( $expireOn <= $expireOn ) {
-				$isBeforeEndDate = true;
+				$isBeforeEndDate = TRUE;
 			}
 		}
 
@@ -163,7 +170,10 @@ class Civicrm_Ux_Membership_Utils {
 				// Get login contact id
 				$cid = $contact['id'];
 
-				$memberships = civicrm_api3( 'Membership', 'get', [ 'contact_id' => $cid, 'status_id.is_current_member' => 1 ] );
+				$memberships = civicrm_api3( 'Membership', 'get', [
+					'contact_id'                  => $cid,
+					'status_id.is_current_member' => 1,
+				] );
 
 				if ( $memberships["count"] == 0 ) {
 					return 0;
@@ -197,8 +207,8 @@ class Civicrm_Ux_Membership_Utils {
 					return 0;
 				}
 				// Get login contact id
-				$cid = $contact['id'];
-				$contacts = civicrm_api3( 'Contact', 'get', array( 'contact_id' => $cid ) );
+				$cid      = $contact['id'];
+				$contacts = civicrm_api3( 'Contact', 'get', [ 'contact_id' => $cid ] );
 
 				if ( $contacts["count"] == 0 ) {
 					return 0;
@@ -219,37 +229,40 @@ class Civicrm_Ux_Membership_Utils {
 	}
 
 	/**
-	 * This function is merged from agileware/agileware-civicrm-membership-summary
+	 * This function is merged from
+	 * agileware/agileware-civicrm-membership-summary
 	 *
 	 * @return array
 	 * @throws Exception
 	 */
 	static public function get_membership_summary() {
 		$membership_summary_message = '';
-    $membership_types = '';
-		$membership_summary_status = '';
-    $renewal_date_format = '';
+		$membership_types           = '';
+		$membership_summary_status  = '';
+		$renewal_date_format        = '';
 
-    $opt = Civicrm_Ux::getInstance()->get_store()->get_option( 'civicrm_summary_options' );
-    $summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
-    $summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
-    $summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
+		$opt                       = Civicrm_Ux::getInstance()
+		                                       ->get_store()
+		                                       ->get_option( 'civicrm_summary_options' );
+		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
+		$summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
+		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
 
-    if ( civicrm_initialize() ) {
+		if ( civicrm_initialize() ) {
 
 			try {
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-				$memberships = civicrm_api3( 'Membership', 'get', array(
+				$memberships = civicrm_api3( 'Membership', 'get', [
 					'contact_id' => $cid,
 					'return'     => [
 						'membership_type_id.name',
 						'end_date',
 						'status_id.label',
-						'status_id.is_current_member'
-					]
-				) );
+						'status_id.is_current_member',
+					],
+				] );
 
 				foreach ( $memberships["values"] as $membership ) {
 
@@ -277,14 +290,14 @@ class Civicrm_Ux_Membership_Utils {
 
 				}
 
-				return ( array(
+				return ( [
 					$membership_summary_message,
 					$membership_types,
 					$membership_summary_status,
 					$renewal_date_format,
 					$summary_show_join_URL,
-					$summary_show_renewal_URL
-				) );
+					$summary_show_renewal_URL,
+				] );
 
 			} catch ( CiviCRM_API3_Exception $e ) {
 
