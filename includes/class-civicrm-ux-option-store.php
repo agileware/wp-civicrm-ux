@@ -23,6 +23,12 @@ class Civicrm_Ux_Option_Store {
 			'civicrm_summary_membership_join_URL'  => '/join/',
 			'civicrm_summary_membership_renew_URL' => '/renew/'
 		] );
+
+		// For contributions
+		$this->register_option( 'civicrm_contribution_ux', null, [
+			'is_recur_default'    => FALSE,
+			'is_autorenew_default'  => FALSE
+		] );
 	}
 
 	public function register_option( $name, $instance, $default = '' ) {
