@@ -3,8 +3,8 @@
 /**
  * The file that defines the core plugin class
  *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
+ * A class definition that includes attributes and functions used across both
+ * the public-facing side of the site and the admin area.
  *
  * @link       https://agileware.com.au
  * @since      1.0.0
@@ -29,13 +29,14 @@
  */
 class Civicrm_Ux {
 
-	static private $singleton = null;
+	static private $singleton = NULL;
 
 	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
-	 * the plugin.
+	 * The loader that's responsible for maintaining and registering all hooks
+	 * that power the plugin.
 	 *
-	 * @var      Civicrm_Ux_Loader $loader Maintains and registers all hooks for the plugin.
+	 * @var      Civicrm_Ux_Loader $loader Maintains and registers all hooks for
+	 *   the plugin.
 	 * @since    1.0.0
 	 * @access   protected
 	 */
@@ -44,7 +45,8 @@ class Civicrm_Ux {
 	/**
 	 * The helper class that provide helper function to all other class
 	 *
-	 * @var      Civicrm_Ux_Helper $helper The helper class that provide helper function to all other class
+	 * @var      Civicrm_Ux_Helper $helper The helper class that provide helper
+	 *   function to all other class
 	 * @since    1.0.0
 	 * @access   public
 	 */
@@ -53,7 +55,8 @@ class Civicrm_Ux {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @var      string $civicrm_ux The string used to uniquely identify this plugin.
+	 * @var      string $civicrm_ux The string used to uniquely identify this
+	 *   plugin.
 	 * @since    1.0.0
 	 * @access   protected
 	 */
@@ -69,15 +72,16 @@ class Civicrm_Ux {
 	protected $version;
 
 	protected const DEPENDENCIES = [
-		'caldera-forms/caldera-core.php' => 'optional'
+		'caldera-forms/caldera-core.php' => 'optional',
 	];
+
 	/**
 	 * @var Civicrm_Ux_Option_Store
 	 */
 	protected $store;
 
 	static public function getInstance() {
-		if ( self::$singleton == null ) {
+		if ( self::$singleton == NULL ) {
 			self::$singleton = new Civicrm_Ux();
 		}
 
@@ -87,9 +91,9 @@ class Civicrm_Ux {
 	/**
 	 * Define the core functionality of the plugin.
 	 *
-	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
-	 * the public-facing side of the site.
+	 * Set the plugin name and the plugin version that can be used throughout
+	 * the plugin. Load the dependencies, define the locale, and set the hooks
+	 * for the admin area and the public-facing side of the site.
 	 *
 	 * @since    1.0.0
 	 */
@@ -112,11 +116,11 @@ class Civicrm_Ux {
 
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
 
-        $this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
+		$this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
 
-        $this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
+		$this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
 
-        $this->loader->add_action( 'civicrm_basepage_parsed', $this, 'civicrm_basepage_actions' );
+		$this->loader->add_action( 'civicrm_basepage_parsed', $this, 'civicrm_basepage_actions' );
 
 		$this->register_options();
 
@@ -182,7 +186,7 @@ class Civicrm_Ux {
 
 		$this->loader = new Civicrm_Ux_Loader();
 		$this->helper = new Civicrm_Ux_Helper( $this );
-		$this->store = new Civicrm_Ux_Option_Store();
+		$this->store  = new Civicrm_Ux_Option_Store();
 
 		// Add utility classes
 		$this->loader->load( 'includes/utils' );
@@ -191,8 +195,8 @@ class Civicrm_Ux {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Civicrm_Ux_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
+	 * Uses the Civicrm_Ux_i18n class in order to set the domain and to register
+	 * the hook with WordPress.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -241,10 +245,10 @@ class Civicrm_Ux {
 		$this->loader->add_filter( 'avada_page_title_bar_contents', $plugin_public, 'avada_page_title_bar_contents' );
 
 		// Use the event time zone from Civi when displaying times in Event Organiser.
-    if (class_exists('CiviCRM_WP_Event_Organiser')) {
-      $this->loader->add_action('eventorganiser_get_the_start', $plugin_public, 'event_organiser_timezone_filter', 10, 5);
-      $this->loader->add_action('eventorganiser_get_the_end', $plugin_public, 'event_organiser_timezone_filter', 10, 5);
-    }
+		if ( class_exists( 'CiviCRM_WP_Event_Organiser' ) ) {
+			$this->loader->add_action( 'eventorganiser_get_the_start', $plugin_public, 'event_organiser_timezone_filter', 10, 5 );
+			$this->loader->add_action( 'eventorganiser_get_the_end', $plugin_public, 'event_organiser_timezone_filter', 10, 5 );
+		}
 	}
 
 	/**
@@ -304,61 +308,65 @@ class Civicrm_Ux {
 		civicrm_initialize();
 	}
 
-    /**
-     * Actions to take during CiviCRM config hook.
-     */
-    public function civicrm_config() {
-      if((strpos($_GET['q'] ?? '', 'civicrm/ajax') === 0) && !defined('DOING_AJAX')) {
-        define('DOING_AJAX', true);
-      }
-    }
+	/**
+	 * Actions to take during CiviCRM config hook.
+	 */
+	public function civicrm_config() {
+		if ( ( strpos( $_GET['q'] ?? '', 'civicrm/ajax' ) === 0 ) && ! defined( 'DOING_AJAX' ) ) {
+			define( 'DOING_AJAX', TRUE );
+		}
+	}
 
-    public function civicrm_shortcode_filter( $output, $tag, $attr ) {
-        global $civicrm_wp_title;
-        global $post;
+	public function civicrm_shortcode_filter( $output, $tag, $attr ) {
+		global $civicrm_wp_title;
+		global $post;
 
-        if( $tag == 'civicrm' && $attr['set_title'] && !empty( $civicrm_wp_title ) ) {
-            $post->post_title = $civicrm_wp_title;
+		if ( $tag == 'civicrm' && $attr['set_title'] && ! empty( $civicrm_wp_title ) ) {
+			$post->post_title = $civicrm_wp_title;
 
-            add_filter( 'single_post_title', [ civi_wp()->shortcodes, 'single_page_title' ], 50, 2 );
+			add_filter( 'single_post_title', [
+				civi_wp()->shortcodes,
+				'single_page_title',
+			], 50, 2 );
 
-            return civi_wp()->shortcodes->get_content($output);
-        }
+			return civi_wp()->shortcodes->get_content( $output );
+		}
 
-        return $output;
-    }
+		return $output;
+	}
 
-    /**
-     * Tweak wordpress state on basepage parse.
-     */
-    public function civicrm_basepage_actions() {
-        global $civicrm_wp_title;
-        $title_copy = $civicrm_wp_title;
+	/**
+	 * Tweak wordpress state on basepage parse.
+	 */
+	public function civicrm_basepage_actions() {
+		global $civicrm_wp_title;
+		$title_copy = $civicrm_wp_title;
 
-        $title_func = function( $title, $id ) use( $title_copy ) {
-            $p = get_post(is_numeric($id) ? $id : NULL);
+		$title_func = function ( $title, $id ) use ( $title_copy ) {
+			$p = get_post( is_numeric( $id ) ? $id : NULL );
 
-            if( $p->post_name == CRM_Core_Config::singleton()->wpBasePage ) {
-                return $title_copy ?: $title;
-            } else {
-                return $title;
-            }
-        };
+			if ( $p->post_name == CRM_Core_Config::singleton()->wpBasePage ) {
+				return $title_copy ?: $title;
+			} else {
+				return $title;
+			}
+		};
 
-        // Current post title. CiviCRM should call this one in the first place.
-        add_filter( 'the_title', $title_func, 10, 2 );
+		// Current post title. CiviCRM should call this one in the first place.
+		add_filter( 'the_title', $title_func, 10, 2 );
 
-        // Support "The SEO Framework" title generation.
-        add_filter( 'the_seo_framework_title_from_generation', $title_func, 10, 2 );
-    }
+		// Support "The SEO Framework" title generation.
+		add_filter( 'the_seo_framework_title_from_generation', $title_func, 10, 2 );
+	}
 
 	/**
 	 * Fake the current post being the CiviCRM basepage for one callback.
 	 *
 	 * @param Closure $callback
+	 *
 	 * @return any
 	 */
-	public static function in_basepage(Closure $callback) {
+	public static function in_basepage( Closure $callback ) {
 		global $post;
 		$actual_post = $post;
 
