@@ -1,9 +1,114 @@
-# CiviCRM UX
-CiviCRM UX plugin provides shortcodes for integrating CiviCRM with your website.
+# CiviCRM UX User Guide
 
-## General usages
-### Shortcodes
-#### Campaign
+This plugin adds many useful shortcodes, some new Caldera Forms smart tags and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
+
+## Events Calendar Shortcode
+
+Display a CiviCRM Events Calendar on your website using the [FullCalendar Javascript library](https://fullcalendar.io), see https://fullcalendar.io for more details.
+
+Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive calendar of all CiviCRM Events which are both public and active.
+
+## CiviCRM APIv4 Shortcode
+
+The CiviCRM APIv4 is directly accessible using the `[ux_cv_api4_get]` WordPress shortcode. You can use the CiviCRM APIv4 Explorer to understand how to query CiviCRM using the APIv4.
+
+Below are some examples of how the `[ux_cv_api4_get]` WordPress shortcode can be used.
+
+### Event Listing Example 1
+
+Example code to list single Event Type in ascending order.
+
+The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates:
+* How to apply styles and layout to the listing.
+* How to output an CiviCRM Custom Field for an Event. In this example, the field is Event_Extra.Event_Feature_Image which is used to record and display a featured image for the Event.
+
+```
+<!-- wp:shortcode -->
+[ux_cv_api4_get entity=Event is_public=1 is_active=1 event_type_id=15 start_date=&gt;=:today sort=start_date:ASC]
+<!-- /wp:shortcode -->
+
+<!-- wp:heading {"level":3,"className":"ui-widget-header event-title"} -->
+<h3 class="ui-widget-header event-title"><a href="https://example.org.au/event-registration/?id={{api4:id}}" target="_blank" rel="noreferrer noopener nofollow">[api4:title]</a></h3>
+<!-- /wp:heading -->
+
+<!-- wp:group {"className":"event-info-group"} -->
+<div class="wp-block-group event-info-group"><!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"33.33%"} -->
+<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">[api4:Event_Extra.Event_Feature_Image:img]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Date:</strong> [api4:start_date:%B %E, %Y]</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"66.66%"} -->
+<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:shortcode -->
+[api4:summary]
+<!-- /wp:shortcode --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:buttons {"contentJustification":"left"} -->
+<div class="wp-block-buttons is-content-justification-left"><!-- wp:button {"className":"is-style-outline","fontSize":"normal"} -->
+<div class="wp-block-button has-custom-font-size is-style-outline has-normal-font-size"><a class="wp-block-button__link" href="https://example.org.au/event-registration/?id={{api4:id}}" target="_blank" rel="noreferrer noopener">Register</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons --></div>
+<!-- /wp:group -->
+
+<!-- wp:shortcode -->
+[/ux_cv_api4_get]
+<!-- /wp:shortcode -->
+```
+
+### Event Listing Example 2
+
+Example shortcode to list multiple Event Types. Same as above, except changes the event_type_id parameter: `event_type_id=IN:18,19`
+
+The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates how to apply styles and layout to the listing.
+
+```
+<!-- wp:shortcode -->
+[ux_cv_api4_get entity=Event is_public=1 is_active=1 event_type_id=IN:18,19 start_date=&gt;=:today sort=start_date:ASC]
+<!-- /wp:shortcode -->
+
+<!-- wp:heading {"level":3,"className":"ui-widget-header event-title"} -->
+<h3 class="ui-widget-header event-title"><a href="https://example.org.au/event-registration/?id={{api4:id}}" target="_blank" rel="noreferrer noopener nofollow">[api4:title]</a></h3>
+<!-- /wp:heading -->
+
+<!-- wp:group {"className":"event-info-group"} -->
+<div class="wp-block-group event-info-group"><!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"33.33%"} -->
+<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">[api4:Event_Extra.Event_Feature_Image:img]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Date:</strong> [api4:start_date:%B %E, %Y]</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"66.66%"} -->
+<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:shortcode -->
+[api4:summary]
+<!-- /wp:shortcode --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:buttons {"contentJustification":"left"} -->
+<div class="wp-block-buttons is-content-justification-left"><!-- wp:button {"className":"is-style-outline","fontSize":"normal"} -->
+<div class="wp-block-button has-custom-font-size is-style-outline has-normal-font-size"><a class="wp-block-button__link" href="https://example.org.au/event-registration/?id={{api4:id}}" target="_blank" rel="noreferrer noopener">Register</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons --></div>
+<!-- /wp:group -->
+
+<!-- wp:shortcode -->
+[/ux_cv_api4_get]
+<!-- /wp:shortcode -->
+```
+
+## Campaign Shortcode
 
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
 1. `[ux_campaign_info_thermometer id=3]`  
@@ -53,39 +158,25 @@ This shortcode without styling is to display the total number of donations recei
 Id for the campaign id is required.  
 Shortcodes return the raw string value except first 2 shortcodes.
 
-#### Event
+## Event iCal Feed Shortcode
 
-Event shortcodes accepts a CiviCRM Event type as a parameter and displays the event listings.
-1. `[ux_event_ical_feed type="Meeting,Exhibition"]display text[/ical-feed]`  
-This shortcode allows downloading the calendar of CiviCRM events.   
-The type of shortcode is the Event Type which you could find in **CiviCRM Dashboard >> CiviEvent >> Event Types**.   
-The type is optional. If the type is not specified, the calendar will include all types of events.  
-The 'display text' can be changed to any text as well.
+Event iCal Feed Shortcode `[ux_event_ical_feed]` generates a custom iCal Calendar and returns a URL to download the iCal file.
 
-2. `[ux_event_listing days=5 type="Training"]`  
-This shortcode will display upcoming CiviCRM events which have a start date of today or a future date.
+Shortcode accepts a CiviCRM Event type as a parameter and displays the event listings. For example: `[ux_event_ical_feed type="Meeting,Exhibition"]Click here to download an iCal feed of meeting and exhibitions[/ical-feed]`
+ 
+The CiviCRM Event type parameter is optional. If the type is not specified, the iCal will include all Event types.
+
+## Event Listing Shortcode
+
+This shortcode will display upcoming CiviCRM events which have a start date of today or a future date. `[ux_event_listing days=5 type="Training"]`  
+
 The type of shortcode is the Event Type which you could find in **CiviCRM Dashboard >> CiviEvent >> Event Types**.   
 The event listing displays the start date, the end date, the event name, the registration link, the brief description of event and the link for more information.
 The 'days' parameter is optional. This can be used to limit the upcoming events to only those with a event start date in the next 'days'.
 The 'type' is optional. If the type is not specified, there will be an event listing of all types of events.
 This shortcode has been formatted in html with styling.
  
-### REST API
-
-@TODO Documentation in this section is incomplete
-
-#### iCal feed
- - ICalFeed/event
- - ICalFeed/manage
-
-##### Parameters
-`type`: filter for event type  
-For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
-
-##### Note
-- Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
-
-### Membership
+## Membership Shortcodes
 
 1. `[ux_membership_expiry]`  
 Return a HTML tag with the membership expiry date of the login user.
@@ -111,7 +202,7 @@ Return the membership summary of the login user.
 1. `[ux_membership_type]`  
 Return the membership type of the login user.
 
-#### CiviCRM Data List using the CiviCRM Data Processor
+## CiviCRM Data List using the CiviCRM Data Processor Shortcode
 
 `[ux_civicrm_listing]`
  - **dpid**: data processor id
@@ -122,7 +213,7 @@ Return the membership type of the login user.
  
 This shortcode requires the [CiviCRM Data Processor](https://lab.civicrm.org/extensions/dataprocessor) extension to be installed on the CiviCRM site.
 
-#### Activity
+## Activity Shortcode
 
 `[ux_activity_listing]`  
 Parameters:
@@ -137,7 +228,7 @@ Parameters:
 For example:  
 `[ux_activity_listing type='Test' relationship-id=5 field='status,source_contact_name,activity_date_time']`
 
-#### Contact
+## Contact Shortcode
 
 `[ux_contact_value]`
 Parameters:
@@ -147,26 +238,7 @@ Parameters:
  - `field`          what field to display **required**
  - `default`        the value to display if empty
 
-#### WordPress helper shortcodes
-
-@TODO Documentation in this section is incomplete
-
-`[ux_cf_value]`  
- - `type`
- - `id`
- - `field`
- - `single`
- - `default` not used yet.
-
-This shortcode is designed for developer. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
-
-`[ux_convert_date]`
- - `return_timezone` the 'to' timezone
- - `timezone` the 'from' timezone
-
-The date format for both input and output is `d/m/Y g:ia`
- 
-### Caldera magic tags
+## Caldera magic tags
 
 Provides additional Caldera magic tags when using both [Caldera Forms](https://wordpress.org/plugins/caldera-forms/) and [Caldera Forms CiviCRM](https://wordpress.org/plugins/cf-civicrm/) plugins to integrate CiviCRM with WordPress.
 
@@ -192,18 +264,69 @@ Return 0 if there is no membership for the login user; 1 if the membership of th
 1. `{user:roles}`  
 Return the user roles of the logged in user, each role is comma separated
 
-## Development
+# For Developers
 
-### How to add shortcode
+## REST API
+
+@TODO Documentation in this section is incomplete
+
+## iCal feed
+- ICalFeed/event
+- ICalFeed/manage
+
+### Parameters
+`type`: filter for event type  
+For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
+
+- Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
+
+## WordPress helper shortcodes
+
+@TODO Documentation in this section is incomplete
+
+`[ux_cf_value]`
+- `type`
+- `id`
+- `field`
+- `single`
+- `default` not used yet.
+
+This shortcode is designed for developer. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
+
+`[ux_convert_date]`
+- `return_timezone` the 'to' timezone
+- `timezone` the 'from' timezone
+
+The date format for both input and output is `d/m/Y g:ia`
+
+## How to add shortcode
 1. Create a php file in **shortcodes** directory.
 2. Within the file, create a class which implements `iCivicrm_Ux_Shortcode`.
 3. Implement all functions defined in the interface. It is recommended to use PhpStorm.
 
-### How to add REST API route
+## How to add REST API route
 1. Create a php file in **rest** directory.
 2. Within the file, create a class which implement `iCivicrm_Ux_REST`.
 3. Implement all functions defined in the interface. It is recommended to use PhpStorm.
 
-### CSS and JavaScript
+## CSS and JavaScript
 All css files should be in `public/css` or `admin/css`. If the new css files are created, please make sure to enqueue them.
 All javascript files should be in `public/js` or `admin/js`.
+
+# About the Authors
+
+This WordPress plugin was developed by the team at [Agileware](https://agileware.com.au).
+
+[Agileware](https://agileware.com.au) provide a range of CiviCRM services including:
+
+* CiviCRM migration
+* CiviCRM integration
+* CiviCRM extension development
+* CiviCRM support
+* CiviCRM hosting
+* CiviCRM remote training services
+
+Support your Australian [CiviCRM](https://civicrm.org) developers, [contact Agileware](https://agileware.com.au/contact) today!
+
+
+![Agileware](logo/agileware-logo.png)

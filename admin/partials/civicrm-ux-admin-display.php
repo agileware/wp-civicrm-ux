@@ -29,6 +29,10 @@ function civicrm_ux_settings_page() {
 	?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
+        <h2>Usage Documentation</h2>
+        <p>Documentation on the available shortcodes and functionality for this plugin is available on our Github project page, <a href="https://github.com/agileware/wp-civicrm-ux/blob/master/USAGE.md" target="_blank">CiviCRM UX User Guide</a>.</p>
+        <h2>How To Say Thank You!</h2>
+        <p>If you are using this plugin and find it useful, you can say thank you by <a href="https://www.paypal.me/agileware" target="_blank">buying us a beer or a coffee</a>.</p>
         <form method="post" action="options.php">
 			<?php settings_fields( 'civicrm-ux-settings-group' ); ?>
             <div>
@@ -109,9 +113,6 @@ function civicrm_ux_settings_page() {
                 </table>
             </div>
 			<?php submit_button(); ?>
-			<?php /** The documentation in this file is outdated <div>
-			 * <a href="<?php echo plugin_dir_url(__FILE__) . 'civicrm-ux-guide.html'; ?>" target="_blank">CiviCRM UX guide</a>
-			 * </div> /**/ ?>
         </form>
     </div>
 <?php }
