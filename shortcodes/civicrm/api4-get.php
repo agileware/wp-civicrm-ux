@@ -67,6 +67,10 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						$op = '=';
 					}
 
+					if($op == 'IN' || $op == 'NOT IN') {
+						$value = explode(',', $value);
+					}
+
 					switch($k) {
 						case 'event_type':
 						case 'financial_type':

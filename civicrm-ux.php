@@ -9,7 +9,7 @@
  * Plugin Name:       WP CiviCRM UX
  * Plugin URI:        https://github.com/agileware/wp-civicrm-ux
  * Description:       A better user experience for integrating WordPress and CiviCRM
- * Version:           1.8.3
+ * Version:           1.8.4
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Agileware
@@ -26,7 +26,7 @@
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'CIVICRM_UXVERSION', '1.8.3' );
+define( 'CIVICRM_UXVERSION', '1.8.4' );
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
