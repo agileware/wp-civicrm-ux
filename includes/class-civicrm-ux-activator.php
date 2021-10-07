@@ -30,16 +30,13 @@ class Civicrm_Ux_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		if ( ! self::check_dependency() ) {
+		if ( !self::check_dependency() && function_exists( 'deactivate_plugins' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die( __( 'Please install and Activate CiviCRM.', 'civicrm-ux' ), 'Plugin dependency check', array( 'back_link' => true ) );
 		}
 	}
 
 	public static function check_dependency() {
-		// TODO
-		$active_plugins = apply_filters( 'active_plugins', get_option( 'active_plugins' ) );
-
-		return in_array( 'civicrm/civicrm.php', $active_plugins );
+		return is_plugin_active( 'civicrm/civicrm.php' );
 	}
 }
