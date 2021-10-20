@@ -108,6 +108,10 @@ The following example code can be inserted into a WordPress page when using the 
 <!-- /wp:shortcode -->
 ```
 
+### Event Registration Page Example
+
+**To do:** Provide information about how to lay out the Event Registration page using APIv4 shortcodes.
+
 ## Campaign Shortcode
 
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
