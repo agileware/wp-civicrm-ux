@@ -112,6 +112,20 @@ The following example code can be inserted into a WordPress page when using the 
 
 **To do:** Provide information about how to lay out the Event Registration page using APIv4 shortcodes.
 
+### Additional usage information
+
+Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
+
+Implicit joins using Api4 are supported, e.g. `[api4:loc_block_id.address_id.street_address]`
+
+Multi-value fields are output as a comma separated list where possible.
+
+Limited format support is available:
+
+* Date fields can have their format specified with the same format as [CiviCRM's date display](https://docs.civicrm.org/user/en/latest/initial-set-up/dates/), e.g. `[api4:start_date:%B %E, %Y]`
+* File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
+* A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
+
 ## Campaign Shortcode
 
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
@@ -188,7 +202,7 @@ Return a HTML tag with the membership expiry date of the login user.
 1. `[ux_membership_id]`  
 Return the membership id of the login user.
 
-1. `[ux_membership_join_url`  
+1. `[ux_membership_join_url]`
 Return the join form URL. The URL can be configured in the settings page.
 
 1. `[ux_membership_renewal_date]`  
@@ -295,7 +309,7 @@ For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,
 - `single`
 - `default` not used yet.
 
-This shortcode is designed for developer. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
+This shortcode is designed for developers. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
 
 `[ux_convert_date]`
 - `return_timezone` the 'to' timezone

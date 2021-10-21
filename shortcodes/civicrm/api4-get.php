@@ -27,7 +27,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			'entity'  => 'Contact',
 		];
 
-		// If "id" attritbute exists but isn't an integer, replaced it with a GET parameter with that name.
+		// If "id" attribute exists but isn't an integer, replaced it with a GET parameter with that name.
 		if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
 			$atts['id'] = (int) $_GET[$atts['id']];
 			if($atts['id'] < 1) {
@@ -55,13 +55,13 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					break;
 				case 'sort':
 				case 'orderby':
-					list($sort, $dir) = explode(':', $v, 2);
+					[ $sort, $dir ] = explode( ':', $v, 2 );
 					if($dir != 'DESC')
 						$dir = 'ASC';
 					$params['orderBy'][$sort] = $dir;
 					break;
 				default:
-					list($op, $value) = explode(':', $v, 2);
+					[ $op, $value ] = explode( ':', $v, 2 );
 					if(!$value) {
 						$value = $op;
 						$op = '=';
@@ -125,9 +125,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 									'">';
 						}
 					}
+					else {
+						if ( is_array( $output ) ) {
+							$output = implode( ', ', $output );
+						}
+						if ( strcasecmp( $match['format'], 'br') === 0) {
+							$output .= '<br />';
+						}
+					}
 
 					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
-				}, $content );
+				}, shortcode_unautop( $content ) );
 
 				$all .= do_shortcode( $output );
 			}
