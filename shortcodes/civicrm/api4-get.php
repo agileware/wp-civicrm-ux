@@ -24,10 +24,10 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		// override default attributes with user attributes
 		$atts = $atts + [
-			'entity'  => 'Contact',
-		];
+				'entity'  => 'Contact',
+			];
 
-		// If "id" attribute exists but isn't an integer, replaced it with a GET parameter with that name.
+		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
 		if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
 			$atts['id'] = (int) $_GET[$atts['id']];
 			if($atts['id'] < 1) {
@@ -40,7 +40,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		// Interpret attributes as where clauses.
 		foreach( $atts as $k => $v ) {
-            $v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', fn($matches) => $matches[value], $v));
+			$v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', fn($matches) => $matches[value], $v));
 			$k = preg_replace('/-(\w+)/', ':$1', $k);
 
 			switch($k) {
@@ -91,14 +91,22 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		}
 
 		try {
+			$trkey = $this->get_shortcode_name() . '__' . md5($atts['entity'] . ':get:' . json_encode($params));
+
+			$all = get_transient( $trkey );
+
+			if( $all !== FALSE ) {
+				return $all;
+			}
+
 			$all = '';
 
 			$class = "\\Civi\\Api4\\{$atts['entity']}";
 
 			$fields = $class::getFields(FALSE)
-					->addSelect( 'name', 'data_type', 'fk_entity' )
-					->execute()
-					->indexBy( 'name' );
+			                ->addSelect( 'name', 'data_type', 'fk_entity' )
+			                ->execute()
+			                ->indexBy( 'name' );
 
 			$results = civicrm_api4( $atts['entity'], 'get', $params );
 
@@ -120,9 +128,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 						if( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match[ 'format' ], $m ) ) {
 							$output = '<img src="' . $output . '"'
-									. ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
-									' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
-									'">';
+							          . ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
+							          ' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
+							          '">';
 						}
 					}
 					else {
@@ -140,9 +148,13 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				$all .= do_shortcode( $output );
 			}
 
-			return trim($all);
+			$all = trim($all);
+
+			set_transient($trkey, $all, 4 * HOUR_IN_SECONDS);
+
+			return $all;
 		} catch (API_Exception $e) {
-			\Civi::log()->error('Error with API$ Shortcode on post #' . get_the_ID(). ': ' . $e->getMessage());
+			\Civi::log()->error('Error with API4 Shortcode on post #' . get_the_ID(). ': ' . $e->getMessage());
 
 			return '';
 		}
