@@ -80,9 +80,9 @@ class Civicrm_Ux {
 	 */
 	protected $store;
 
-	static public function getInstance() {
+	static public function getInstance( $plugin_file = '../civicrm-ux.php' ) {
 		if ( self::$singleton == NULL ) {
-			self::$singleton = new Civicrm_Ux();
+			self::$singleton = new Civicrm_Ux($plugin_file);
 		}
 
 		return self::$singleton;
@@ -97,12 +97,8 @@ class Civicrm_Ux {
 	 *
 	 * @since    1.0.0
 	 */
-	private function __construct() {
-		if ( defined( 'CIVICRM_UXVERSION' ) ) {
-			$this->version = CIVICRM_UXVERSION;
-		} else {
-			$this->version = '1.0.0';
-		}
+	private function __construct( $plugin_file ) {
+		$this->version = \get_plugin_data( realpath( $plugin_file ) )['Version'];
 		$this->civicrm_ux = 'civicrm-ux';
 
 		$this->load_dependencies();

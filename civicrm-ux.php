@@ -21,13 +21,6 @@
  * GitHub Plugin URI: agileware/wp-civicrm-ux
  */
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-define( 'CIVICRM_UXVERSION', '1.8.6' );
-
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -80,7 +73,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux.php';
  */
 function run_civicrm_ux() {
 
-	$plugin = Civicrm_Ux::getInstance();
+	$plugin = Civicrm_Ux::getInstance( __FILE__ );
 	$plugin->run();
 
 }
