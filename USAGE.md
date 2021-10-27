@@ -64,7 +64,7 @@ The following example code can be inserted into a WordPress page when using the 
 
 ### Event Listing Example 2
 
-Example shortcode to list multiple Event Types. Same as above, except changes the event_type_id parameter: `event_type_id=IN:18,19`
+Example code to list multiple Event Types. Same as above, except changes the event_type_id parameter: `event_type_id=IN:18,19`
 
 The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates how to apply styles and layout to the listing.
 
@@ -108,9 +108,71 @@ The following example code can be inserted into a WordPress page when using the 
 <!-- /wp:shortcode -->
 ```
 
-### Event Registration Page Example
+### Event Information / Event Registration Page Example
 
-**To do:** Provide information about how to lay out the Event Registration page using APIv4 shortcodes.
+Example code to display Event Information and the Event Registration form. This page will use the Event ID as passed in via the URL to load the related Event Information.
+
+The Event in this example has CiviCRM Custom Fields as follows:
+1. Event Feature Image
+2. Presenter Heading
+3. Presenter Information
+4. Presenter Image
+
+The standard CiviCRM Event Registration form is shown at the bottom of the page.
+
+The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates how to apply styles and layout to the listing.
+
+```
+<!-- wp:group {"className":"clearfix"} -->
+<div class="wp-block-group clearfix"><!-- wp:shortcode -->
+[ux_cv_api4_get entity=Event id=id]
+<!-- /wp:shortcode -->
+
+<!-- wp:shortcode -->
+[api4:Event_Extra.Event_Feature_Image:img]
+<!-- /wp:shortcode -->
+
+<!-- wp:paragraph -->
+<p>[api4:summary]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[api4:description]
+<!-- /wp:shortcode -->
+
+<!-- wp:heading {"level":3} -->
+<h3>[api4:Presenter.Presenter_Heading]</h3>
+<!-- /wp:heading -->
+
+<!-- wp:group {"className":"alignright"} -->
+<div class="wp-block-group alignright"><!-- wp:shortcode -->
+[api4:Presenter.Presenter_Image:img]
+<!-- /wp:shortcode --></div>
+<!-- /wp:group -->
+
+<!-- wp:shortcode -->
+[api4:Presenter.Presenter_Information]
+<!-- /wp:shortcode -->
+
+<!-- wp:list {"className":"clear-float"} -->
+<ul class="clear-float"><li><strong>Starts:</strong> [api4:start_date]</li><li><strong>Finishes:</strong> [api4:end_date]</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:shortcode -->
+[/ux_cv_api4_get]
+<!-- /wp:shortcode --></div>
+<!-- /wp:group -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Registration Details</h3>
+<!-- /wp:heading -->
+
+<!-- wp:group {"className":"crm-hide-title"} -->
+<div class="wp-block-group crm-hide-title"><!-- wp:shortcode -->
+[civicrm component="event" action=register set_title=1]
+<!-- /wp:shortcode --></div>
+<!-- /wp:group -->
+```
 
 ### Additional usage information
 
