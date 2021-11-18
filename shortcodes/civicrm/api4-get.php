@@ -109,12 +109,10 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$all = '';
 
-			$class = "\\Civi\\Api4\\{$atts['entity']}";
-
-			$fields = $class::getFields(FALSE)
-			                ->addSelect( 'name', 'data_type', 'fk_entity' )
-			                ->execute()
-			                ->indexBy( 'name' );
+			$fields = civicrm_api4( $atts['entity'], 'getfields', [
+				'checkPermissions' => FALSE,
+				'select' => [ 'name', 'data_type', 'fk_entity' ]
+			] )->indexBy( 'name' );
 
 			$results = civicrm_api4( $atts['entity'], 'get', $params );
 
@@ -129,7 +127,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					$field = &$fields[ $match[ 'field' ] ];
 
 					if( ($field[ 'data_type' ] == 'Date') || ($field[ 'data_type' ] == 'Timestamp') ) {
-						$output = CRM_Utils_Date::customFormat($output, $match['format'] ?? NULL);
+						$output = isset($match['format']) ? strftime($match['format'], strtotime($output)) : CRM_Utils_Date::customFormat($output);
 					}
 					elseif( $field[ 'fk_entity' ] == 'File' ) {
 						$output = Civicrm_Ux::in_basepage( function() use ($output) { return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] )); } );
