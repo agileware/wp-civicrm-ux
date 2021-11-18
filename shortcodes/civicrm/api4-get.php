@@ -24,8 +24,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		// override default attributes with user attributes
 		$atts = $atts + [
-				'entity'  => 'Contact',
-			];
+			'entity'  => 'Contact',
+		];
 
 		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
 		if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
@@ -38,9 +38,15 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
 		$params = [ 'checkPermissions' => FALSE ];
 
+		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
+
 		// Interpret attributes as where clauses.
 		foreach( $atts as $k => $v ) {
-			$v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', fn($matches) => $matches[value], $v));
+			$v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', function( $matches ){ return $matches['value']; }, $v));
+			// Replace ?<parameter> with the escaped value of the matching URL parameter.
+			$v = preg_replace_callback('{\? (?<value> [[:alnum:]_-]+ )}x', function( $matches ){
+				return str_replace(['%'], ['\%'], CRM_Core_DAO::escapeString( $_GET[ $matches['value'] ] ?? '' ));
+			}, $v);
 			$k = preg_replace('/-(\w+)/', ':$1', $k);
 
 			switch($k) {
@@ -89,6 +95,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		if( preg_match_all( $output_regex, $content, $match )) {
 			$params['select'] = array_values($match['field']);
 		}
+
+		$params = apply_filters( $this->get_shortcode_name() . '/params', $params, $atts );
 
 		try {
 			$trkey = $this->get_shortcode_name() . '__' . md5($atts['entity'] . ':get:' . json_encode($params));
@@ -144,6 +152,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
 				}, shortcode_unautop( $content ) );
+
+				$output = apply_filters( $this->get_shortcode_name() . '/output', $output, $result, $params, $atts );
 
 				$all .= do_shortcode( $output );
 			}
