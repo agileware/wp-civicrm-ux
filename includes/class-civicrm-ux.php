@@ -360,6 +360,15 @@ class Civicrm_Ux {
 
 		// Support "The SEO Framework" title generation.
 		add_filter( 'the_seo_framework_title_from_generation', $title_func, 10, 2 );
+
+		// Support Yoast SEO, but only replace the %%title%% string for applicable posts.
+		add_filter( 'wpseo_replacements', function ( $replacements, $args ) use ( $title_copy ) {
+			if ( isset( $args->post_name ) && ( $args->post_name === CRM_Core_Config::singleton()->wpBasePage ) ) {
+				$replacements['%%title%%'] = $title_copy;
+			}
+
+			return $replacements;
+		}, 10, 2 );
 	}
 
 	/**
