@@ -4,9 +4,11 @@ This plugin adds many useful shortcodes, some new Caldera Forms smart tags and p
 
 ## Events Calendar Shortcode
 
-Display a CiviCRM Events Calendar on your website using the [FullCalendar Javascript library](https://fullcalendar.io), see https://fullcalendar.io for more details.
+Display a CiviCRM Events Calendar on your website using the [FullCalendar Javascript library](https://fullcalendar.io), see [https://fullcalendar.io](https://fullcalendar.io) for more details and [demonstrations](https://fullcalendar.io/demos) of the calendar options available.
 
 Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive calendar of all CiviCRM Events which are both public and active.
+
+![](images/example-calendar.png)
 
 ## CiviCRM APIv4 Shortcode
 
