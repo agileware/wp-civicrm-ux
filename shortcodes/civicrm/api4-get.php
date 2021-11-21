@@ -4,167 +4,178 @@
  * Class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get
  */
 class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcode {
-	/**
-	 * @return string The name of shortcode
-	 */
-	public function get_shortcode_name() {
-		return 'ux_cv_api4_get';
-	}
 
-	/**
-	 * @param array $atts
-	 * @param null $content
-	 * @param string $tag
-	 *
-	 * @return mixed Should be the html output of the shortcode
-	 */
-	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
-		// normalize attribute keys, lowercase
-		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+  /**
+   * @return string The name of shortcode
+   */
+  public function get_shortcode_name() {
+    return 'ux_cv_api4_get';
+  }
 
-		// override default attributes with user attributes
-		$atts = $atts + [
-			'entity'  => 'Contact',
-		];
+  /**
+   * @param   array   $atts
+   * @param   null    $content
+   * @param   string  $tag
+   *
+   * @return mixed Should be the html output of the shortcode
+   */
+  public function shortcode_callback($atts = [], $content = NULL, $tag = '') {
+    // normalize attribute keys, lowercase
+    $atts = array_change_key_case((array) $atts, CASE_LOWER);
 
-		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
-		if( array_key_exists( 'id', $atts ) && !is_int( $atts['id'] ) ) {
-			$atts['id'] = (int) $_GET[$atts['id']];
-			if($atts['id'] < 1) {
-				return __('Invalid ID');
-			}
-		}
+    // override default attributes with user attributes
+    $atts = $atts + [
+        'entity' => 'Contact',
+      ];
 
-		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
-		$params = [ 'checkPermissions' => FALSE ];
+    // If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
+    if (array_key_exists('id', $atts) && !is_int($atts['id'])) {
+      $atts['id'] = (int) $_GET[$atts['id']];
+      if ($atts['id'] < 1) {
+        return __('Invalid ID');
+      }
+    }
 
-		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
+    // default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
+    $params = ['checkPermissions' => FALSE];
 
-		// Interpret attributes as where clauses.
-		foreach( $atts as $k => $v ) {
-			$v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', function( $matches ){ return $matches['value']; }, $v));
-			// Replace ?<parameter> with the escaped value of the matching URL parameter.
-			$v = preg_replace_callback('{\? (?<value> [[:alnum:]_-]+ )}x', function( $matches ){
-				return str_replace(['%'], ['\%'], CRM_Core_DAO::escapeString( $_GET[ $matches['value'] ] ?? '' ));
-			}, $v);
-			$k = preg_replace('/-(\w+)/', ':$1', $k);
+    $atts = apply_filters($this->get_shortcode_name() . '/attributes', $atts);
 
-			switch($k) {
-				case 'entity':
-					break;
-				case 'limit':
-				case 'offset':
-					$params[$k] = (int) $v;
-					break;
-				case 'checkPermissions':
-					$params[$k] = (bool) $v;
-					break;
-				case 'sort':
-				case 'orderby':
-					[ $sort, $dir ] = explode( ':', $v, 2 );
-					if($dir != 'DESC')
-						$dir = 'ASC';
-					$params['orderBy'][$sort] = $dir;
-					break;
-				default:
-					[ $op, $value ] = explode( ':', $v, 2 );
-					if(!$value) {
-						$value = $op;
-						$op = '=';
-					}
+    // Interpret attributes as where clauses.
+    foreach ($atts as $k => $v) {
+      $v = html_entity_decode(preg_replace_callback('/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', function ($matches) {
+        return $matches['value'];
+      }, $v));
+      // Replace ?<parameter> with the escaped value of the matching URL parameter.
+      $v = preg_replace_callback('{\? (?<value> [[:alnum:]_-]+ )}x', function ($matches) {
+        return str_replace(['%'], ['\%'], CRM_Core_DAO::escapeString($_GET[$matches['value']] ?? ''));
+      }, $v);
+      $k = preg_replace('/-(\w+)/', ':$1', $k);
 
-					if($op == 'IN' || $op == 'NOT IN') {
-						$value = explode(',', $value);
-					}
+      switch ($k) {
+        case 'entity':
+          break;
+        case 'limit':
+        case 'offset':
+          $params[$k] = (int) $v;
+          break;
+        case 'checkPermissions':
+          $params[$k] = (bool) $v;
+          break;
+        case 'sort':
+        case 'orderby':
+          [$sort, $dir] = explode(':', $v, 2);
+          if ($dir != 'DESC') {
+            $dir = 'ASC';
+          }
+          $params['orderBy'][$sort] = $dir;
+          break;
+        default:
+          [$op, $value] = explode(':', $v, 2);
+          if (!$value) {
+            $value = $op;
+            $op    = '=';
+          }
 
-					switch($k) {
-						case 'event_type':
-						case 'financial_type':
-						default:
-							$params['where'][] = [$k, $op, $value];
-							break;
-					}
-					break;
-			}
-		}
+          if ($op == 'IN' || $op == 'NOT IN') {
+            $value = explode(',', $value);
+          }
 
-		$match = [];
+          switch ($k) {
+            case 'event_type':
+            case 'financial_type':
+            default:
+              $params['where'][] = [$k, $op, $value];
+              break;
+          }
+          break;
+      }
+    }
 
-		$output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][[:space:]:{}]+ ) (?: : (?<format>[^][{}]+ ) )? (?(1) \] | }} ) /sx';
+    $match = [];
 
-		if( preg_match_all( $output_regex, $content, $match )) {
-			$params['select'] = array_values($match['field']);
-		}
+    $output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][[:space:]:{}]+ ) (?: : (?<format>[^][{}]+ ) )? (?(1) \] | }} ) /sx';
 
-		$params = apply_filters( $this->get_shortcode_name() . '/params', $params, $atts );
+    if (preg_match_all($output_regex, $content, $match)) {
+      $params['select'] = array_values($match['field']);
+    }
 
-		try {
-			$trkey = $this->get_shortcode_name() . '__' . md5($atts['entity'] . ':get:' . json_encode($params));
+    $params = apply_filters($this->get_shortcode_name() . '/params', $params, $atts);
 
-			$all = get_transient( $trkey );
+    try {
+      $trkey = $this->get_shortcode_name() . '__' . md5($atts['entity'] . ':get:' . json_encode($params));
 
-			if( $all !== FALSE ) {
-				return $all;
-			}
+      $all = get_transient($trkey);
 
-			$all = '';
+      if ($all !== FALSE) {
+        return $all;
+      }
 
-			$fields = civicrm_api4( $atts['entity'], 'getfields', [
-				'checkPermissions' => FALSE,
-				'select' => [ 'name', 'data_type', 'fk_entity' ]
-			] )->indexBy( 'name' );
+      $all = '';
 
-			$results = civicrm_api4( $atts['entity'], 'get', $params );
+      $fields = civicrm_api4($atts['entity'], 'getfields', [
+        'checkPermissions' => FALSE,
+        'select'           => ['name', 'data_type', 'fk_entity'],
+      ])->indexBy('name');
 
-			foreach($results as $result) {
-				$output = preg_replace_callback( $output_regex, function( $match ) use( $result, $fields ){
-					$output = $result[ $match[ 'field' ] ] ?? '';
+      $results = civicrm_api4($atts['entity'], 'get', $params);
 
-					if(!$output) {
-						return '';
-					}
+      foreach ($results as $result) {
+        $output = preg_replace_callback($output_regex, function ($match) use ($result, $fields) {
+          $output = $result[$match['field']] ?? '';
 
-					$field = &$fields[ $match[ 'field' ] ];
+          if (!$output) {
+            return '';
+          }
 
-					if( ($field[ 'data_type' ] == 'Date') || ($field[ 'data_type' ] == 'Timestamp') ) {
-						$output = isset($match['format']) ? strftime($match['format'], strtotime($output)) : CRM_Utils_Date::customFormat($output);
-					}
-					elseif( $field[ 'fk_entity' ] == 'File' ) {
-						$output = Civicrm_Ux::in_basepage( function() use ($output) { return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [ 'id' => (int) $output, 'return' => 'url' ] )); } );
+          $field = &$fields[$match['field']];
 
-						if( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match[ 'format' ], $m ) ) {
-							$output = '<img src="' . $output . '"'
-							          . ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
-							          ' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
-							          '">';
-						}
-					}
-					else {
-						if ( is_array( $output ) ) {
-							$output = implode( ', ', $output );
-						}
-						if ( strcasecmp( $match['format'], 'br') === 0) {
-							$output .= '<br />';
-						}
-					}
+          if (($field['data_type'] == 'Date') || ($field['data_type'] == 'Timestamp')) {
+            $output = isset($match['format']) ? strftime($match['format'], strtotime($output)) : CRM_Utils_Date::customFormat($output);
+          }
+          elseif ($field['fk_entity'] == 'File') {
+            $output = Civicrm_Ux::in_basepage(function () use ($output) {
+              return htmlentities(civicrm_api3('Attachment', 'getvalue', ['id'     => (int) $output,
+                                                                          'return' => 'url',
+              ]));
+            });
 
-					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
-				}, shortcode_unautop( $content ) );
+            if (preg_match('/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m)) {
+              $output = '<img src="' . $output . '"'
+                        . ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
+                        ' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
+                        '">';
+            }
+          }
+          else {
+            if (is_array($output)) {
+              $output = implode(', ', $output);
+            }
+            if (strcasecmp($match['format'], 'br') === 0) {
+              $output .= '<br />';
+            }
+          }
 
-				$output = apply_filters( $this->get_shortcode_name() . '/output', $output, $result, $params, $atts );
+          return apply_filters('esc_html', wp_check_invalid_utf8($output));
+        }, shortcode_unautop($content));
 
-				$all .= do_shortcode( $output );
-			}
+        $output = apply_filters($this->get_shortcode_name() . '/output', $output, $result, $params, $atts);
 
-			$all = trim($all);
+        $all .= do_shortcode($output);
+      }
 
-			set_transient($trkey, $all, 4 * HOUR_IN_SECONDS);
+      $all = trim($all);
 
-			return $all;
-		} catch (API_Exception $e) {
-			\Civi::log()->error('CiviCRM APIv4 shortcode (' . $this->get_shortcode_name() . ') on WordPress Post ID: ' . get_the_ID(). '. CiviCRM error message: ' . $e->getMessage());
+      set_transient($trkey, $all, 4 * HOUR_IN_SECONDS);
 
-			return '';
-		}
-	}
+      return $all;
+    }
+    catch (API_Exception $e) {
+      \Civi::log()
+           ->error('CiviCRM APIv4 shortcode (' . $this->get_shortcode_name() . ') on WordPress Post ID: ' . get_the_ID() . '. CiviCRM error message: ' . $e->getMessage());
+
+      return '';
+    }
+  }
+
 }
