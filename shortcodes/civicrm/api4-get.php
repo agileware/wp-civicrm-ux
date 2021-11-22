@@ -59,7 +59,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				case 'offset':
 					$params[ $k ] = (int) $v;
 					break;
-				case 'checkPermissions':
+				case 'checkpermissions':
+				case 'check_permissions':
 					$params[ $k ] = (bool) $v;
 					break;
 				case 'sort':
@@ -176,5 +177,4 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			return '';
 		}
 	}
-
 }
