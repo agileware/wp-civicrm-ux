@@ -29,7 +29,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			];
 
 		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
-		if ( array_key_exists( 'id', $atts ) && ! is_int( $atts['id'] ) ) {
+		if ( array_key_exists( 'id', $atts ) && ! is_int( $atts['id'] ) && preg_match('{^ (?![_-]) [A-Za-z0-9_-]+ $}x', $atts['id']) ) {
 			$atts['id'] = (int) $_GET[ $atts['id'] ];
 			if ( $atts['id'] < 1 ) {
 				return __( 'Invalid ID' );
@@ -61,7 +61,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					break;
 				case 'checkpermissions':
 				case 'check_permissions':
-					$params[ $k ] = (bool) $v;
+					$params[ 'checkPermissions' ] = (bool) $v;
 					break;
 				case 'sort':
 				case 'orderby':
@@ -78,8 +78,13 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						$op    = '=';
 					}
 
+					if ( preg_match( '{(^|\.|_) id $}x', $k ) &&
+					     preg_match( '{^\s* \d+ (\s* , \s* \d+)+ \s* $}x', $value ) ) {
+						$op = [ '!=' => 'NOT IN', '=' => 'IN' ][ $op ] ?? $op;
+					}
+
 					if ( $op == 'IN' || $op == 'NOT IN' ) {
-						$value = explode( ',', $value );
+						$value = array_map( 'trim', explode( ',', $value ) );
 					}
 
 					switch ( $k ) {
@@ -129,7 +134,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						return '';
 					}
 
-					$field = &$fields[ $match['field'] ];
+					$field = $fields[ $match['field'] ] ?? [];
 
 					if ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) {
 						$output = isset( $match['format'] ) ? strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
