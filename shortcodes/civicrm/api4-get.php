@@ -108,6 +108,14 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$params = apply_filters( $this->get_shortcode_name() . '/params', $params, $atts );
 
+		if ($atts['entity'] == 'Contact') {
+			$params['join'] = [
+				['Email AS email', 'LEFT', ['email.is_primary', '=', TRUE]],
+				['Address AS address', 'LEFT', ['address.is_primary', '=', TRUE]],
+				['Phone AS phone', 'LEFT', ['phone.is_primary', '=', TRUE]],
+			];
+		}
+
 		try {
 			$trkey = $this->get_shortcode_name() . '__' . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
 
