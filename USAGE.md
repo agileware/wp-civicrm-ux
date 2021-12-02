@@ -190,6 +190,14 @@ Limited format support is available:
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
 
+### CiviCRM API caching
+
+CiviCRM API responses are cached as a WordPress transient with a minimum lifetime of 4 hours.
+
+If the API request is returning the incorrect results or if you have changed the parameters and are not seeing the correct results, then try flushing the WordPress transient cache.
+
+```wp transient delete --all```
+
 ## Campaign Shortcode
 
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
