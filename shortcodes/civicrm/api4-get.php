@@ -185,7 +185,11 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		}
 		catch ( API_Exception $e ) {
 			\Civi::log()
-			     ->error( 'CiviCRM APIv4 shortcode (' . $this->get_shortcode_name() . ') on WordPress Post ID: ' . get_the_ID() . '. CiviCRM error message: ' . $e->getMessage() );
+			     ->error( 'WordPress Post ID: ' . get_the_ID() . '; CiviCRM APIv4 Shortcode: ' . $this->get_shortcode_name() . '; Params: ' . json_encode( $params ) . ';' );
+			\Civi::log()
+			     ->error( $e->getMessage() );
+			\Civi::log()
+			     ->error( $e->getTraceAsString() );
 
 			return '';
 		}
