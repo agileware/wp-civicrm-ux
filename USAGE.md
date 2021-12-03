@@ -190,6 +190,20 @@ Limited format support is available:
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
 
+### CiviCRM API trouble-shooting
+
+If the CiviCRM API shortcode is not evaluating and returning a **blank** result, check the CiviCRM log file for errors. An error message along with a CiviCRM backtrace will be shown.
+
+As the CiviCRM API requests are performed by the logged in user, verify that this user has the requisite permissions for the API request. This can be performed by executing the same command using the WP or CV CLI.
+
+Using the **wp** CLI:
+```wp --user=<WP User Name> cv api4 Contact.get +w id=<Contact ID>```
+
+Using the **cv** CLI:
+```cv --user=<WP User Name> api4 Contact.get +w id=<Contact ID>```
+
+For Access Control, grant all users the CiviCRM permission: ```CiviCRM: access all custom data``` as this is required to view Custom Fields for Contacts. 
+
 ### CiviCRM API caching
 
 CiviCRM API responses are cached as a WordPress transient with a minimum lifetime of 4 hours.
