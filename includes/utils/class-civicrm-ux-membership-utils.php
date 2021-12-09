@@ -128,31 +128,13 @@ class Civicrm_Ux_Membership_Utils {
 	 */
 	static public function isPriceFieldActive( $priceFieldOption ) {
 		$currentDate = new DateTime();
-		$activeOn    = ( isset( $priceFieldOption['price_field_id.active_on'] ) ) ? $priceFieldOption['price_field_id.active_on'] : NULL;
-		$expireOn    = ( isset( $priceFieldOption['price_field_id.expire_on'] ) ) ? $priceFieldOption['price_field_id.expire_on'] : NULL;
+		$activeOn    = $priceFieldOption['price_field_id.active_on'] ?? null;
+		$expireOn    = $priceFieldOption['price_field_id.expire_on'] ?? null;
 
-		$isAfterStartDate = FALSE;
-		$isBeforeEndDate  = FALSE;
+		$isAfterStartDate = ( ! $activeOn ) || ( $currentDate >= DateTime::createFromFormat( 'Y-m-d H:i:s', $activeOn ) );
+		$isBeforeEndDate  = ( ! $expireOn ) || ( $currentDate <  DateTime::createFromFormat( 'Y-m-d H:i:s', $expireOn ) );
 
-		if ( ! $activeOn ) {
-			$isAfterStartDate = TRUE;
-		} else {
-			$activeOn = DateTime::createFromFormat( 'Y-m-d H:i:s', $activeOn );
-			if ( $currentDate >= $activeOn ) {
-				$isAfterStartDate = TRUE;
-			}
-		}
-
-		if ( ! $expireOn ) {
-			$isBeforeEndDate = TRUE;
-		} else {
-			$expireOn = DateTime::createFromFormat( 'Y-m-d H:i:s', $expireOn );
-			if ( $expireOn <= $expireOn ) {
-				$isBeforeEndDate = TRUE;
-			}
-		}
-
-		return ( $isBeforeEndDate && $isAfterStartDate );
+		return $isBeforeEndDate && $isAfterStartDate;
 	}
 
 	static public function membership_check() {
