@@ -1,0 +1,97 @@
+<?php
+
+class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag {
+
+	private $field;
+
+	private static $activity;
+
+	function __construct( $manager, $field = 'id' ) {
+		parent::__construct( $manager );
+
+		$this->field = $field;
+	}
+
+	/**
+	 * The tag name
+	 *
+	 * @return string
+	 */
+	function get_tag_name() {
+		return 'activity:' . $this->field;
+	}
+
+	/**
+	 * The callback function. Should return $value if no changes.
+	 *
+	 * @param string $value
+	 *
+	 * @return string
+	 */
+	function callback( $value ) {
+		$activity_id = $_GET['activity_id'] ?? $_GET['aid'] ?? NULL;
+		$activity_id = CRM_Utils_Type::validate( $activity_id, 'Positive', FALSE );
+
+		if ( ! $activity_id ) {
+			return null;
+		}
+
+		try {
+			$field_name = $this->field == 'activity_date' ? 'activity_date_time' : $this->field;
+
+			$activities = Civi\Api4\Activity::get()
+			                                ->addSelect( $field_name )
+			                                ->addWhere( 'id', '=', $activity_id )
+			                                ->execute();
+
+			$result = $activities[0][ $field_name ];
+
+			if($this->field == 'activity_date') {
+				$result = explode(' ', $result)[0];
+			}
+
+			if(is_array($result)) {
+				$result = implode(",\x1E", $result);
+			}
+
+			return $result;
+		} catch ( API_Exception $e ) {
+			return $e->getMessage();
+		}
+	}
+
+	/**
+	 * Create a list of instances.
+	 */
+	static function getInstances( $manager ) {
+		if ( ! civicrm_initialize() ) {
+			return [];
+		}
+
+		$instances = [];
+
+		try {
+			$fields = Civi\Api4\Activity::getFields( FALSE )
+			                            ->addSelect( 'name', 'suffixes' )
+			                            ->execute();
+
+			foreach ( $fields as $field ) {
+				$instances[] = new static( $manager, $field['name'] );
+
+				foreach ( $field['suffixes'] ?? [] as $suffix ) {
+					$instances[] = new static( $manager, $field['name'] . ':' . $suffix );
+				}
+
+				if($field['name'] == 'activity_date_time') {
+					$instances[] = new static( $manager, 'activity_date' );
+				}
+			}
+
+		} catch ( API_Exception $e ) {
+			// ...
+		}
+
+		return $instances;
+	}
+
+}

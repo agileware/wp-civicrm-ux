@@ -293,7 +293,7 @@ class Civicrm_Ux {
 	 * @since    1.0.0
 	 */
 	public function run() {
-		$this->loader->run();
+		add_action('init', [$this->loader, 'run']);
 	}
 
 	/**
