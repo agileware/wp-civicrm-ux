@@ -160,6 +160,11 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 							          ' alt="' . ( $m['alt'] ? htmlentities( $m['alt'] ) : '" role="presentation' ) .
 							          '">';
 						}
+					} elseif ( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m ) ) {
+						$output = '<img src="' . $output . '"'
+							          . ( $m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '' ) .
+							          ' alt="' . ( $m['alt'] ? htmlentities( $m['alt'] ) : '" role="presentation' ) .
+							          '">';
 					} else {
 						if ( is_array( $output ) ) {
 							$output = implode( ', ', $output );
