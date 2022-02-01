@@ -182,6 +182,8 @@ Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode inst
 
 Implicit joins using Api4 are supported, e.g. `[api4:loc_block_id.address_id.street_address]`
 
+Simple explicit joins are supported by adding `join=EntityName:EntityAlias:JoinType:LeftJoinField:JoinCondition:RightJoinField`, for example for a join of individual contacts onto their organisations `join=Contact:contact:INNER:organization_name:=:contact.display_name`. All fields of the joined contacts will be available at `contact.*`. Details of allowed values for each field can be found using the API explorer. Joins using entity bridges are currently not supported.
+
 Multi-value fields are output as a comma separated list where possible.
 
 Limited format support is available:
