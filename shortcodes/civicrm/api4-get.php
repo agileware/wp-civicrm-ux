@@ -117,7 +117,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		}
 
 		try {
-			$trkey = $this->get_shortcode_name() . '__' . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
+			$trkey = $this->get_shortcode_name() . '__' . md5( $atts['entity'] . ':get:' . json_encode( $params ) . $content );
 
 			$all = get_transient( $trkey );
 
