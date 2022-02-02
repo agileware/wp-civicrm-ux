@@ -29,7 +29,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			];
 
 		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
-		if ( array_key_exists( 'id', $atts ) && ! is_int( $atts['id'] ) && preg_match('{^ (?![_-]) [A-Za-z0-9_-]+ $}x', $atts['id']) ) {
+		if ( array_key_exists( 'id', $atts ) && ( filter_var($atts['id'], FILTER_VALIDATE_INT) === false ) && preg_match('{^ (?![_-]) [A-Za-z0-9_-]+ $}x', $atts['id']) ) {
 			$atts['id'] = (int) $_GET[ $atts['id'] ];
 			if ( $atts['id'] < 1 ) {
 				return __( 'Invalid ID' );
