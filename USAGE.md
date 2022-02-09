@@ -348,16 +348,15 @@ Provides additional Caldera magic tags when using both [Caldera Forms](https://w
 
 1. `{contact:related_subtype}`  
 Return the sub-type of the related contact.  
-This magic tag is designed for a specific website (the relationship type is hardcoded). You can change the code if you know what you are doing.
 
 1. `{contact:subtype}`  
 Return all sub-types of the login user.
 
 1. `{member:membership}`  
-Return all memberships of the login user.
+Will return the membership type name of the current membership of the logged-in user. If there is no current membership, nothing will be returned.   
 
 1. `{member:membership_type}`  
-Return the membership type of the login user. Also work with checksum.
+Will return the membership type name for most recent membership of the logged-in user. If there is a current membership, this will be returned. Otherwise, all other memberships will be checked. If a membership has been Cancelled it will be skipped. If there are no membership records, nothing will be returned.
 
 1. `{member:membership_value}`  
 Return the price field value id of the login user's membership.
