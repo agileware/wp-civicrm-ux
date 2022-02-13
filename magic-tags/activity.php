@@ -2,14 +2,15 @@
 
 class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag {
 
-	private $field;
+	private $field, $data_type;
 
 	private static $activity;
 
-	function __construct( $manager, $field = 'id' ) {
+	function __construct( $manager, $field = 'id', $data_type = 'String' ) {
 		parent::__construct( $manager );
 
-		$this->field = $field;
+		$this->field     = $field;
+		$this->data_type = $data_type;
 	}
 
 	/**
@@ -50,8 +51,15 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 				$result = explode(' ', $result)[0];
 			}
 
-			if(is_array($result)) {
-				$result = implode(",\x1E", $result);
+			if ( is_array( $result ) ) {
+				if ( $this->data_type === 'Boolean' ) {
+					foreach ( $result as $i => $r ) {
+						$result[ $i ] = $r ? 1 : 0;
+					}
+				}
+				$result = implode( ",\x1E", $result );
+			} elseif ( $this->data_type === 'Boolean' ) {
+				$result = $result ? 1 : 0;
 			}
 
 			return $result;
@@ -72,18 +80,18 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 
 		try {
 			$fields = Civi\Api4\Activity::getFields( FALSE )
-			                            ->addSelect( 'name', 'suffixes' )
+			                            ->addSelect( 'name', 'suffixes', 'data_type' )
 			                            ->execute();
 
 			foreach ( $fields as $field ) {
-				$instances[] = new static( $manager, $field['name'] );
+				$instances[] = new static( $manager, $field['name'], $field['data_type'] );
 
 				foreach ( $field['suffixes'] ?? [] as $suffix ) {
-					$instances[] = new static( $manager, $field['name'] . ':' . $suffix );
+					$instances[] = new static( $manager, $field['name'] . ':' . $suffix, 'String' );
 				}
 
 				if($field['name'] == 'activity_date_time') {
-					$instances[] = new static( $manager, 'activity_date' );
+					$instances[] = new static( $manager, 'activity_date', $field['data_type'] );
 				}
 			}
 
