@@ -4,13 +4,19 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 
 	private $field, $data_type;
 
-	private static $activity;
+	private static $activity_id = NULL;
 
 	function __construct( $manager, $field = 'id', $data_type = 'String' ) {
 		parent::__construct( $manager );
 
 		$this->field     = $field;
 		$this->data_type = $data_type;
+
+		$activity_id = $_GET['activity_id'] ?? $_GET['aid'] ?? NULL;
+
+		if ( $activity_id && ! self::$activity_id ) {
+			self::$activity_id = CRM_Utils_Type::validate( $activity_id, 'Positive', FALSE );
+		}
 	}
 
 	/**
@@ -30,11 +36,12 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 	 * @return string
 	 */
 	function callback( $value ) {
-		$activity_id = $_GET['activity_id'] ?? $_GET['aid'] ?? NULL;
-		$activity_id = CRM_Utils_Type::validate( $activity_id, 'Positive', FALSE );
-
-		if ( ! $activity_id ) {
+		if ( ! self::$activity_id ) {
 			return null;
+		}
+
+		if( $this->field == 'id' ) {
+			return self::$activity_id;
 		}
 
 		try {
@@ -42,7 +49,7 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 
 			$activities = Civi\Api4\Activity::get()
 			                                ->addSelect( $field_name )
-			                                ->addWhere( 'id', '=', $activity_id )
+			                                ->addWhere( 'id', '=', self::$activity_id )
 			                                ->execute();
 
 			$result = $activities[0][ $field_name ];
@@ -102,4 +109,7 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 		return $instances;
 	}
 
+	static function getActivityId() {
+		return self::$activity_id;
+	}
 }
