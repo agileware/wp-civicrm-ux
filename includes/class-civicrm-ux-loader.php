@@ -226,8 +226,12 @@ class Civicrm_Ux_Loader {
 				if ( in_array( $interface, class_implements( $className ) )
 				     || is_subclass_of( $className, $interface ) ) {
 					/** @var iCivicrm_Ux_Managed_Instance $instance */
-					$instance = new $className( $manager );
-					$manager->add_instance( $instance );
+					if ( method_exists( $className, 'getInstances' ) ) {
+						array_walk( $className::getInstances( $manager ), [ $manager, 'add_instance' ] );
+					} else {
+						$instance = new $className( $manager );
+						$manager->add_instance( $instance );
+					}
 				}
 			}
 
