@@ -100,7 +100,7 @@ class Civicrm_Ux {
 	 * @since    1.0.0
 	 */
 	private function __construct( $plugin_file ) {
-		$this->version = \get_plugin_data( realpath( $plugin_file ) )['Version'];
+		$this->version = \get_file_data( realpath( $plugin_file ), [ 'Version' => 'Version' ], 'plugin' )['Version'];
 		$this->civicrm_ux = 'civicrm-ux';
         $this->directory = plugin_dir_path( $plugin_file );
 
