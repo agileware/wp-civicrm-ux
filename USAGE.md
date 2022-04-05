@@ -180,6 +180,8 @@ The following example code can be inserted into a WordPress page when using the 
 
 Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
 
+If filtering based on custom fields containing dots is required, it can be specified by using an argument like `[ux_cv_api4_get entity=Event where='field_group.field_name=value']`. If multiple custom fields need to be checked, they can be separated as follows `[ux_cv_api4_get entity=Event where='field_group.field_name1=value1|field_group.field_name2=value2']`.
+
 Implicit joins using Api4 are supported, e.g. `[api4:loc_block_id.address_id.street_address]`
 
 Multi-value fields are output as a comma separated list where possible.
