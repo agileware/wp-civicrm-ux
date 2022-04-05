@@ -72,32 +72,18 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					$params['orderBy'][ $sort ] = $dir;
 					break;
 				case 'where':
-					$wheres = explode( '|', $v);
-					foreach ( $wheres as $where ) {
-						[$k, $v] = explode( '=', $where, 2);
-
-						[ $op, $value ] = explode( ':', $v, 2 );
-						if ( ! $value ) {
-							$value = $op;
-							$op    = '=';
-						}
-
-						if ( preg_match( '{(^|\.|_) id $}x', $k ) &&
-							preg_match( '{^\s* \d+ (\s* , \s* \d+)+ \s* $}x', $value ) ) {
-							$op = [ '!=' => 'NOT IN', '=' => 'IN' ][ $op ] ?? $op;
-						}
-
-						if ( $op == 'IN' || $op == 'NOT IN' ) {
-							$value = array_map( 'trim', explode( ',', $value ) );
-						}
-
-						switch ( $k ) {
-							case 'event_type':
-							case 'financial_type':
-							default:
-								$params['where'][] = [ $k, $op, $value ];
-						}
+					// Convert json to valid format and parse into array
+					$json = strtr($v, '()', '[]');
+					$parsed_json = json_decode($json);
+					// If arrays are not set, create empty arrays
+					if (!isset($params['where'])) {
+						$params['where'] = array();
 					}
+					if ($parsed_json == null) {
+						$parsed_json = array();
+					}
+					// Merge exising and new arguments from json
+					$params['where'] = array_merge($params['where'], $parsed_json);
 					break;
 				default:
 					[ $op, $value ] = explode( ':', $v, 2 );
