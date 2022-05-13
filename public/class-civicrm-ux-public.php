@@ -130,7 +130,12 @@ class Civicrm_Ux_Public {
 	 * @since 1.2.0
 	 */
 	function event_organiser_timezone_filter( $formatted, \DateTime $date, $format, $post_id, $occurrence_id ) {
-		$civi_id = reset( civicrm_eo()->db->get_civi_event_ids_by_eo_event_id( $post_id ) );
+		$ceo = civicrm_eo();
+		if ( method_exists( $ceo->db, 'get_civi_event_ids_by_eo_event_id' ) ) {
+			$civi_id = reset( $ceo->db->get_civi_event_ids_by_eo_event_id( $post_id ) );
+		} else {
+			$civi_id = reset( $ceo->mapping->get_civi_event_ids_by_eo_event_id( $post_id ) );
+		}
 
 		try {
 			$civi_event = $civi_id ? ( \Civi\Api4\Event::get( FALSE )
