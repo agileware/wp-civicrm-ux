@@ -31,7 +31,7 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
     try {
       $results = \Civi\Api4\Event::get()
-        ->addSelect('id', 'title', 'start_date', 'end_date', 'event_tz', 'event_type_id', 'is_online_registration')
+        ->addSelect('id', 'title', 'start_date', 'end_date', 'event_tz', 'event_type_id', 'is_online_registration', 'summary', 'registration_link_text')
         ->addWhere('start_date', '>=', 'today')
         ->addWhere('is_public', '=', TRUE)
         ->addWhere('is_active', '=', TRUE)
@@ -98,21 +98,23 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
     $end_date_text .= ' ' . (!empty($event['event_tz']) ? $event['event_tz'] : CRM_Core_Config::singleton()->userSystem->getTimeZoneString());
 
-    $output = '<div class="civicrm-event-listing-item"><h3 class="civicrm-event-item-header">' . $this->get_event_info_link_html($event['id'], $event['title']) . '</h3><p class="civicrm-event-item-date">' . $start_date_text . $end_date_text . '</p>';
+    $output = '<div class="civicrm-event-listing-item"><h3 class="civicrm-event-item-header">' . $this->get_event_info_link_html($event['id'], $event['title']) . '</h3>' .
+      '<p class="civicrm-event-item-date">' . $start_date_text . $end_date_text . '</p>' .
+      '<p class="civicrm-event-item-summary">' . $event['summary'] . '</p>';
 
     // If on-line registration is enabled display the register now link
     if ($event['is_online_registration']) {
-      $output .= '<p class="civicrm-event-item-register">' . $this->get_event_register_link_html($event['id'], 'Register now') . '</p>';
+      $output .= '<p class="civicrm-event-item-register">' . $this->get_event_register_link_html($event['id'], $event['registration_link_text']) . '</p>';
     }
     $output .= '</div>';
 
     return $output;
   }
 
-  private function get_event_register_link_html(string $event_id) {
+  private function get_event_register_link_html(string $event_id, string $text = 'Register now') {
     // URLs must be absolute as this shortcode may be used by the au.com.agileware.evaluatewpshortcode extension
     $url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event_id],TRUE,NULL,TRUE,TRUE);
-    return '<a target=_blank href="' . $url . '">Register now</a>';
+    return '<a target=_blank href="' . $url . '">' . $text . '</a>';
   }
 
   private function get_event_info_link_html(string $event_id, string $text = 'More information') {
