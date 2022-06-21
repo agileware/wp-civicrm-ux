@@ -117,9 +117,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		}
 
 		try {
-			$trkey = $this->get_shortcode_name() . '__' . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
+			$post_id = get_post()->ID;
+			$post_revision = wp_get_post_revision( $post_id );
+			if ( $post_revision instanceof WP_Post ) {
+				$post_revision = $post_revision->ID . '__';
+			} else {
+				$post_revision = '';
+			}
 
-			$all = get_transient( $trkey );
+			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
+
+			$all = $_GET['reset'] ? FALSE : get_transient( $trkey );
 
 			if ( $all !== FALSE ) {
 				return $all;
