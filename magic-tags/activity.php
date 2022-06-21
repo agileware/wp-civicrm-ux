@@ -1,5 +1,7 @@
 <?php
 
+use Civi\API\Exception\UnauthorizedException;
+
 class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag {
 
 	private $field, $data_type;
@@ -45,17 +47,27 @@ class Civicrm_Ux_Cf_Magic_Tag_Activity extends Abstract_Civicrm_Ux_Cf_Magic_Tag 
 		}
 
 		try {
+			if ( ! CRM_Core_Permission::check( 'view all activities' ) ) {
+				throw new UnauthorizedException( 'Cannot view activities' );
+			}
 			$field_name = $this->field == 'activity_date' ? 'activity_date_time' : $this->field;
 
-			$activities = Civi\Api4\Activity::get()
+			$activities = Civi\Api4\Activity::get( FALSE )
 			                                ->addSelect( $field_name )
-			                                ->addWhere( 'id', '=', self::$activity_id )
-			                                ->execute();
+			                                ->addWhere( 'id', '=', self::$activity_id );
 
-			$result = $activities[0][ $field_name ];
+			if ( ! CRM_Core_Permission::check( 'view all contacts' ) ) {
+				if ( ! CRM_Core_Permission::check( 'view my contact' ) ) {
+					throw new UnauthorizedException( 'Cannot view own contact details' );
+				}
+				$activities->addJoin( 'ActivityContact AS contact', 'INNER', [ 'contact.activity_id', '=', 'id' ] );
+				$activities->addWhere( 'contact.id', '=', CRM_Core_Session::getLoggedInContactID() ?: 0);
+			}
 
-			if($this->field == 'activity_date') {
-				$result = explode(' ', $result)[0];
+			$result = $activities->execute()->first()[ $field_name ] ?? NULL;
+
+			if ( $this->field == 'activity_date' ) {
+				$result = explode( ' ', $result )[0];
 			}
 
 			if ( is_array( $result ) ) {
