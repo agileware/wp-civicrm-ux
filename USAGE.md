@@ -190,6 +190,11 @@ Limited format support is available:
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
 
+Arbitrary API queries are supported using json syntax, as per CiviCRM's API query formatting. Square brackets, double quotes and single quotes should be escaped to their html encodings. For example:
+```
+[ux_cv_api4_get entity=Event json='{&quotwhere&quot : &#91 &#91 &quotid&quot, &quot=&quot, 10 &#93 &#93}' ]
+```
+
 ### CiviCRM API trouble-shooting
 
 If the CiviCRM API shortcode is not evaluating and returning a **blank** result, check the CiviCRM log file for errors. An error message along with a CiviCRM backtrace will be shown.
