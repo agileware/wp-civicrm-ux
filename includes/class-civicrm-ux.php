@@ -31,7 +31,7 @@ class Civicrm_Ux {
 
 	static private $singleton = NULL;
 
-    static private $directory;
+	static private $directory;
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks
@@ -102,7 +102,7 @@ class Civicrm_Ux {
 	private function __construct( $plugin_file ) {
 		$this->version = \get_file_data( realpath( $plugin_file ), [ 'Version' => 'Version' ], 'plugin' )['Version'];
 		$this->civicrm_ux = 'civicrm-ux';
-        $this->directory = plugin_dir_path( $plugin_file );
+		self::$directory = plugin_dir_path( $plugin_file );
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -113,11 +113,11 @@ class Civicrm_Ux {
 		$this->define_rest();
 		$this->define_magic_tag();
 
-        if( !function_exists( 'urlparam' ) && !empty( $this->directory ) ) {
-            include_once( $this->directory . '/packaged/url-params/urlparams.php');
-        }
+		if( !function_exists( 'urlparam' ) && !empty( self::$directory ) ) {
+			include_once( self::$directory . '/packaged/url-params/urlparams.php');
+		}
 
-        $this->loader->add_action( 'init', $this, 'civicrm_init' );
+		$this->loader->add_action( 'init', $this, 'civicrm_init' );
 
 		$this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
 
