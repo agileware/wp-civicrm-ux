@@ -189,6 +189,7 @@ Limited format support is available:
 * Date fields can have their format specified with the same format as [CiviCRM's date display](https://docs.civicrm.org/user/en/latest/initial-set-up/dates/), e.g. `[api4:start_date:%B %E, %Y]`
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
+* Conditional display of fields has some support, using `[api4:display_name|sort_name]` syntax, which will return the `display_name` if defined, then the `sort_name` if defined. Formatting options cannot be applied conditionally, so this should only be used for the same content type (i.e. don't mix text/images in results, as this may apply invalid formatting options).
 
 ### CiviCRM API trouble-shooting
 
