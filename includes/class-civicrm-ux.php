@@ -275,6 +275,9 @@ class Civicrm_Ux {
 	}
 
 	private function define_magic_tag() {
+		if(!class_exists('Caldera_Forms')) {
+			return;
+		}
 
 		$manager = new Civicrm_Ux_Cf_Magic_Tag_Manager( $this );
 
