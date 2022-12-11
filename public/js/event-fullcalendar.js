@@ -8,26 +8,197 @@ const domevent = function(eventName, detail) {
     }
 };
 
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime;
+}
+
+function extractUrlValue(key, url)
+{
+    if (typeof(url) === 'undefined')
+        url = window.location.href;
+    var match = url.match('[?&]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+}
+
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('civicrm-event-fullcalendar');
+    var sources_api_obj = {};
+    var imageFetched = 0;
+
+    
+
+    //
+
+    const sources = {
+        meetings: {
+            url: "/fcvic_sandbox/wp-content/uploads/meetings.ics",
+            format: "ics",
+            category: "meeting",
+            color: "red",
+            textColor: "white"
+        },
+        fundraiser: {
+            url: "/fcvic_sandbox/wp-content/uploads/fundraisers.ics", 
+            format: "ics",
+            category: "fundraiser",
+            color: "yellow",
+            textColor: "black"
+        }
+    }
 
     let calendarParams = ({
         initialView: 'dayGridMonth',
-        events: {
-            url: '/civicrm/event/ical?reset=1&list=1',
-            format: 'ics',
-        },
+        eventSources: [sources.fundraiser, sources.meetings],
         eventTimeFormat: {
             hour: 'numeric',
             minute: '2-digit',
             omitZeroMinute: false,
             meridiem: 'short'
         },
+        customButtons: {
+            sortByType: {
+                text: 'sort by type'
+            },
+            // customPrevYear: {
+            //     text: 'Prev year'
+            // },
+            // customPrevMonth: {
+            //     text: 'Prev month',
+            // },
+            // customNextMonth: {
+            //     text: 'Next month'
+            // },
+            // customNextYear: {
+            //     text: 'Next year'
+            // }
+        },
         headerToolbar: {
-            start: 'title',
+            left: 'dayGridMonth,listMonth sortByType',
             center: '',
-            end: 'dayGridMonth,listMonth,timeGridWeek,timeGridDay today prev,next'
+            end: 'prevYear,prev title next,nextYear'
+            // left: 'title',
+            // center: '',
+            // end: 'dayGridMonth,listMonth,timeGridWeek,timeGridDay,sortByType today prev,next'
+        },
+        buttonText: {
+            dayGridMonth: 'Events',
+            prevYear: '« Previous year',
+            prev: '‹ Previous month',
+            nextYear: 'Next year »',
+            next: 'Next month ›'
+        },
+        buttonIcons: {
+            prevYear: 'chevrons-left',
+            prev: 'chevron-left',
+            nextYear: 'chevrons-right',
+            next: 'chevron-right'
+        },
+        firstDay: 1,
+        eventContent: function(arg) {
+            var sortByTypeBtn = document.querySelector('.fc-sortByType-button');
+            if (sortByTypeBtn) {
+                sortByTypeBtn.remove();
+            }
+            
+        },
+        eventMouseEnter: function(info) {
+            var pos = info.el.getBoundingClientRect();
+
+            var tooltip = document.getElementById("civicrm-ux-event-tooltip");
+            var x = ((pos.left + pos.right) / 2) - 250; 
+            var y = ((pos.bottom + pos.top) / 2) + 100;
+            // tooltip.style.left  = x+"px";
+            // tooltip.style.top  = y+"px";
+
+            const event_color = info.event.extendedProps;
+            const event_id = extractUrlValue('id', info.event.url);
+
+            if (!(imageFetched == event_id)) {
+                imageFetched = event_id;
+                jQuery.ajax({
+                    method : "GET",
+                    dataType : "json",
+                    url : my_ajax_object.ajax_url,
+                    data : {action: "get_thumbnail", event_id : event_id},
+                    success: function(response) {
+                        var event_img = document.getElementById("event-img");
+                        var event_title = document.getElementById("event-name");
+                        var event_time = document.getElementById("event-time-text");
+                        var event_location = document.getElementById("event-location-text");
+
+                        if (response.result['start_date']) {
+
+                        }
+
+                        const event_start = new Date(response.result['start_date']);
+                        const event_end = new Date(response.result['end_date']);
+
+
+                        event_time.innerHTML = formatAMPM(event_start) + ' to ' + formatAMPM(event_end);
+                        event_img.src = '/fcvic_sandbox/wp-content/uploads/civicrm/custom/' + response.result['file.uri'];
+                        event_title.innerHTML = response.result.title;
+                        event_title.style.backgroundColor = event_color;
+                        event_location.innerHTML = response.result['address.city'] + ' ' + response.result['address.country_id:name'];
+                    }
+                })
+            }
+            // tooltip.style.display = "inline-block";
+
+            
+            
+        },
+        eventMouseLeave: function(info) {
+            document.getElementById("civicrm-ux-event-tooltip").style.display = "none";
+        },
+        eventClick: function(eventClickInfo) {
+            var jsEvent = eventClickInfo.jsEvent;
+            jsEvent.preventDefault();
+
+            const event_id = extractUrlValue('id', eventClickInfo.event.url);
+
+
+            jQuery.ajax({
+                method : "GET",
+                dataType : "json",
+                url : my_ajax_object.ajax_url,
+                data : {action: "get_event_info", event_id : event_id},
+                success: function(response) {
+                    var header = document.getElementById("civicrm-ux-event-popup-header");
+                    var summary = document.getElementById("civicrm-ux-event-popup-summary");
+                    var desc = document.getElementById("civicrm-ux-event-popup-desc");
+                    var img = document.getElementById("civicrm-ux-event-popup-img");
+                    var event_type = document.getElementById("civicrm-ux-event-popup-eventtype");
+                    var event_loc = document.getElementById("civicrm-ux-event-popup-location");
+                    var event_time_day = document.getElementById("civicrm-ux-event-popup-time-day");
+                    var event_time_hours = document.getElementById("civicrm-ux-event-popup-time-hours");
+
+                    const event_start = new Date(response.result['start_date']);
+                    const event_end = new Date(response.result['end_date']);
+
+
+                    header.innerHTML = response.result['title'];
+                    summary.innerHTML = response.result['summary'];
+                    desc.innerHTML = response.result['description'];
+                    img.src = '/fcvic_sandbox/wp-content/uploads/civicrm/custom/' + response.result['file.uri'];
+                    event_type.innerHTML = response.result['event_type_id:name'];
+                    event_time_day.innerHTML = days[event_start.getDay()] + ', ' + event_start.getDate() + ' ' + months[event_start.getMonth()] + ' ' + event_start.getFullYear();
+                    event_time_hours.innerHTML = formatAMPM(event_start) + ' to ' + formatAMPM(event_end);
+                }
+            })
+
+            var popup = document.getElementById("civicrm-ux-event-popup");
+            calendarEl.style.display = "none";
+            popup.style.display = "block";
         }
     });
 
@@ -35,6 +206,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const calendar = new FullCalendar.Calendar(calendarEl, calendarParams);
 
+    let sources_tmp = calendar.getEventSources();
+    for (var i = 0; i < sources_tmp.length; i++) {
+        let source = sources_tmp[i];
+        sources_api_obj[source.internalEventSource.extendedProps.category] = source;
+    }
+
     calendarEl.dispatchEvent(domevent('fullcalendar:prerender'));
     calendar.render();
+
+    var sortByTypeBtn = document.querySelector('.fc-sortByType-button');
+    var parent = sortByTypeBtn.parentElement;
+    var sortByTypeSelect = document.createElement('select');
+    sortByTypeSelect.classList.add('fc-button');
+    sortByTypeSelect.classList.add('fc-button-primary');
+    sortByTypeSelect.innerHTML = `<option selected="" value="all">sort by type</option>
+    <option value="conference">Conference</option><option value="meeting">Meeting</option>
+    <option value="fundraiser">Fundraiser</option><option value="workshop">Workshop</option>
+    <option value="performance">Performance</option><option value="exhibition">Exhibition</option>`;
+    sortByTypeSelect.setAttribute("id", "event-selector");
+
+    sortByTypeBtn.style.display = "none";
+    parent.appendChild(sortByTypeSelect);
+
+    // var toolbar = document.querySelector(".fc-header-toolbar");
+    // var toolbar_main = toolbar.querySelector(".fc-toolbar-chunk:last-child");
+    // toolbar_main.style.display = "inline-flex";
+    // toolbar_main.style.marginTop = "50px";
+
+    let selector = document.querySelector("#event-selector");
+
+    selector.addEventListener('change', function() {
+        let val = selector.value;
+
+        if (!(val == "all")) {
+            var sources = calendar.getEventSources();
+            var foundType = false;
+            for (var i = 0; i < sources.length; i++) {
+                var source = sources[i];
+                let cat = source.internalEventSource.extendedProps.category
+                if (cat != val) {
+                    source.remove();
+                } else {
+                    foundType = true;
+                }
+
+                if (!foundType) {
+                    calendar.addEventSource(sources_api_obj[val]);
+                }
+            }
+        } else {
+            for (var key in sources_api_obj) {
+                if (sources_api_obj.hasOwnProperty(key)) {
+                    calendar.addEventSource(sources_api_obj[key]);
+                }
+            }
+        }
+
+
+        
+        calendar.refetchEvents();
+    });
+
+
+
+    var event_popup_x = document.getElementById("civicrm-ux-event-popup-close");
+    if (event_popup_x) {
+        event_popup_x.addEventListener("click", function(){
+            document.getElementById("civicrm-ux-event-popup").style.display = "none";
+            calendarEl.style.display = "flex";
+        });    
+    }
 });
