@@ -39,6 +39,10 @@ class Civicrm_Ux_REST_ICal_Feed_External extends Abstract_Civicrm_Ux_REST {
 			$types         = explode( ',', $types );
 			$opts['types'] = $types;
 		}
+		if ( $data->get_param( 'start_date' ) ) {
+			$start_date = $data->get_param( 'start_date' );
+			$opts['start_date'] = $start_date;
+		}
 		print Civicrm_Ux_Event_Utils::createICalObject( $opts );
 		exit();
 	}

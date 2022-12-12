@@ -26,7 +26,7 @@ class Civicrm_Ux_Event_Utils {
 			'sequential' => 1,
 			'is_public'  => 1,
 			'is_active'  => 1,
-			'start_date' => [ '>' => "now" ],
+			'start_date' => [ '>' => $opts['start_date'] ? $opts['start_date'] : "now" ],
 		];
 		// Get all counted participant status
 		$counted_type = [];

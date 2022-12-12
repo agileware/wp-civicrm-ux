@@ -47,6 +47,7 @@ class Civicrm_Ux_Shortcode_Event_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode
 		// override default attributes with user attributes
 		$mod_atts = shortcode_atts( [
 			'type' => '',
+			'start_date' => 'now'
 		], $atts, $tag );
 
 		$url = add_query_arg( $mod_atts, get_rest_url( null, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );
