@@ -69,26 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
             sortByType: {
                 text: 'sort by type'
             },
-            // customPrevYear: {
-            //     text: 'Prev year'
-            // },
-            // customPrevMonth: {
-            //     text: 'Prev month',
-            // },
-            // customNextMonth: {
-            //     text: 'Next month'
-            // },
-            // customNextYear: {
-            //     text: 'Next year'
-            // }
         },
         headerToolbar: {
             left: 'dayGridMonth,listMonth sortByType',
             center: '',
             end: 'prevYear,prev title next,nextYear'
-            // left: 'title',
-            // center: '',
-            // end: 'dayGridMonth,listMonth,timeGridWeek,timeGridDay,sortByType today prev,next'
         },
         buttonText: {
             dayGridMonth: 'Events',
@@ -109,57 +94,68 @@ document.addEventListener('DOMContentLoaded', function() {
             if (sortByTypeBtn) {
                 sortByTypeBtn.remove();
             }
-            
+
+            let eventHolder = document.createElement('div');
+            eventHolder.classList.add('event-holder');
+            eventHolder.style.backgroundColor = arg.backgroundColor;
+            eventHolder.style.color = arg.textColor;
+            eventHolder.innerHTML = '<div class="fc-event-time">' + arg.timeText + '</div><div class="fc-event-title">' + arg.event.title + '</div>';
+
+            let arrayOfDomNodes = [ eventHolder ]
+            return { domNodes: arrayOfDomNodes }
         },
-        eventMouseEnter: function(info) {
-            var pos = info.el.getBoundingClientRect();
 
-            var tooltip = document.getElementById("civicrm-ux-event-tooltip");
-            var x = ((pos.left + pos.right) / 2) - 250; 
-            var y = ((pos.bottom + pos.top) / 2) + 100;
-            // tooltip.style.left  = x+"px";
-            // tooltip.style.top  = y+"px";
+        eventDidMount: function(info) {
+            var event_img;
+            var event_title;
+            var event_time;
+            var event_location;
 
-            const event_color = info.event.extendedProps;
             const event_id = extractUrlValue('id', info.event.url);
 
-            if (!(imageFetched == event_id)) {
-                imageFetched = event_id;
-                jQuery.ajax({
-                    method : "GET",
-                    dataType : "json",
-                    url : my_ajax_object.ajax_url,
-                    data : {action: "get_thumbnail", event_id : event_id},
-                    success: function(response) {
-                        var event_img = document.getElementById("event-img");
-                        var event_title = document.getElementById("event-name");
-                        var event_time = document.getElementById("event-time-text");
-                        var event_location = document.getElementById("event-location-text");
+            console.log(info);
 
-                        if (response.result['start_date']) {
-
-                        }
-
-                        const event_start = new Date(response.result['start_date']);
-                        const event_end = new Date(response.result['end_date']);
+            jQuery.ajax({
+                method : "GET",
+                dataType : "json",
+                url : my_ajax_object.ajax_url,
+                data : {action: "get_thumbnail", event_id : event_id},
+                success: function(response) {
 
 
-                        event_time.innerHTML = formatAMPM(event_start) + ' to ' + formatAMPM(event_end);
-                        event_img.src = '/fcvic_sandbox/wp-content/uploads/civicrm/custom/' + response.result['file.uri'];
-                        event_title.innerHTML = response.result.title;
-                        event_title.style.backgroundColor = event_color;
-                        event_location.innerHTML = response.result['address.city'] + ' ' + response.result['address.country_id:name'];
-                    }
-                })
-            }
-            // tooltip.style.display = "inline-block";
 
+                    const event_start = new Date(response.result['start_date']);
+                    const event_end = new Date(response.result['end_date']);
+
+
+                    event_time = formatAMPM(event_start) + ' to ' + formatAMPM(event_end);
+                    event_img = '/fcvic_sandbox/wp-content/uploads/civicrm/custom/' + response.result['file.uri'];
+                    event_title = response.result.title;
+                    event_location = response.result['address.city'] + ' ' + response.result['address.country_id:name'];
+
+                    var template = `<div class="tooltip">
+                        <div id="event-name">` + info.event.title + `</div>`;
+
+                    template += response.result['file.uri'] ? '<img id="event-img" src="' + event_img + '">' : '';
+                    template += `<div id="event-time"><i class="fa fa-clock-o"></i><span id="event-time-text"> ` + event_time + `</span></div>
+                        <div id="event-location"><i class="fa fa-map-marker-alt"></i><span id="event-location-text">` + event_location + `</span></div>
+                        </div>`
+                       
+
+                    var tooltip = new Tooltip(info.el, {
+                        html: true,
+                        template: template,
+                        title: info.event.title,
+                        placement: 'top',
+                        trigger: 'hover',
+                        container: 'body'
+                    });
+                }
+            })
             
-            
+
         },
-        eventMouseLeave: function(info) {
-            document.getElementById("civicrm-ux-event-tooltip").style.display = "none";
-        },
+
         eventClick: function(eventClickInfo) {
             var jsEvent = eventClickInfo.jsEvent;
             jsEvent.preventDefault();
@@ -228,11 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     sortByTypeBtn.style.display = "none";
     parent.appendChild(sortByTypeSelect);
-
-    // var toolbar = document.querySelector(".fc-header-toolbar");
-    // var toolbar_main = toolbar.querySelector(".fc-toolbar-chunk:last-child");
-    // toolbar_main.style.display = "inline-flex";
-    // toolbar_main.style.marginTop = "50px";
 
     let selector = document.querySelector("#event-selector");
 

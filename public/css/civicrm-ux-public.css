@@ -227,26 +227,17 @@ div.civicrm-event-listing-item {
     font-size: 13px !important;
 }
 
-
-
-#civicrm-ux-event-tooltip {
+.tooltip {
     height: 200px;
     width: 150px;
     background-color: #f0e8ce;
     border-radius: 10px 10px 10px 10px;
-    position:absolute;
-    z-index:10001;
-    margin-left:200px !important;
-    display: none;
     transition: 0.2s;
+    z-index: 1;
 }
 
-#civicrm-ux-event-tooltip .fc-event:hover {
-    display: inline-block;
-    
-}
 
-#civicrm-ux-event-tooltip img {
+.tooltip img {
     max-width: 90%;
     max-height: 50px;
     height: auto;
@@ -256,7 +247,7 @@ div.civicrm-event-listing-item {
 
 
 
-#civicrm-ux-event-tooltip:before {
+.tooltip:before {
     content: "";
     position: absolute;
     top: 100%;
@@ -265,6 +256,12 @@ div.civicrm-event-listing-item {
     border-top: 20px solid #f0e8ce;
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
+}
+
+.event-holder {
+    overflow: hidden;
+    padding: 3px 3px 3px 3px;
+    border-radius: 3px 3px 3px 3px;
 }
 
 #event-name {
