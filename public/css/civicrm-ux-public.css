@@ -3,81 +3,78 @@
  * included in this file.
  */
 
-.civicrm-event-listing h2, .civicrm-event-listing h3,
-.civicrm-event-listing p {
-    margin: 0;
-}
-
-.civicrm-event-listing p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.civicrm-event-listing h3 {
-    font-size: 18px;
-}
-
-div.civicrm-event-listing-item {
-    margin: 0 0 1.8em 0;
-}
-
-/* Campaign shortcodes */
-.campaign-meter {
-    width: 100%;
-    background-color: #e0e0e0;
-    padding: 3px;
-    border-radius: 3px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
-}
-
-.campaign-meter > span {
-    display: block;
-    height: 22px;
-    background-color: #659cef;
-    border-radius: 3px;
-
-    transition: width 500ms ease-in-out;
-}
-
-.campaign-bold {
-    font-weight: 700;
-}
-
-.campaign-raised {
-    font-size: 3.75em;
-    font-weight: 500;
-    line-height: normal;
-}
-
-.campaign-honour-item {
-    display: flex;
-    height: 3rem;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
-}
-
-.campaign-honour-item:nth-child(odd) {
-    background-color: #f2f2f2;
-}
-
-.campaign-honour-item-info, .campaign-honour-item-amount {
-    flex: 0 0 40%;
-}
-
-.campaign-honour-item-info {
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.campaign-honour-item-amount {
-    text-align: right;
-    font-size: 32px;
-    font-weight: 800;
-}
-
-/*Chrush Statistics*/
-.civicrm-activities-wrap label {
-    display: block;
-}
+ .civicrm-event-listing h2, .civicrm-event-listing h3,
+ .civicrm-event-listing p {
+     margin: 0;
+ }
+ 
+ .fc-h-event {
+     border: none !important;
+ }
+ 
+ @media screen and (max-width: 600px) {
+   .fc-view-harness {
+     height: 64vh !important;
+   }
+ }
+ 
+ /* Campaign shortcodes */
+ .campaign-meter {
+     width: 100%;
+     background-color: #e0e0e0;
+     padding: 3px;
+     border-radius: 3px;
+     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+ }
+ 
+ .campaign-meter > span {
+     display: block;
+     height: 22px;
+     background-color: #659cef;
+     border-radius: 3px;
+ 
+     transition: width 500ms ease-in-out;
+ }
+ 
+ .campaign-bold {
+     font-weight: 700;
+ }
+ 
+ .campaign-raised {
+     font-size: 3.75em;
+     font-weight: 500;
+     line-height: normal;
+ }
+ 
+ .campaign-honour-item {
+     display: flex;
+     height: 3rem;
+     justify-content: space-between;
+     align-items: center;
+     padding: 0 10px;
+ }
+ 
+ .campaign-honour-item:nth-child(odd) {
+     background-color: #f2f2f2;
+ }
+ 
+ .campaign-honour-item-info, .campaign-honour-item-amount {
+     flex: 0 0 40%;
+ }
+ 
+ .campaign-honour-item-info {
+     font-size: 14px;
+     font-weight: 700;
+     text-transform: uppercase;
+ }
+ 
+ .campaign-honour-item-amount {
+     text-align: right;
+     font-size: 32px;
+     font-weight: 800;
+ }
+ 
+ /*Chrush Statistics*/
+ .civicrm-activities-wrap label {
+     display: block;
+ }

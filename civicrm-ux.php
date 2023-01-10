@@ -78,4 +78,7 @@ function run_civicrm_ux() {
 
 }
 
+define('WP_CIVICRM_UX_PLUGIN_NAME', basename(plugin_dir_path(__FILE__ )) );
+define( 'WP_CIVICRM_UX_PLUGIN_URL', plugins_url('', dirname(__FILE__) ) . '/');
+
 run_civicrm_ux();

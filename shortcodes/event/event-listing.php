@@ -30,7 +30,7 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
     ], $atts, $tag);
 
     try {
-      $results = \Civi\Api4\Event::get()
+      $results = \Civi\Api4\Event::get(FALSE)
         ->addSelect('id', 'title', 'start_date', 'end_date', 'event_tz', 'event_type_id', 'is_online_registration', 'summary', 'registration_link_text')
         ->addWhere('start_date', '>=', 'today')
         ->addWhere('is_public', '=', TRUE)
