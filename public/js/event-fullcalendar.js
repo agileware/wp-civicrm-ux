@@ -77,36 +77,8 @@ const domevent = function (eventName, detail) {
     const calendarEl = document.getElementById("civicrm-event-fullcalendar");
   
     // ColoUr scheme for different event type labels
-    const colors = {
-      CPD: {
-        color: "#52246d",
-        textColor: "white",
-      },
-      "Board meeting": {
-        color: "#c45472",
-        textColor: "white",
-      },
-      "Agency Managers meeting": {
-        color: "#ce8d8b",
-        textColor: "white",
-      },
-      "Working Group": {
-        color: "#ca78b1",
-        textColor: "white",
-      },
-      Networks: {
-        color: "#ac5653",
-        textColor: "white",
-      },
-      Conference: {
-        color: "#e27270",
-        textColor: "white",
-      },
-      Meeting: {
-        color: "#a04486",
-        textColor: "white",
-      },
-    };
+    const colors = wp_site_obj.colors;
+    const event_types = wp_site_obj.types.split(',');
   
     /* 
       This object defines the custom parameters for FullCalendar's library incl. buttons, logic, views
@@ -122,8 +94,9 @@ const domevent = function (eventName, detail) {
             url: wp_site_obj.ajax_url,
             data: {
               action: "get_events_all",
-              type: "CPD,Board meeting,Agency Managers meeting,Working Group,Networks,Conference,Meeting",
-              start_date: new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0], // 1 year previously
+              type: wp_site_obj.types,
+              start_date: wp_site_obj.start,
+              image_id_field: wp_site_obj.image_id_field
             },
             // Store events in client's browser after success to prevent further AJAX requests
             success: function (response) {
@@ -168,7 +141,7 @@ const domevent = function (eventName, detail) {
       },
       firstDay: 1,
       // Event render hooks (eventContent, eventDidMount, eventClick) define the custom logic for FCVIC's fullcalendar
-        
+      
       // Content injection to change the colour of event labels (by type)
       eventContent: function (arg) {
         let selector_val = document.querySelector("#event-selector").value;
@@ -180,11 +153,9 @@ const domevent = function (eventName, detail) {
           let eventHolder = document.createElement("div");
           eventHolder.classList.add("event-holder");
           eventHolder.style.backgroundColor =
-            colors[arg.event.extendedProps.event_type].color;
+            Object.keys(colors).length > 0 ? '#' + colors[arg.event.extendedProps.event_type] : '#333333';
           eventHolder.innerHTML =
-            '<div style="line-height: 1;" class="fc-event-title"><a style="font-size: 11px; font-weight: normal; text-decoration: none; color: ' +
-            colors[arg.event.extendedProps.event_type].textColor +
-            ';" href="' +
+            '<div style="line-height: 1;" class="fc-event-title"><a style="font-size: 11px; font-weight: normal; text-decoration: none; color: white;" href="' +
             arg.event.url +
             '">' +
             arg.event.title +
@@ -202,7 +173,6 @@ const domevent = function (eventName, detail) {
         const event_start = new Date(info.event.start);
         const event_end = new Date(info.event.end);
         const day_start = formatDay(event_start);
-  
         if (info.view.type == "listMonth") {
           if (prev_rendered_date != event_start.getDate()) {
             prev_rendered_date = event_start.getDate;
@@ -253,7 +223,7 @@ const domevent = function (eventName, detail) {
           selector_val == info.event.extendedProps.event_type
         ) {
           let event_img =
-            wp_site_obj.upload.baseurl +
+            wp_site_obj.upload +
             "/" +
             info.event.extendedProps["file.uri"];
           let event_title = info.event.title;
@@ -288,30 +258,12 @@ const domevent = function (eventName, detail) {
                               : ""
                           }</div>
                           <div class="civicrm-ux-event-listing-type" style="background-color: ${
-                            colors[info.event.extendedProps.event_type].color
-                          };">${
-              info.event.extendedProps.level
-                ? info.event.extendedProps.level + " SESSION"
-                : info.event.extendedProps.event_type
-            }</div>
+                            Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
+                          };">${info.event.extendedProps.event_type}</div>
                           <div class="civicrm-ux-event-listing-name">${event_title}</div>
                           <div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">${event_time}</span></div>
                           <div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker-alt"></i>&nbsp;&nbsp;<span id="event-time-text">${event_location}</span></div>
-                          <div class="civicrm-ux-event-listing-cpd-points">${
-                            info.event.extendedProps.cpd_points > 0
-                              ? '<i class="fa fa-check-square"></i>&nbsp;&nbsp;<span id="event-time-text">' +
-                                info.event.extendedProps.cpd_points +
-                                " CPD Points</span>"
-                              : ""
-                          }${
-              info.event.extendedProps.category.length > 0
-                ? '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-flag"></i>&nbsp;&nbsp;' +
-                  info.event.extendedProps.category.join([separator = ', '])
-                : ""
-            }</div>
-                          <div class="civicrm-ux-event-listing-register" onclick="window.location.href='${
-                            info.event.url
-                          }';">Click here to register</div>
+                          ${info.event.extendedProps.is_online_registration ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' + info.event.url + '\'">Click here to register</div>'  : ''}
                           <div class="civicrm-ux-event-listing-desc">${
                             info.event._def.extendedProps.description
                               ? info.event._def.extendedProps.description
@@ -323,10 +275,12 @@ const domevent = function (eventName, detail) {
           } else {
             event_title = info.event.title;
             event_location = info.event.extendedProps.country;
+
+            console.log(info.event.extendedProps["file.uri"]);
   
             const template = `
                       <div style="background-color: ${
-                        colors[info.event.extendedProps.event_type].color
+                        Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
                       }" id="event-name">${info.event.title}</div>
                       ${
                         info.event.extendedProps["file.uri"]
@@ -380,9 +334,6 @@ const domevent = function (eventName, detail) {
         let event_loc = document.getElementById(
           "civicrm-ux-event-popup-location-txt"
         );
-        let event_cpd = document.getElementById(
-          "civicrm-ux-event-popup-cpd-points"
-        );
         let event_time_day = document.getElementById(
           "civicrm-ux-event-popup-time-day"
         );
@@ -411,14 +362,14 @@ const domevent = function (eventName, detail) {
         summary.innerHTML = eventClickInfo.event.extendedProps["summary"];
         desc.innerHTML = eventClickInfo.event.extendedProps["description"];
         img.src =
-          wp_site_obj.upload.baseurl +
+          wp_site_obj.upload +
           "/" +
           eventClickInfo.event.extendedProps["file.uri"];
         event_type.innerHTML = eventClickInfo.event.extendedProps.level
           ? eventClickInfo.event.extendedProps.level + " SESSION"
           : eventClickInfo.event.extendedProps["event_type"];
         event_type.style.backgroundColor =
-          colors[eventClickInfo.event.extendedProps.event_type].color;
+          Object.keys(colors).length > 0 ? '#' + colors[eventClickInfo.event.extendedProps.event_type] : '#333333';
         event_time_day.innerHTML =
           days[event_start.getDay()] +
           ", " +
@@ -430,19 +381,14 @@ const domevent = function (eventName, detail) {
         event_loc.innerHTML = event_location;
         event_time_hours.innerHTML =
           formatAMPM(event_start) + " to " + formatAMPM(event_end);
+        if (eventClickInfo.event.extendedProps.is_online_registration) {
+          register.style.display = "initial";
+        } else {
+          register.style.display = "none";
+        }
         register.onclick = function () {
           window.location.href = eventClickInfo.event.url;
         };
-        event_cpd.innerHTML =
-          eventClickInfo.event.extendedProps.cpd_points > 0
-            ? '<i class="fa fa-check-square"></i>&nbsp;&nbsp;' +
-              eventClickInfo.event.extendedProps.cpd_points +
-              " CPD Points"
-            : "";
-        event_cpd.innerHTML += eventClickInfo.event.extendedProps.category.length > 0
-          ? '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-flag"></i>&nbsp;&nbsp;' +
-            eventClickInfo.event.extendedProps.category.join([separator = ', '])
-          : "";
   
         if (eventClickInfo.event.extendedProps["file.uri"]) {
           img.style.display = "block";
@@ -467,10 +413,10 @@ const domevent = function (eventName, detail) {
     let sortByTypeSelect = document.createElement("select");
     sortByTypeSelect.classList.add("fc-button");
     sortByTypeSelect.classList.add("fc-button-primary");
-    sortByTypeSelect.innerHTML = `<option selected="" value="all">sort by type</option>
-      <option value="CPD">CPD</option><option value="Board meeting">Board meeting</option>
-      <option value="Agency Managers meeting">Agency Managers meeting</option><option value="Working Group">Working Group</option>
-      <option value="Networks">Networks</option><option value="Conference">Conferences</option><option value="Meeting">Meeting</option>`;
+    sortByTypeSelect.innerHTML = '<option selected value="all">Sort by type</option>';
+    for (let i = 0; i < event_types.length; i++) {
+      sortByTypeSelect.innerHTML += '<option value="' + event_types[i] + '">' + event_types[i] + '</option>';
+    }
     sortByTypeSelect.setAttribute("id", "event-selector");
   
     sortByTypeBtn.style.display = "none";

@@ -78,4 +78,109 @@ function run_civicrm_ux() {
 
 }
 
+
+/*
+   AJAX handler to retreive all CiviCRM events and their properties
+   with specified start date and event types
+*/
+
+function get_events_all() {
+	$types = explode(',', $_REQUEST['type']);
+	$start_date = $_REQUEST['start_date'];
+
+	$res = array('success' => true);
+
+	try {
+		$events = array();
+		if ($_REQUEST['image_id_field'] != "") {
+			$image_id_field = $_REQUEST['image_id_field'];
+
+			$events = \Civi\Api4\Event::get()
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.uri', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label')
+                ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
+                ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
+                ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
+                ->addWhere('event_type_id:label', 'IN', $types)
+                ->addWhere('start_date', '>', $start_date)
+				->execute();
+
+			$res['result'] = array();
+
+
+			foreach ($events as $event) {
+				$event_obj = array(
+					'id' => $event['id'],
+					'title' => $event['title'],
+					'start' => date(DATE_ISO8601, strtotime($event['start_date'])),
+					'end' => date(DATE_ISO8601, strtotime($event['end_date'])),
+					'display' => 'auto',
+					'startStr' => $event['start_date'],
+					'endStr' => $event['end_date'],
+					'url' => get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'],
+					'extendedProps' => array(
+						'summary' => $event['summary'],
+						'description' => $event['description'],
+						'event_type' => $event['event_type_id:label'],
+						'file.uri' => $event['file.uri'],
+						'street_address' => $event['address.street_address'],
+						'street_number' => $event['address.street_number'],
+						'street_number_suffix' => $event['address.street_number_suffix'],
+						'street_name' => $event['address.street_name'],
+						'street_type' => $event['address.street_type'],
+						'country' => $event['address.country_id:label'],
+					)
+				);
+				array_push($res['result'], $event_obj);
+			}
+		} else {
+			$events = \Civi\Api4\Event::get()
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
+                ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
+                ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
+                ->addWhere('event_type_id:label', 'IN', $types)
+                ->addWhere('start_date', '>', $start_date)
+				->execute();
+
+			$res['result'] = array();
+
+
+			foreach ($events as $event) {
+				$event_obj = array(
+					'id' => $event['id'],
+					'title' => $event['title'],
+					'start' => date(DATE_ISO8601, strtotime($event['start_date'])),
+					'end' => date(DATE_ISO8601, strtotime($event['end_date'])),
+					'display' => 'auto',
+					'startStr' => $event['start_date'],
+					'endStr' => $event['end_date'],
+					'url' => get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'],
+					'extendedProps' => array(
+						'summary' => $event['summary'],
+						'description' => $event['description'],
+						'event_type' => $event['event_type_id:label'],
+						'street_address' => $event['address.street_address'],
+						'street_number' => $event['address.street_number'],
+						'street_number_suffix' => $event['address.street_number_suffix'],
+						'street_name' => $event['address.street_name'],
+						'street_type' => $event['address.street_type'],
+						'country' => $event['address.country_id:label'],
+						'is_online_registration' => $event['is_online_registration']
+					)
+				);
+				array_push($res['result'], $event_obj);
+			}
+                
+        }
+	} catch (CiviCRM_API4_Exception $e) {
+		$res['err'] = $e;
+	}
+
+	echo json_encode($res);
+	wp_die();
+
+}
+
+add_action( 'wp_ajax_get_events_all', 'get_events_all' );
+add_action( 'wp_ajax_nopriv_get_events_all', 'get_events_all' );
+
 run_civicrm_ux();

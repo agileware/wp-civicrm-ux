@@ -16,6 +16,34 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
+		global $wpdb;
+
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		$types = $wpdb->get_row("SELECT GROUP_CONCAT(Label SEPARATOR ',') AS EventTypes FROM `civicrm_option_value` AS ov INNER JOIN civicrm_option_group AS og ON og.id=ov.option_group_id WHERE og.name='event_type';")->EventTypes;
+
+		$wporg_atts = shortcode_atts(
+			array(
+				'types' => $types,
+				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom'
+			), $atts, $tag
+		);
+
+		$colors = array();
+
+		if (isset($atts['colors'])) {
+			$colors_arr = explode(',', $atts['colors']);
+			$types_arr = explode(',', $wporg_atts['types']);
+			for ($i = 0; $i < count($colors_arr); $i++) {
+				if ($i >= count($types_arr)) {
+					break;
+				}
+				$colors[$types_arr[$i]] = $colors_arr[$i];
+			}
+		}
+
+		
+
 		wp_enqueue_script( 'ical', 'https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.js', [] );
 		wp_enqueue_script( 'fullcalendar-base', 'https://cdn.jsdelivr.net/combine/npm/fullcalendar@5.9.0/main.js', [] );
 		wp_enqueue_script( 'popper', 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js', [] );
@@ -26,9 +54,11 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		wp_enqueue_script( 'ux-fullcalendar', plugin_dir_url( dirname( __FILE__ ) . '/../../..' ) . 'public/js/event-fullcalendar.js', [ 'fullcalendar-ical' ], '1.7.0' );
 		wp_localize_script( 'ux-fullcalendar', 'wp_site_obj',
             array( 'ajax_url' => admin_url( 'admin-ajax.php'), 
-            	'upload' => wp_upload_dir(),
-            	'meetings' => 'meetings.ics', 
-            	'fundraisers' => 'fundraisers.ics'));
+            	'upload' => $wporg_atts['upload'],
+            	'types' => $wporg_atts['types'], 
+            	'colors' => $colors,
+				'start' => isset($wporg_atts['start']) ? $wporg_atts['start'] : date('Y-m-d', strtotime('-1 year')),
+			    'image_id_field' => $atts['image_id_field']));
 
 
 
@@ -51,10 +81,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				<i class="fa fa-map-marker-alt"></i>
 				<span id="civicrm-ux-event-popup-location-txt"></span>
 			</div>
-			<div id="civicrm-ux-event-popup-cpd-points"></div>
-			<div id="civicrm-ux-event-popup-register">Click here to register</div>
+			<div id="civicrm-ux-event-popup-register" style="display: none;">Click here to register</div>
 			<h4 id="civicrm-ux-event-popup-summary"></h4>
-			
 			<p id="civicrm-ux-event-popup-desc"></p>
 		</div></div>';
 	}
