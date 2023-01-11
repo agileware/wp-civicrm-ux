@@ -95,9 +95,10 @@ function get_events_all() {
 		$events = array();
 		if ($_REQUEST['image_id_field'] != "") {
 			$image_id_field = $_REQUEST['image_id_field'];
+			$image_src_field = $_REQUEST['image_src_field'];
 
 			$events = \Civi\Api4\Event::get()
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.uri', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
                 ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
@@ -128,7 +129,7 @@ function get_events_all() {
 						'summary' => $event['summary'],
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
-						'file.uri' => $event['file.uri'],
+						'file.uri' => $event[$image_src_field],
 						'street_address' => $event['address.street_address'],
 						'street_number' => $event['address.street_number'],
 						'street_number_suffix' => $event['address.street_number_suffix'],

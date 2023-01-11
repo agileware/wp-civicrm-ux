@@ -103,6 +103,7 @@ const domevent = function (eventName, detail) {
               type: wp_site_obj.types,
               start_date: wp_site_obj.start,
               image_id_field: wp_site_obj.image_id_field,
+              image_src_field: wp_site_obj.image_src_field,
               force_log_in: wp_site_obj.force_log_in
             },
             // Store events in client's browser after success to prevent further AJAX requests

@@ -26,7 +26,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			array(
 				'types' => $types,
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
-				'force_login' => true
+				'force_login' => true,
+				'image_src_field' => 'file.uri'
 			), $atts, $tag
 		);
 
@@ -60,6 +61,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
             	'colors' => $colors,
 				'start' => isset($wporg_atts['start']) ? $wporg_atts['start'] : date('Y-m-d', strtotime('-1 year')),
 			    'image_id_field' => $atts['image_id_field'],
+				'image_src_field' => $wporg_atts['image_id_field'],
 				'force_login' => $wporg_atts['force_login']));
 
 
