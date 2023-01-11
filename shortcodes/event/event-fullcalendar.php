@@ -78,7 +78,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				<span id="civicrm-ux-event-popup-time-hours"><span>
 			</div>
 			<div id="civicrm-ux-event-popup-location">
-				<i class="fa fa-map-marker-alt"></i>
+				<i class="fa fa-map-marker"></i>
 				<span id="civicrm-ux-event-popup-location-txt"></span>
 			</div>
 			<div id="civicrm-ux-event-popup-register" style="display: none;">Click here to register</div>

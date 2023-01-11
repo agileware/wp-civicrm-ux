@@ -262,7 +262,7 @@ const domevent = function (eventName, detail) {
                           };">${info.event.extendedProps.event_type}</div>
                           <div class="civicrm-ux-event-listing-name">${event_title}</div>
                           <div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">${event_time}</span></div>
-                          <div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker-alt"></i>&nbsp;&nbsp;<span id="event-time-text">${event_location}</span></div>
+                          <div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;<span id="event-time-text">${event_location}</span></div>
                           ${info.event.extendedProps.is_online_registration ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' + info.event.url + '\'">Click here to register</div>'  : ''}
                           <div class="civicrm-ux-event-listing-desc">${
                             info.event._def.extendedProps.description
@@ -290,7 +290,7 @@ const domevent = function (eventName, detail) {
                       <div id="event-time"><i class="fa fa-clock-o"></i>&nbsp;<span id="event-time-text">${
                         formatAMPM(event_start) + " to " + formatAMPM(event_end)
                       }</span></div>
-                      <div id="event-location"><i class="fa fa-map-marker-alt"></i>&nbsp;<span id="event-location-text">${event_location}</span></div>
+                      <div id="event-location"><i class="fa fa-map-marker"></i>&nbsp;<span id="event-location-text">${event_location}</span></div>
                       `;
   
             let tooltip = new tippy(info.el, {
