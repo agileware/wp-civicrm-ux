@@ -87,6 +87,7 @@ function run_civicrm_ux() {
 function get_events_all() {
 	$types = explode(',', $_REQUEST['type']);
 	$start_date = $_REQUEST['start_date'];
+	$force_log_in = $_REQUEST['force_log_in'];
 
 	$res = array('success' => true);
 
@@ -108,6 +109,12 @@ function get_events_all() {
 
 
 			foreach ($events as $event) {
+				$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'];
+
+				if (!is_user_logged_in() and $force_log_in) {
+					$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
+				}
+
 				$event_obj = array(
 					'id' => $event['id'],
 					'title' => $event['title'],
@@ -116,7 +123,7 @@ function get_events_all() {
 					'display' => 'auto',
 					'startStr' => $event['start_date'],
 					'endStr' => $event['end_date'],
-					'url' => get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'],
+					'url' => $url,
 					'extendedProps' => array(
 						'summary' => $event['summary'],
 						'description' => $event['description'],
@@ -146,6 +153,12 @@ function get_events_all() {
 
 
 			foreach ($events as $event) {
+				$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'];
+
+				if (!is_user_logged_in() and $force_log_in) {
+					$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
+				}
+
 				$event_obj = array(
 					'id' => $event['id'],
 					'title' => $event['title'],
@@ -154,7 +167,7 @@ function get_events_all() {
 					'display' => 'auto',
 					'startStr' => $event['start_date'],
 					'endStr' => $event['end_date'],
-					'url' => get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'],
+					'url' => $url,
 					'extendedProps' => array(
 						'summary' => $event['summary'],
 						'description' => $event['description'],

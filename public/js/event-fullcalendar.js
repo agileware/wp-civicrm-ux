@@ -26,6 +26,12 @@ const domevent = function (eventName, detail) {
     const strTime = hours + ":" + minutes + " " + ampm;
     return strTime;
   }
+
+  function sameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  }
   
   // Used to convert an index to a day-of-the-week/month
   // E.g. days[Date.getDay()] => days[1] => Monday 
@@ -96,7 +102,8 @@ const domevent = function (eventName, detail) {
               action: "get_events_all",
               type: wp_site_obj.types,
               start_date: wp_site_obj.start,
-              image_id_field: wp_site_obj.image_id_field
+              image_id_field: wp_site_obj.image_id_field,
+              force_log_in: wp_site_obj.force_log_in
             },
             // Store events in client's browser after success to prevent further AJAX requests
             success: function (response) {
@@ -117,7 +124,7 @@ const domevent = function (eventName, detail) {
       },
       customButtons: {
         sortByType: {
-          text: "Sort by type",
+          text: "Sort by type: Filter by Event Type",
         },
       },
       headerToolbar: {
@@ -126,8 +133,8 @@ const domevent = function (eventName, detail) {
         end: "prevYear,prev title next,nextYear",
       },
       buttonText: {
-        dayGridMonth: "Events",
-        listMonth: "List",
+        dayGridMonth: "Events: Calendar View",
+        listMonth: "List: List View",
         prevYear: "« Previous year",
         prev: "‹ Previous month",
         nextYear: "Next year »",
@@ -173,6 +180,8 @@ const domevent = function (eventName, detail) {
         const event_start = new Date(info.event.start);
         const event_end = new Date(info.event.end);
         const day_start = formatDay(event_start);
+        const day_end = formatDay(event_end);
+
         if (info.view.type == "listMonth") {
           if (prev_rendered_date != event_start.getDate()) {
             prev_rendered_date = event_start.getDate;
@@ -242,13 +251,17 @@ const domevent = function (eventName, detail) {
               : "Online";
           }
   
-          const event_time =
+          let event_time =
             "&nbsp;&nbsp;" +
             day_start +
             '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="event-time-text">' +
             formatAMPM(event_start) +
             " to " +
             formatAMPM(event_end);
+
+          if (!sameDay(event_start, event_end)) {
+            event_time = "&nbsp;&nbsp;" + day_start + "&nbsp;&nbsp;" + formatAMPM(event_start) + " to " + day_end + "&nbsp;&nbsp;" + formatAMPM(event_end);
+          }
   
           if (info.view.type == "listMonth") {
             const template = `<div class="civicrm-ux-event-listing">
@@ -276,8 +289,6 @@ const domevent = function (eventName, detail) {
             event_title = info.event.title;
             event_location = info.event.extendedProps.country;
 
-            console.log(info.event.extendedProps["file.uri"]);
-  
             const template = `
                       <div style="background-color: ${
                         Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
@@ -334,11 +345,8 @@ const domevent = function (eventName, detail) {
         let event_loc = document.getElementById(
           "civicrm-ux-event-popup-location-txt"
         );
-        let event_time_day = document.getElementById(
-          "civicrm-ux-event-popup-time-day"
-        );
-        let event_time_hours = document.getElementById(
-          "civicrm-ux-event-popup-time-hours"
+        let event_time = document.getElementById(
+          "civicrm-ux-event-popup-time"
         );
   
         let event_location = eventClickInfo.event.extendedProps.street_address
@@ -370,17 +378,14 @@ const domevent = function (eventName, detail) {
           : eventClickInfo.event.extendedProps["event_type"];
         event_type.style.backgroundColor =
           Object.keys(colors).length > 0 ? '#' + colors[eventClickInfo.event.extendedProps.event_type] : '#333333';
-        event_time_day.innerHTML =
-          days[event_start.getDay()] +
-          ", " +
-          event_start.getDate() +
-          " " +
-          months[event_start.getMonth()] +
-          " " +
-          event_start.getFullYear();
+
+          event_time.innerHTML = '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;<span style="font-family: sans-serif;">' + formatDay(event_start) + '<span>&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span style="font-family: sans-serif;">' + formatAMPM(event_start) + " to " + formatAMPM(event_end) + '</span>';
+
+          if (!sameDay(event_start, event_end)) {
+          event_time.innerHTML = '<i class="fa fa-calendar-o"><span style="font-family: sans-serif;">&nbsp;&nbsp;' + formatDay(event_start) + "&nbsp;&nbsp;" + formatAMPM(event_start) + " to " + formatDay(event_end) + "&nbsp;&nbsp;" + formatAMPM(event_end) + '</span>';
+          }
+
         event_loc.innerHTML = event_location;
-        event_time_hours.innerHTML =
-          formatAMPM(event_start) + " to " + formatAMPM(event_end);
         if (eventClickInfo.event.extendedProps.is_online_registration) {
           register.style.display = "block";
         } else {
@@ -413,7 +418,7 @@ const domevent = function (eventName, detail) {
     let sortByTypeSelect = document.createElement("select");
     sortByTypeSelect.classList.add("fc-button");
     sortByTypeSelect.classList.add("fc-button-primary");
-    sortByTypeSelect.innerHTML = '<option selected value="all">Sort by type</option>';
+    sortByTypeSelect.innerHTML = '<option selected value="all">Sort by type: Filter by Event Type</option>';
     for (let i = 0; i < event_types.length; i++) {
       sortByTypeSelect.innerHTML += '<option value="' + event_types[i] + '">' + event_types[i] + '</option>';
     }

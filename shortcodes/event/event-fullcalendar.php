@@ -25,7 +25,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		$wporg_atts = shortcode_atts(
 			array(
 				'types' => $types,
-				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom'
+				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
+				'force_login' => true
 			), $atts, $tag
 		);
 
@@ -58,7 +59,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
             	'types' => $wporg_atts['types'], 
             	'colors' => $colors,
 				'start' => isset($wporg_atts['start']) ? $wporg_atts['start'] : date('Y-m-d', strtotime('-1 year')),
-			    'image_id_field' => $atts['image_id_field']));
+			    'image_id_field' => $atts['image_id_field'],
+				'force_login' => $wporg_atts['force_login']));
 
 
 
@@ -72,10 +74,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			<div id="civicrm-ux-event-popup-eventtype"></div>
 			<h2 id="civicrm-ux-event-popup-header"></h2>
 			<div id="civicrm-ux-event-popup-time">
-				<i class="fa fa-calendar-o"></i>
-				<span id="civicrm-ux-event-popup-time-day"></span>
-				<i class="fa fa-clock-o"></i>
-				<span id="civicrm-ux-event-popup-time-hours"><span>
 			</div>
 			<div id="civicrm-ux-event-popup-location">
 				<i class="fa fa-map-marker"></i>
