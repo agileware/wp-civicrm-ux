@@ -384,7 +384,7 @@ const domevent = function (eventName, detail) {
         if (eventClickInfo.event.extendedProps.is_online_registration) {
           register.style.display = "initial";
         } else {
-          register.style.display = "none";
+          register.style.display = "block";
         }
         register.onclick = function () {
           window.location.href = eventClickInfo.event.url;
