@@ -10,6 +10,16 @@ Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive cale
 
 ![](images/example-calendar.png)
 
+### Optional fullcalendar shortcode attributes
+
+You can include additional parameters in the fullcalendar shortcode to limit the scope of events shown on the calendar or to add extra visual features (colors, images) that are not included out-of-the-box. None of these additional parameters are strictly required.
+- *types* is a comma-separated list that can be used to show only events of the type specified. E.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition"]` will only show events that are workshops, meetings or exhibitions. By default FullCalendar will simply use all event types on your system.
+- *colors* is a comma-separated list of HEX codes that can be used to apply a background color to each event type label. Do *not* include the leading `#` character in this list. E.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the HEX codes #52246d, #c45472 and #ce8d8b to the event types Workshop, Meeting and Exhibition respectively. It is not necessary to also include the *types* parameter in the shortcode, but it is best-practice
+- *start* is the date from which active events will be displayed. For example `[ux_event_fullcalendar start="2021-01-01"]` will show only events from the 1st of Jan 2021 onwards. If this parameter is not specified FullCalendar will use the current date 1 year ago as the default start date.
+- *image_id_field* if you have a custom CiviCRM events field for event images/thumbnails you can include the name of the custom options group & field to display them as a thumbnail. For example, if you have a custom events field called 'Upload' under the custom option group 'Thumbnail_upload' you would include it the shortcode like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload"]`.
+  - *upload*: specifies the upload directory where event images are located. By default this is set as the CiviCRM custom uploads folder (the directory where image uploads from custom fields are placed) but if your images are placed in another folder (for example, the default Wordpress uploads directory) you can specify this like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload" upload="http://example.com/wp-content/uploads"]`
+
+
 ## CiviCRM APIv4 Shortcode
 
 The CiviCRM APIv4 is directly accessible using the `[ux_cv_api4_get]` WordPress shortcode. You can use the CiviCRM APIv4 Explorer to understand how to query CiviCRM using the APIv4.
