@@ -18,6 +18,7 @@ You can include additional parameters in the fullcalendar shortcode to limit the
 - *start* is the date from which active events will be displayed. For example `[ux_event_fullcalendar start="2021-01-01"]` will show only events from the 1st of Jan 2021 onwards. If this parameter is not specified FullCalendar will use the current date 1 year ago as the default start date.
 - *force_login*: true or false. This option will force anonymous users to log in before registering for an event.
 - *image_id_field* if you have a custom CiviCRM events field for event images/thumbnails you can include the name of the custom options group & field to display them as a thumbnail. For example, if you have a custom events field called 'Upload' under the custom option group 'Thumbnail_upload' you would include it the shortcode like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload"]`.
+  - *img_src_field* the field containing the filename and relative path with respect to upload folder (see below). By default this field is 'file.uri' and should not be overwritten unless you use a different field name.
   - *upload*: specifies the upload directory where event images are located. By default this is set as the CiviCRM custom uploads folder (the directory where image uploads from custom fields are placed) but if your images are placed in another folder (for example, the default Wordpress uploads directory) you can specify this like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload" upload="http://example.com/wp-content/uploads"]`
 
 
