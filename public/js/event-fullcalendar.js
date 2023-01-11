@@ -382,9 +382,9 @@ const domevent = function (eventName, detail) {
         event_time_hours.innerHTML =
           formatAMPM(event_start) + " to " + formatAMPM(event_end);
         if (eventClickInfo.event.extendedProps.is_online_registration) {
-          register.style.display = "initial";
-        } else {
           register.style.display = "block";
+        } else {
+          register.style.display = "none";
         }
         register.onclick = function () {
           window.location.href = eventClickInfo.event.url;
