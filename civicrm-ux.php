@@ -96,7 +96,7 @@ function get_events_all() {
 			$image_id_field = $_REQUEST['image_id_field'];
 
 			$events = \Civi\Api4\Event::get()
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.uri', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label')
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.uri', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
                 ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
@@ -128,6 +128,7 @@ function get_events_all() {
 						'street_name' => $event['address.street_name'],
 						'street_type' => $event['address.street_type'],
 						'country' => $event['address.country_id:label'],
+						'is_online_registration' => $event['is_online_registration']
 					)
 				);
 				array_push($res['result'], $event_obj);
