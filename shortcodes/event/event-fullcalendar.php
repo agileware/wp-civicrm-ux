@@ -27,7 +27,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'types' => $types,
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
 				'force_login' => true,
-				'image_src_field' => 'file.uri'
+				'image_src_field' => 'file.uri',
+				'extra_fields' => ''
 			), $atts, $tag
 		);
 
@@ -62,7 +63,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'start' => isset($wporg_atts['start']) ? $wporg_atts['start'] : date('Y-m-d', strtotime('-1 year')),
 			    'image_id_field' => $atts['image_id_field'],
 				'image_src_field' => $wporg_atts['image_src_field'],
-				'force_login' => $wporg_atts['force_login']));
+				'force_login' => $wporg_atts['force_login'],
+				'extra_fields' => $wporg_atts['extra_fields']));
 
 
 
@@ -71,19 +73,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
 		<div id="civicrm-ux-event-popup-container">
 		<div id="civicrm-ux-event-popup">
-			<button id="civicrm-ux-event-popup-close">&times;</button>
-			<img id="civicrm-ux-event-popup-img" src="">
-			<div id="civicrm-ux-event-popup-eventtype"></div>
-			<h2 id="civicrm-ux-event-popup-header"></h2>
-			<div id="civicrm-ux-event-popup-time">
-			</div>
-			<div id="civicrm-ux-event-popup-location">
-				<i class="fa fa-map-marker"></i>
-				<span id="civicrm-ux-event-popup-location-txt"></span>
-			</div>
-			<div id="civicrm-ux-event-popup-register" style="display: none;">Click here to register</div>
-			<h4 id="civicrm-ux-event-popup-summary"></h4>
-			<p id="civicrm-ux-event-popup-desc"></p>
+			<button onclick="hidePopup()" id="civicrm-ux-event-popup-close">&times;</button>
+			<div id="civicrm-ux-event-popup-content"></div>
 		</div></div>';
 	}
 }

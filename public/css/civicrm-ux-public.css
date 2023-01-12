@@ -18,6 +18,13 @@
    }
  }
  
+.civicrm-ux-event-listing-image img {
+	display:block;
+	margin-top: 30px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
  .civicrm-ux-event-listing-name {
      font-size: 22px;
      margin-bottom: 10px;
@@ -280,7 +287,7 @@
  }
  
  .fc-button-group {
-     width: 28.5% !important;
+     width: 33% !important;
  }
  
  .fc-button {

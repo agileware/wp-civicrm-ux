@@ -27,6 +27,11 @@ const domevent = function (eventName, detail) {
     return strTime;
   }
 
+  function hidePopup() {
+    document.getElementById("civicrm-ux-event-popup").style.display = "none";
+    document.getElementById("civicrm-event-fullcalendar").style.display = "flex";
+  }
+
   function sameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
@@ -101,10 +106,13 @@ const domevent = function (eventName, detail) {
             data: {
               action: "get_events_all",
               type: wp_site_obj.types,
+              upload: wp_site_obj.upload,
+              colors: colors,
               start_date: wp_site_obj.start,
               image_id_field: wp_site_obj.image_id_field,
               image_src_field: wp_site_obj.image_src_field,
-              force_log_in: wp_site_obj.force_log_in
+              force_login: wp_site_obj.force_login,
+              extra_fields: wp_site_obj.extra_fields
             },
             // Store events in client's browser after success to prevent further AJAX requests
             success: function (response) {
@@ -180,8 +188,6 @@ const domevent = function (eventName, detail) {
   
         const event_start = new Date(info.event.start);
         const event_end = new Date(info.event.end);
-        const day_start = formatDay(event_start);
-        const day_end = formatDay(event_end);
 
         if (info.view.type == "listMonth") {
           if (prev_rendered_date != event_start.getDate()) {
@@ -236,59 +242,13 @@ const domevent = function (eventName, detail) {
             wp_site_obj.upload +
             "/" +
             info.event.extendedProps["file.uri"];
-          let event_title = info.event.title;
-          const event_id = info.event.id;
   
-          let event_location = info.event.extendedProps.street_address
-            ? info.event.extendedProps.street_address + ", "
-            : "";
-          event_location += info.event.extendedProps.country
-            ? info.event.extendedProps.country
-            : "";
-  
-          if (info.event.extendedProps.zoom == "1") {
-            event_location = info.event.extendedProps.country
-              ? "Online, " + info.event.extendedProps.country
-              : "Online";
-          }
-  
-          let event_time =
-            "&nbsp;&nbsp;" +
-            day_start +
-            '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="event-time-text">' +
-            formatAMPM(event_start) +
-            " to " +
-            formatAMPM(event_end);
-
-          if (!sameDay(event_start, event_end)) {
-            event_time = "&nbsp;&nbsp;" + day_start + "&nbsp;&nbsp;" + formatAMPM(event_start) + " to " + day_end + "&nbsp;&nbsp;" + formatAMPM(event_end);
-          }
   
           if (info.view.type == "listMonth") {
-            const template = `<div class="civicrm-ux-event-listing">
-                          <div class="civicrm-ux-event-listing-image">${
-                            info.event.extendedProps["file.uri"]
-                              ? '<img src="' + event_img + '">'
-                              : ""
-                          }</div>
-                          <div class="civicrm-ux-event-listing-type" style="background-color: ${
-                            Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
-                          };">${info.event.extendedProps.event_type}</div>
-                          <div class="civicrm-ux-event-listing-name">${event_title}</div>
-                          <div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">${event_time}</span></div>
-                          <div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;<span id="event-time-text">${event_location}</span></div>
-                          ${info.event.extendedProps.is_online_registration ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' + info.event.url + '\'">Click here to register</div>'  : ''}
-                          <div class="civicrm-ux-event-listing-desc">${
-                            info.event._def.extendedProps.description
-                              ? info.event._def.extendedProps.description
-                              : "No event description provided"
-                          }</div>
-                          <hr>
-                      </div>`;
+            const template = info.event.extendedProps.html_render;
             info.el.innerHTML = template;
           } else {
-            event_title = info.event.title;
-            event_location = info.event.extendedProps.country;
+            const event_location = info.event.extendedProps.country;
 
             const template = `
                       <div style="background-color: ${
@@ -326,81 +286,16 @@ const domevent = function (eventName, detail) {
         let jsEvent = eventClickInfo.jsEvent;
         jsEvent.preventDefault();
   
-        const event_id = eventClickInfo.event.id;
         let event_container = document.getElementById(
           "civicrm-ux-event-popup-container"
         );
         let popup = document.getElementById("civicrm-ux-event-popup");
+        let popup_container = document.getElementById("civicrm-ux-event-popup-content");
         event_container.style.display = "none";
         calendarEl.style.display = "none";
         popup.style.display = "block";
+        popup_container.innerHTML = eventClickInfo.event.extendedProps.html_render;
   
-        let header = document.getElementById("civicrm-ux-event-popup-header");
-        let summary = document.getElementById("civicrm-ux-event-popup-summary");
-        let desc = document.getElementById("civicrm-ux-event-popup-desc");
-        let register = document.getElementById("civicrm-ux-event-popup-register");
-        let img = document.getElementById("civicrm-ux-event-popup-img");
-        let event_type = document.getElementById(
-          "civicrm-ux-event-popup-eventtype"
-        );
-        let event_loc = document.getElementById(
-          "civicrm-ux-event-popup-location-txt"
-        );
-        let event_time = document.getElementById(
-          "civicrm-ux-event-popup-time"
-        );
-  
-        let event_location = eventClickInfo.event.extendedProps.street_address
-          ? eventClickInfo.event.extendedProps.street_address + ", "
-          : "";
-        event_location += eventClickInfo.event.extendedProps.country
-          ? eventClickInfo.event.extendedProps.country
-          : "";
-  
-        if (eventClickInfo.event.extendedProps.zoom == "1") {
-          event_location = eventClickInfo.event.extendedProps.country
-            ? "Online, " + eventClickInfo.event.extendedProps.country
-            : "Online";
-        }
-  
-        const event_start = new Date(eventClickInfo.event["start"]);
-        const event_end = new Date(eventClickInfo.event["end"]);
-        header.innerHTML = eventClickInfo.event["title"];
-        event_type.style.backgroundColor =
-          eventClickInfo.el.firstChild.style.backgroundColor;
-        summary.innerHTML = eventClickInfo.event.extendedProps["summary"];
-        desc.innerHTML = eventClickInfo.event.extendedProps["description"];
-        img.src =
-          wp_site_obj.upload +
-          "/" +
-          eventClickInfo.event.extendedProps["file.uri"];
-        event_type.innerHTML = eventClickInfo.event.extendedProps.level
-          ? eventClickInfo.event.extendedProps.level + " SESSION"
-          : eventClickInfo.event.extendedProps["event_type"];
-        event_type.style.backgroundColor =
-          Object.keys(colors).length > 0 ? '#' + colors[eventClickInfo.event.extendedProps.event_type] : '#333333';
-
-          event_time.innerHTML = '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;<span style="font-family: sans-serif;">' + formatDay(event_start) + '<span>&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span style="font-family: sans-serif;">' + formatAMPM(event_start) + " to " + formatAMPM(event_end) + '</span>';
-
-          if (!sameDay(event_start, event_end)) {
-          event_time.innerHTML = '<i class="fa fa-calendar-o"><span style="font-family: sans-serif;">&nbsp;&nbsp;' + formatDay(event_start) + "&nbsp;&nbsp;" + formatAMPM(event_start) + " to " + formatDay(event_end) + "&nbsp;&nbsp;" + formatAMPM(event_end) + '</span>';
-          }
-
-        event_loc.innerHTML = event_location;
-        if (eventClickInfo.event.extendedProps.is_online_registration) {
-          register.style.display = "block";
-        } else {
-          register.style.display = "none";
-        }
-        register.onclick = function () {
-          window.location.href = eventClickInfo.event.url;
-        };
-  
-        if (eventClickInfo.event.extendedProps["file.uri"]) {
-          img.style.display = "block";
-        } else {
-          img.style.display = "none";
-        }
         event_container.style.display = "block";
       },
     };
@@ -413,7 +308,7 @@ const domevent = function (eventName, detail) {
   
     calendarEl.dispatchEvent(domevent("fullcalendar:prerender"));
     calendar.render();
-  
+
     let sortByTypeBtn = document.querySelector(".fc-sortByType-button");
     let parent = sortByTypeBtn.parentElement;
     let sortByTypeSelect = document.createElement("select");
@@ -433,13 +328,5 @@ const domevent = function (eventName, detail) {
     selector.addEventListener("change", function () {
       calendar.refetchEvents();
     });
-  
-    let event_popup_x = document.getElementById("civicrm-ux-event-popup-close");
-    if (event_popup_x) {
-      event_popup_x.addEventListener("click", function () {
-        document.getElementById("civicrm-ux-event-popup").style.display = "none";
-        calendarEl.style.display = "flex";
-      });
-    }
   });
   

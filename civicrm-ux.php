@@ -85,9 +85,11 @@ function run_civicrm_ux() {
 */
 
 function get_events_all() {
-	$types = explode(',', $_REQUEST['type']);
-	$start_date = $_REQUEST['start_date'];
-	$force_log_in = $_REQUEST['force_log_in'];
+	$types = explode(',', filter_var($_REQUEST['type'], FILTER_SANITIZE_STRING));
+	$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
+	$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
+	$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
+	
 
 	$res = array('success' => true);
 
@@ -98,7 +100,7 @@ function get_events_all() {
 			$image_src_field = $_REQUEST['image_src_field'];
 
 			$events = \Civi\Api4\Event::get()
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
@@ -108,11 +110,14 @@ function get_events_all() {
 
 			$res['result'] = array();
 
+			$colors = $_REQUEST['colors'];
+
 
 			foreach ($events as $event) {
-				$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'];
+				//$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id']; 
+				$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
 
-				if (!is_user_logged_in() and $force_log_in) {
+				if (!is_user_logged_in() and $force_login) {
 					$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
 				}
 
@@ -126,6 +131,7 @@ function get_events_all() {
 					'endStr' => $event['end_date'],
 					'url' => $url,
 					'extendedProps' => array(
+						'html_render' => generate_event_html($event, $_REQUEST['upload'], $colors, $image_src_field, $url),
 						'summary' => $event['summary'],
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
@@ -136,14 +142,22 @@ function get_events_all() {
 						'street_name' => $event['address.street_name'],
 						'street_type' => $event['address.street_type'],
 						'country' => $event['address.country_id:label'],
-						'is_online_registration' => $event['is_online_registration']
+						'is_online_registration' => $event['is_online_registration'],
+						'extra_fields' => array()
 					)
 				);
+
+				for ($i = 0; $i < count($extra_fields); $i++) {
+					$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
+				}
+
+				$event_obj = apply_filters( 'event_page_inject_content', $event_obj );
+
 				array_push($res['result'], $event_obj);
 			}
 		} else {
 			$events = \Civi\Api4\Event::get()
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration')
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
                 ->addWhere('event_type_id:label', 'IN', $types)
@@ -154,9 +168,9 @@ function get_events_all() {
 
 
 			foreach ($events as $event) {
-				$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id'];
+				$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
 
-				if (!is_user_logged_in() and $force_log_in) {
+				if (!is_user_logged_in() and $force_login) {
 					$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
 				}
 
@@ -170,6 +184,7 @@ function get_events_all() {
 					'endStr' => $event['end_date'],
 					'url' => $url,
 					'extendedProps' => array(
+						'html_render' => generate_event_html($event, $_REQUEST['upload'], json_decode($_REQUEST['colors']), $image_src_field, $url),
 						'summary' => $event['summary'],
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
@@ -179,9 +194,17 @@ function get_events_all() {
 						'street_name' => $event['address.street_name'],
 						'street_type' => $event['address.street_type'],
 						'country' => $event['address.country_id:label'],
-						'is_online_registration' => $event['is_online_registration']
+						'is_online_registration' => $event['is_online_registration'],
+						'extra_fields' => $array()
 					)
 				);
+
+				for ($i = 0; $i < count($extra_fields); $i++) {
+					$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
+				}
+
+				$event_obj = apply_filters( 'event_page_inject_content', $event_obj );
+
 				array_push($res['result'], $event_obj);
 			}
                 
@@ -195,7 +218,59 @@ function get_events_all() {
 
 }
 
+function formatDay($date) {
+	return $date->format('l') . ', ' . $date->format('j') . ' ' . $date->format('F') . ' ' . $date->format('Y');
+}
+
+function formatAMPM($date) {
+	return $date->format('g') . ':' . $date->format('i') . ' ' . $date->format('A');
+}
+
+function sameDay($d1, $d2) {
+	return ($d1->format('j') == $d2->format('j')) &&  ($d1->format('f') == $d2->format('f')) && ($d1->format('Y') == $d2->format('Y'));
+}
+
 add_action( 'wp_ajax_get_events_all', 'get_events_all' );
 add_action( 'wp_ajax_nopriv_get_events_all', 'get_events_all' );
+
+function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
+	$date_start = date_create($event['start_date']);
+	$date_end = date_create($event['end_date']);
+
+	$event_start_day = formatDay($date_start);
+	$event_end_day = formatDay($date_end);
+	
+	$event_start_hour = formatAMPM($date_start);
+	$event_end_hour = formatAMPM($date_end);
+
+	$event_time = '&nbsp;&nbsp;' . $event_start_day . '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="event-time-text">' . $event_start_hour . ' to ' . $event_end_hour;
+
+	if (!sameDay($date_start, $date_end)) {
+		$event_time = '&nbsp;&nbsp;' . $event_start_day . '&nbsp;&nbsp;' . $event_start_hour . " to " . $event_end_day . '&nbsp;&nbsp;' . $event_end_hour;
+	}
+
+	$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
+	$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
+
+	$template = '<div class="civicrm-ux-event-listing">';
+	$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $upload . '/' . $event[$image_src_field] . '"></div>' : '';
+		
+	$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: ' . (count($colors) > 0 ? '#' . $colors[$event['event_type_id:label']] : '#333333') . ';">' . $event['event_type_id:label'] . '</div>
+		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
+		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">' . $event_time . '</span></div>
+		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;<span id="event-time-text">' . $event_location . '</span></div>';
+
+	$template .= $event['is_online_registration'] ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' . $url . '\'">Click here to register</div>'  : '';
+	$template .= '<div class="civicrm-ux-event-listing-desc">';
+	$template .= $event['description'] ? $event['description'] . '</div>' : 'No event description provided</div>
+	<hr>
+	</div>';
+
+	return $template;
+}
+
+
+
+
 
 run_civicrm_ux();
