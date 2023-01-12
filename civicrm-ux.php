@@ -89,6 +89,12 @@ function get_events_all() {
 	$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
 	$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
 	$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
+	$colors = $_REQUEST['colors'];
+	$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+
+	foreach ($colors as $k => $v) {
+		$colors[$k] = sanitize_hex_color_no_hash($v);
+	}
 	
 
 	$res = array('success' => true);
@@ -110,7 +116,7 @@ function get_events_all() {
 
 			$res['result'] = array();
 
-			$colors = $_REQUEST['colors'];
+			
 
 
 			foreach ($events as $event) {
@@ -131,7 +137,7 @@ function get_events_all() {
 					'endStr' => $event['end_date'],
 					'url' => $url,
 					'extendedProps' => array(
-						'html_render' => generate_event_html($event, $_REQUEST['upload'], $colors, $image_src_field, $url),
+						'html_render' => generate_event_html($event, $upload, $colors, $image_src_field, $url),
 						'summary' => $event['summary'],
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
@@ -151,7 +157,7 @@ function get_events_all() {
 					$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
 				}
 
-				$event_obj = apply_filters( 'event_page_inject_content', $event_obj );
+				$event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
 
 				array_push($res['result'], $event_obj);
 			}
@@ -184,7 +190,7 @@ function get_events_all() {
 					'endStr' => $event['end_date'],
 					'url' => $url,
 					'extendedProps' => array(
-						'html_render' => generate_event_html($event, $_REQUEST['upload'], json_decode($_REQUEST['colors']), $image_src_field, $url),
+						'html_render' => generate_event_html($event, $upload, $colors, $image_src_field, $url),
 						'summary' => $event['summary'],
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
@@ -203,7 +209,7 @@ function get_events_all() {
 					$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
 				}
 
-				$event_obj = apply_filters( 'event_page_inject_content', $event_obj );
+				$event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
 
 				array_push($res['result'], $event_obj);
 			}
