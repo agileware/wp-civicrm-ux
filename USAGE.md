@@ -306,16 +306,42 @@ Return the membership summary of the login user.
 1. `[ux_membership_type]`  
 Return the membership type of the login user.
 
-## CiviCRM Data List using the CiviCRM Data Processor Shortcode
+## CiviCRM Data Processor Shortcode
+
+This shortcode will output a [CiviCRM Data Processor](https://lab.civicrm.org/extensions/dataprocessor), in a table format. The Data Processor being used must have a API output defined and for this API output, the  API Entity must also be set.
 
 `[ux_civicrm_listing]`
- - **dpid**: data processor id
- - **limit**: the limit of result default is 0(no limit)
- - **sort**: the order of result
- - **autopop_user_id**: get the logged in user id and pass it to the parameter. State the parameter name, like *contact_id*
- - **format**: default is table
- 
-This shortcode requires the [CiviCRM Data Processor](https://lab.civicrm.org/extensions/dataprocessor) extension to be installed on the CiviCRM site.
+ - **dpid**: Data Processor ID
+ - **limit**: the limit of result default is 0 (no limit)
+ - **sort**: the order of result, either: asc (ascending) or desc (descending)
+ - **autopop_user_id**: return the logged-in user ID and passas a parameter to the Data Processor. Define the parameter name, like *contact_id*
+ - **hide_fields**: comma separated list of fields to be excluded from the output.
+ - **css_id**: CSS ID to assign to the table.
+
+The example usage below uses a Data Processor with the ID of 4, excludes the contact_id column from display and assigns the CSS ID of member_directory to the table.
+
+[Datatables](https://datatables.net/) can be used to add features to the table displayed on the page, as shown below. 
+
+```
+[ux_civicrm_listing dpid=4 autopop_user_id=0 hide_fields=contact_id css_id=member_directory format=datatable][/ux_civicrm_listing]
+
+<script type="text/javascript" src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js" id="datatable-js-js"></script>
+
+<script type="text/javascript">
+        jQuery(document).ready(function () {
+            jQuery('#member_directory').DataTable({
+                'paging': true,
+                'pageLength': 50,
+                order: [[0, 'asc']],
+                columns: [
+                    { title: 'Member Name' },
+                    { title: 'Country' },
+                ],
+            });
+        });
+</script>
+```
+
 
 ## Activity Shortcode
 
