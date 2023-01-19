@@ -26,8 +26,12 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'limit'  => 0,
 			'format' => 'default',
 			'sort'   => '',
+			'hide_fields' => '',
+			'css_id' => '',
 			'autopop_user_id' => false
 		], $atts, $tag );
+
+		$hide_fields = explode(',', $mod_atts['hide_fields']);
 
 		// get data processor information
 		try {
@@ -55,6 +59,10 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		}
 		$header = $header['values'];
 
+		foreach ( $hide_fields as $hide_field ) {
+			unset($header[$hide_field]);
+		}
+
 		// the main data
 		$params = [
 			'sequential' => 1,
@@ -81,22 +89,26 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			return "CiviCRM API error.";
 		}
 
-		return $this->render( $result, $header, $content, $mod_atts['format'] );
+		foreach ( $hide_fields as $hide_field ) {
+			foreach($result['values'] as &$value) { unset($value[$hide_field]); }
+		}
+
+    return $this->render( $result, $header, $content, $mod_atts['format'],$mod_atts['css_id']);
 	}
 
-	function render( $info, $header, $template = null, $format = 'default' ) {
+	function render( $info, $header, $template = null, $format = 'default', $css_id = null ) {
 		if ( count( $info ) == 0 ) {
 			return "empty data";
 		}
 
 		switch ( $format ) {
 			default:
-				return $this->renderTable( $info['values'], $template, $header );
+				return $this->renderTable( $info['values'], $template, $header, $css_id);
 				break;
 		}
 	}
 
-	function renderTable( $values, $template, $header ) {
+	function renderTable( $values, $template, $header, $css_id) {
 		$header_html = "";
 		$tbody_html  = "";
 		foreach ( $header as $key => $value ) {
@@ -124,7 +136,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 
 			$tbody_html .= "<tr>$row_html</tr>";
 		}
-		$html = "<table class='ux-cv-listing'><thead>$header_html</thead><tbody>$tbody_html</tbody></table>";
+		$html = "<table id='$css_id' class='ux-cv-listing'><thead>$header_html</thead><tbody>$tbody_html</tbody></table>";
 
 		return $html;
 	}
