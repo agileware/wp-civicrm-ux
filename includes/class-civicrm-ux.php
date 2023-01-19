@@ -264,7 +264,7 @@ class Civicrm_Ux {
 
 		$shortcode_manager = new Civicrm_Ux_Shortcode_Manager( $this );
 
-		$shortcode_manager->register_shortcodes();
+		$this->loader->add_action( 'init', $shortcode_manager, 'register_shortcodes' );
 	}
 
 	private function define_rest() {
@@ -296,7 +296,7 @@ class Civicrm_Ux {
 	 * @since    1.0.0
 	 */
 	public function run() {
-		add_action('init', [$this->loader, 'run']);
+		add_action('plugins_loaded', [$this->loader, 'run']);
 	}
 
 	/**
