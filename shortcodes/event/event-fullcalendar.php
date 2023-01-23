@@ -20,11 +20,22 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		$types = $wpdb->get_row("SELECT GROUP_CONCAT(Label SEPARATOR ',') AS EventTypes FROM `civicrm_option_value` AS ov INNER JOIN civicrm_option_group AS og ON og.id=ov.option_group_id WHERE og.name='event_type';")->EventTypes;
+		$types = array();
+        $types_ = \Civi\Api4\Event::getFields(FALSE)
+            ->setLoadOptions([
+                'name',
+                'label',
+            ])
+            ->addWhere('name', '=', 'event_type_id')
+            ->addSelect('options')
+            ->execute()[0]['options'];
+        foreach ($types_ as $type) {
+            array_push($types, $type['label']);
+        }
 
 		$wporg_atts = shortcode_atts(
 			array(
-				'types' => $types,
+				'types' => join(',', $types),
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
 				'force_login' => true,
 				'image_src_field' => 'file.uri',
