@@ -16,21 +16,56 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
-		global $wpdb;
-
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		
+		$colors_arr = array();
+		$extra_fields_arr = array();
+		
+		// Sanitize shortcode parameters
+        if (count($atts) > 1) {
+            if (isset($atts['types'])) {
+                if (!ctype_alnum(str_replace(",", "", $atts['types']))) {
+                    $atts['types'] = preg_replace('/[^a-zA-Z0-9, ]/', '', $atts['types']);
+                }
+            }
+            if (isset($atts['colors'])) {
+                $colors_tmp = explode(",", $atts['colors']);
+				foreach ($colors_tmp as $color) {
+					array_push($colors_arr, sanitize_hex_color_no_hash($color));
+				}
+            }
+			if (isset($atts['extra_fields'])) {
+				$extra_fields_tmp = explode(",", $atts['extra_fields']);
+				foreach ($extra_fields_tmp as $field) {
+					array_push($extra_fields_arr, preg_replace('/[^a-zA-Z0-9._]/', '', $field));
+				}
+            }
+			if (isset($atts['upload'])) {
+				$atts['upload'] = sanitize_text_field($atts['upload']);
+			}
+            if (isset($atts['image_id_field'])) {
+                $atts['image_id_field'] = preg_replace('/[^a-zA-Z0-9._]/', '', $atts['image_id_field']);
+            }
+			if (isset($atts['image_src_field'])) {
+                $atts['image_src_field'] = preg_replace('/[^a-zA-Z0-9._]/', '', $atts['image_src_field']);
+            }
+            if (isset($atts['force_login'])) {
+                $atts['force_login'] = preg_replace('/[^0-1]/', '', $atts['force_login']);
+            }
+			
+        }
 
 		$types = array();
         $types_ = \Civi\Api4\Event::getFields(FALSE)
             ->setLoadOptions([
                 'name',
-                'label',
+                'label'
             ])
             ->addWhere('name', '=', 'event_type_id')
             ->addSelect('options')
             ->execute()[0]['options'];
         foreach ($types_ as $type) {
-            array_push($types, $type['label']);
+            array_push($types, $type['name']);
         }
 
 		$wporg_atts = shortcode_atts(
@@ -39,14 +74,13 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
 				'force_login' => true,
 				'image_src_field' => 'file.uri',
-				'extra_fields' => ''
+				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag
 		);
 
 		$colors = array();
 
 		if (isset($atts['colors'])) {
-			$colors_arr = explode(',', $atts['colors']);
 			$types_arr = explode(',', $wporg_atts['types']);
 			for ($i = 0; $i < count($colors_arr); $i++) {
 				if ($i >= count($types_arr)) {

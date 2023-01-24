@@ -83,17 +83,26 @@ function run_civicrm_ux() {
    AJAX handler to retreive all CiviCRM events and their properties
    with specified start date and event types
 */
-
 function get_events_all() {
-	$types = explode(',', filter_var($_REQUEST['type'], FILTER_SANITIZE_STRING));
+	$types = array();
 	$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
 	$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
 	$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
 	$colors = $_REQUEST['colors'];
 	$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
+    if (isset($_REQUEST['type'])) {
+        if (!ctype_alnum(str_replace(",", "", $_REQUEST['type']))) {
+            $_REQUEST['type'] = preg_replace('/[^a-zA-Z0-9, ]/', '', $_REQUEST['type']);
+        }
+        $types = explode(",", $_REQUEST['type']);
+    }
+
 	foreach ($colors as $k => $v) {
-		$colors[$k] = sanitize_hex_color_no_hash($v);
+        $colors[$k] = sanitize_hex_color_no_hash($v);
+        if (!ctype_alnum($k)) {
+            unset($colors[$k]);
+        }
 	}
 	
 
