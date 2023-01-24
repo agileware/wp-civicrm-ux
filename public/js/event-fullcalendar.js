@@ -96,6 +96,7 @@ const domevent = function (eventName, detail) {
     */
     let calendarParams = {
       initialView: "dayGridMonth",
+      nextDayThreshold: '09:00:00',
       events: function (info, successCallback, failureCallback) {
         if (!events_loaded) {
           // Make AJAX request (themes > functions.php) to get all events from 1 year ago until now
