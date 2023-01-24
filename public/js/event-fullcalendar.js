@@ -90,7 +90,7 @@ const domevent = function (eventName, detail) {
     // ColoUr scheme for different event type labels
     const colors = wp_site_obj.colors;
     const event_types = wp_site_obj.types.split(',');
-  
+
     /* 
       This object defines the custom parameters for FullCalendar's library incl. buttons, logic, views
     */

@@ -78,6 +78,8 @@ function run_civicrm_ux() {
 
 }
 
+define('WP_CIVICRM_UX_PLUGIN_NAME', basename(plugin_dir_path(__FILE__ )) );
+define( 'WP_CIVICRM_UX_PLUGIN_URL', plugins_url('', dirname(__FILE__) ) . '/');
 
 /*
    AJAX handler to retreive all CiviCRM events and their properties
@@ -92,10 +94,11 @@ function get_events_all() {
 	$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
     if (isset($_REQUEST['type'])) {
-        if (!ctype_alnum(str_replace(",", "", $_REQUEST['type']))) {
-            $_REQUEST['type'] = preg_replace('/[^a-zA-Z0-9, ]/', '', $_REQUEST['type']);
-        }
-        $types = explode(",", $_REQUEST['type']);
+		$types_tmp = explode(",", $_REQUEST['type']);
+		for ($i = 0; $i < count($types_tmp); $i++) {
+			$types_tmp[$i] = preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]);
+		}
+		$_REQUEST['type'] = implode(",", $types_tmp);
     }
 
 	foreach ($colors as $k => $v) {
