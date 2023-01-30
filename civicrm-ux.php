@@ -91,17 +91,15 @@ function get_events_all() {
 	$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
 	$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
 	$colors = $_REQUEST['colors'];
-	$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+	filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+	$upload = $_REQUEST['upload'];
 
     if (isset($_REQUEST['type'])) {
 		$types_tmp = explode(",", $_REQUEST['type']);
 		for ($i = 0; $i < count($types_tmp); $i++) {
 			array_push($types, preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]));
 		}
-		//echo implode(",", $types_tmp);
-		//$_REQUEST['type'] = implode(",", $types_tmp);
-		//echo "\n" . $_REQUEST['type'];
-//	    var_dump($types);
+
     }
 
 	foreach ($colors as $k => $v) {
@@ -135,7 +133,6 @@ function get_events_all() {
 
 
 			foreach ($events as $event) {
-				//$url = get_site_url() . '/civicrm/?page=CiviCRM&q=civicrm%2Fevent%2Finfo&reset=1&id=' . $event['id']; 
 				$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
 
 				if (!is_user_logged_in() and $force_login) {
