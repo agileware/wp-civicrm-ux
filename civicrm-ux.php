@@ -96,9 +96,12 @@ function get_events_all() {
     if (isset($_REQUEST['type'])) {
 		$types_tmp = explode(",", $_REQUEST['type']);
 		for ($i = 0; $i < count($types_tmp); $i++) {
-			$types_tmp[$i] = preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]);
+			array_push($types, preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]));
 		}
-		$_REQUEST['type'] = implode(",", $types_tmp);
+		//echo implode(",", $types_tmp);
+		//$_REQUEST['type'] = implode(",", $types_tmp);
+		//echo "\n" . $_REQUEST['type'];
+//	    var_dump($types);
     }
 
 	foreach ($colors as $k => $v) {
@@ -174,6 +177,9 @@ function get_events_all() {
 				array_push($res['result'], $event_obj);
 			}
 		} else {
+
+			$image_src_field = $_REQUEST['image_src_field'];
+
 			$events = \Civi\Api4\Event::get(FALSE)
                 ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
@@ -213,7 +219,7 @@ function get_events_all() {
 						'street_type' => $event['address.street_type'],
 						'country' => $event['address.country_id:label'],
 						'is_online_registration' => $event['is_online_registration'],
-						'extra_fields' => $array()
+						'extra_fields' => array()
 					)
 				);
 
@@ -272,7 +278,8 @@ function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 
 	$template = '<div class="civicrm-ux-event-listing">';
 	$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $upload . '/' . $event[$image_src_field] . '"></div>' : '';
-		
+
+
 	$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: ' . (count($colors) > 0 ? '#' . $colors[$event['event_type_id:label']] : '#333333') . ';">' . $event['event_type_id:label'] . '</div>
 		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
 		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">' . $event_time . '</span></div>
