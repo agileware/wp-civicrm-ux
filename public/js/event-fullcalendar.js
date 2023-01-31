@@ -239,10 +239,7 @@ const domevent = function (eventName, detail) {
           selector_val == "all" ||
           selector_val == info.event.extendedProps.event_type
         ) {
-          let event_img =
-            wp_site_obj.upload +
-            "/" +
-            info.event.extendedProps["file.uri"];
+          let event_img = info.event.extendedProps["file.uri"] ? info.event.extendedProps["image_url"] : "";
   
   
           if (info.view.type == "listMonth") {

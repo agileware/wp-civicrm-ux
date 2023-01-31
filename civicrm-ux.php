@@ -119,7 +119,7 @@ function get_events_all() {
 			$image_src_field = $_REQUEST['image_src_field'];
 
 			$events = \Civi\Api4\Event::get(FALSE)
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.id', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
                 ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
@@ -139,6 +139,13 @@ function get_events_all() {
 					$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
 				}
 
+				if (str_ends_with($upload, '/civicrm/custom')) {
+					$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
+					$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
+				} else {
+					$image_url = $upload . '/' . $event[$image_src_field];
+				}
+
 				$event_obj = array(
 					'id' => $event['id'],
 					'title' => $event['title'],
@@ -154,6 +161,7 @@ function get_events_all() {
 						'description' => $event['description'],
 						'event_type' => $event['event_type_id:label'],
 						'file.uri' => $event[$image_src_field],
+						'image_url' => $image_url,
 						'street_address' => $event['address.street_address'],
 						'street_number' => $event['address.street_number'],
 						'street_number_suffix' => $event['address.street_number_suffix'],
@@ -273,8 +281,18 @@ function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 	$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
 	$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
 
+	if (str_ends_with($upload, '/civicrm/custom') && $event['file.id']) {
+		$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
+		$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
+	} else {
+		$image_url = $upload . '/' . $event[$image_src_field];
+	}
+
+
 	$template = '<div class="civicrm-ux-event-listing">';
-	$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $upload . '/' . $event[$image_src_field] . '"></div>' : '';
+	$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $image_url . '"></div>' : '';
+
+
 
 
 	$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: ' . (count($colors) > 0 ? '#' . $colors[$event['event_type_id:label']] : '#333333') . ';">' . $event['event_type_id:label'] . '</div>
