@@ -283,7 +283,7 @@ function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 
 	if (str_ends_with($upload, '/civicrm/custom') && $event['file.id']) {
 		$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
-		$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
+		$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}", true, "", false, true, false);
 	} else {
 		$image_url = $upload . '/' . $event[$image_src_field];
 	}
@@ -299,6 +299,8 @@ function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
 		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">' . $event_time . '</span></div>
 		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;<span id="event-time-text">' . $event_location . '</span></div>';
+
+
 
 	$template .= $event['is_online_registration'] ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' . $url . '\'">Click here to register</div>'  : '';
 	$template .= '<div class="civicrm-ux-event-listing-desc">';
