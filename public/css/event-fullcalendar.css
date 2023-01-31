@@ -4,6 +4,7 @@
     margin-top: 30px;
     margin-left:auto;
     margin-right:auto;
+    max-width: 100%;
 }
 
 .civicrm-ux-event-listing-name {
@@ -140,6 +141,10 @@ div.civicrm-event-listing-item {
     position: relative;
 }
 
+#event-selector {
+    margin-left: 4em;
+}
+
 
 .fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button {
     background-color: #4f4f4f !important;
@@ -164,6 +169,10 @@ div.civicrm-event-listing-item {
 .fc-daygrid-day-number {
     color: #666;
     font-size: 16px;
+}
+
+.fc-button {
+    white-space: nowrap;
 }
 
 .fc-col-header-cell-cushion {
