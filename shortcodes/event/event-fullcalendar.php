@@ -75,6 +75,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'types' => join(',', $types),
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
 				'force_login' => true,
+				'start' => date('Y-m-d', strtotime('-1 year')),
 				'image_src_field' => 'file.uri',
 				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag
@@ -113,7 +114,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			       'upload' => $wporg_atts['upload'],
 			       'types' => $wporg_atts['types'],
 			       'colors' => $colors,
-			       'start' => isset($wporg_atts['start']) ? $wporg_atts['start'] : date('Y-m-d', strtotime('-1 year')),
+			       'start' => $wporg_atts['start'],
 			       'image_id_field' => $atts['image_id_field'],
 			       'image_src_field' => $wporg_atts['image_src_field'],
 			       'force_login' => $wporg_atts['force_login'],
