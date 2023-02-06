@@ -110,7 +110,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 
 		wp_localize_script( 'ux-fullcalendar', 'wp_site_obj',
-			array( 'ajax_url' => admin_url( 'admin-ajax.php'),
+			array( 'ajax_url' => get_rest_url(),
 			       'upload' => $wporg_atts['upload'],
 			       'types' => $wporg_atts['types'],
 			       'colors' => $colors,
@@ -119,10 +119,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			       'image_src_field' => $wporg_atts['image_src_field'],
 			       'force_login' => $wporg_atts['force_login'],
 			       'extra_fields' => $wporg_atts['extra_fields']));
-
-
-
-
 
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
 		<div id="civicrm-ux-event-popup-container">

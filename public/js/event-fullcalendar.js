@@ -103,9 +103,8 @@ const domevent = function (eventName, detail) {
           jQuery.ajax({
             method: "GET",
             dataType: "json",
-            url: wp_site_obj.ajax_url,
+            url: wp_site_obj.ajax_url + 'civicrm_ux/get_events_all',
             data: {
-              action: "get_events_all",
               type: wp_site_obj.types,
               upload: wp_site_obj.upload,
               colors: colors,
