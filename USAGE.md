@@ -368,6 +368,9 @@ Parameters:
  - `field`          what field to display **required**
  - `default`        the value to display if empty
 
+For example: to display the External ID of a Contact, use this shortcode
+`[ux_contact_value field="external_identifier"]`
+
 ## Caldera magic tags
 
 Provides additional Caldera magic tags when using both [Caldera Forms](https://wordpress.org/plugins/caldera-forms/) and [Caldera Forms CiviCRM](https://wordpress.org/plugins/cf-civicrm/) plugins to integrate CiviCRM with WordPress.
