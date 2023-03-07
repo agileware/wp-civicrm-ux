@@ -8,9 +8,11 @@ Display a CiviCRM Events Calendar on your website using the [FullCalendar Javasc
 
 Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive calendar of all CiviCRM Events which are both public and active.
 
-![](images/example-calendar.png)
+![](images/event-calendar.png)
 
-### Optional fullcalendar shortcode attributes
+![](images/event-single.png)
+
+### Shortcode options
 
 You can include additional parameters in the fullcalendar shortcode to limit the scope of events shown on the calendar or to add extra visual features (colors, images) that are not included out-of-the-box. None of these additional parameters are strictly required.
 - *types* is a comma-separated list that can be used to show only events of the type specified. E.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition"]` will only show events that are workshops, meetings or exhibitions. By default FullCalendar will simply use all event types on your system.
