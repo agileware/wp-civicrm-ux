@@ -284,9 +284,9 @@ const domevent = function (eventName, detail) {
         jsEvent.preventDefault();
   
         let event_container = document.querySelector(
-          "civicrm-ux-event-popup-container"
+          ".civicrm-ux-event-popup-container"
         );
-        let popup = document.querySelector("civicrm-ux-event-popup");
+        let popup = document.querySelector(".civicrm-ux-event-popup");
         let popup_container = document.getElementById("civicrm-ux-event-popup-content");
         event_container.style.display = "none";
         calendarEl.style.display = "none";
@@ -320,7 +320,7 @@ const domevent = function (eventName, detail) {
     sortByTypeBtn.style.display = "none";
     parent.appendChild(sortByTypeSelect);
   
-    let selector = document.querySelector("#event-selector");
+    let selector = document.querySelector(".event-selector");
   
     selector.addEventListener("change", function () {
       calendar.refetchEvents();
