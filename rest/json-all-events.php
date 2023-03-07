@@ -167,7 +167,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 						'endStr' => $event['end_date'],
 						'url' => $url,
 						'extendedProps' => array(
-							'html_render' => generate_event_html($event, $upload, $colors, $image_src_field, $url),
+							'html_render' => $this->generate_event_html($event, $upload, $colors, $image_src_field, $url),
 							'summary' => $event['summary'],
 							'description' => $event['description'],
 							'event_type' => $event['event_type_id:label'],
@@ -209,10 +209,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$event_start_hour = self::formatAMPM( $date_start );
 		$event_end_hour = self::formatAMPM( $date_end );
 
-		$event_time = '&nbsp;&nbsp;' . $event_start_day . '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span id="event-time-text">' . $event_start_hour . ' to ' . $event_end_hour;
+		$event_time = $event_start_day . '</span><i class="fa fa-clock-o"></i><span class="event-time-text">' . $event_start_hour . ' to ' . $event_end_hour;
 
 		if (! self::sameDay( $date_start, $date_end ) ) {
-			$event_time = '&nbsp;&nbsp;' . $event_start_day . '&nbsp;&nbsp;' . $event_start_hour . " to " . $event_end_day . '&nbsp;&nbsp;' . $event_end_hour;
+			$event_time = $event_start_day . ' ' . $event_start_hour . " to " . $event_end_day . ' ' . $event_end_hour;
 		}
 
 		$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
@@ -231,8 +231,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: ' . (count($colors) > 0 ? '#' . $colors[$event['event_type_id:label']] : '#333333') . ';">' . $event['event_type_id:label'] . '</div>
 		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
-		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span id="event-time-text">' . $event_time . '</span></div>
-		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;<span id="event-time-text">' . $event_location . '</span></div>';
+		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>
+		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
 
 
 

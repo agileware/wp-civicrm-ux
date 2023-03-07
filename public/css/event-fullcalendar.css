@@ -12,7 +12,7 @@
     margin-bottom: 10px;
 }
 
-#civicrm-ux-event-popup-container {
+.civicrm-ux-event-popup-container {
     padding: 15px;
     background: #eeeeee;
     box-shadow: 0 0 5px 2px rgb(145 145 145 / 35%);
@@ -81,7 +81,7 @@ div.civicrm-event-listing-item {
 }
 
 
-#civicrm-ux-event-popup{
+.civicrm-ux-event-popup{
     background-color: #eeeeee;
     width: 100%;
     padding: 30px 40px;
@@ -93,7 +93,7 @@ div.civicrm-event-listing-item {
     z-index: 1;
 }
 
-#civicrm-ux-event-popup button{
+.civicrm-ux-event-popup button{
     display: block;
     margin:  0 0 20px auto;
     background-color: transparent;
@@ -109,14 +109,14 @@ div.civicrm-event-listing-item {
     padding: 0px 0px 0px 0px;
 }
 
-#civicrm-ux-event-popup p{
+.civicrm-ux-event-popup p{
     font-size: 14px;
     text-align: justify;
     margin: 20px 0;
     line-height: 25px;
 }
 
-#civicrm-ux-event-popup-img {
+.civicrm-ux-event-popup-img {
     /*    max-width: 90%;
         height: auto;*/
     display:block;
@@ -124,7 +124,7 @@ div.civicrm-event-listing-item {
     margin-bottom: 30px;
 }
 
-#civicrm-ux-event-popup-eventtype {
+.civicrm-ux-event-popup-eventtype {
     font-size: 14px;
     text-transform: uppercase;
     text-align: center;
@@ -254,7 +254,7 @@ div.civicrm-event-listing-item {
     border-radius: 3px 3px 3px 3px;
 }
 
-#event-name {
+.event-name {
     font-size: 14px;
     text-transform: uppercase;
     text-align: center;
@@ -271,19 +271,26 @@ div.civicrm-event-listing-item {
     position: relative;
 }
 
-#event-time {
+.event-time {
     margin: 5px 0px 0px 10px;
+    display: inline-flex;
 }
 
-#event-time-text {
+.event-time-text {
     font-size: 14px;
     color: #000000;
+    margin-left: 5px;
 }
 
-#event-location {
+.event-location {
     margin: 0px 0px 5px 10px;
 }
 
-#event-location-text {
+.event-location-text {
     font-size: 12px;
+    margin-left: 5px;
+}
+
+.civicrm-ux-event-listing-date .fa-clock-o {
+    margin-left: 5px;
 }

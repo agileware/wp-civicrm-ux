@@ -121,8 +121,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			       'extra_fields' => $wporg_atts['extra_fields']));
 
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
-		<div id="civicrm-ux-event-popup-container">
-		<div id="civicrm-ux-event-popup">
+		<div class="civicrm-ux-event-popup-container">
+		<div class="civicrm-ux-event-popup">
 			<button onclick="hidePopup()" id="civicrm-ux-event-popup-close">&times;</button>
 			<div id="civicrm-ux-event-popup-content"></div>
 		</div></div>';

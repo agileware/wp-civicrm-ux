@@ -28,7 +28,7 @@ const domevent = function (eventName, detail) {
   }
 
   function hidePopup() {
-    document.getElementById("civicrm-ux-event-popup").style.display = "none";
+    document.querySelector(".civicrm-ux-event-popup").style.display = "none";
     document.getElementById("civicrm-event-fullcalendar").style.display = "flex";
   }
 
@@ -250,16 +250,16 @@ const domevent = function (eventName, detail) {
             const template = `
                       <div style="background-color: ${
                         Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
-                      }" id="event-name">${info.event.title}</div>
+                      }" class="event-name">${info.event.title}</div>
                       ${
                         info.event.extendedProps["file.uri"]
                           ? '<img id="event-img" src="' + event_img + '">'
                           : ""
                       }
-                      <div id="event-time"><i class="fa fa-clock-o"></i>&nbsp;<span id="event-time-text">${
+                      <div class="event-time"><i class="fa fa-clock-o"></i><span class="event-time-text">${
                         formatAMPM(event_start) + " to " + formatAMPM(event_end)
                       }</span></div>
-                      <div id="event-location"><i class="fa fa-map-marker"></i>&nbsp;<span id="event-location-text">${event_location}</span></div>
+                      <div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">${event_location}</span></div>
                       `;
   
             let tooltip = new tippy(info.el, {
@@ -283,10 +283,10 @@ const domevent = function (eventName, detail) {
         let jsEvent = eventClickInfo.jsEvent;
         jsEvent.preventDefault();
   
-        let event_container = document.getElementById(
+        let event_container = document.querySelector(
           "civicrm-ux-event-popup-container"
         );
-        let popup = document.getElementById("civicrm-ux-event-popup");
+        let popup = document.querySelector("civicrm-ux-event-popup");
         let popup_container = document.getElementById("civicrm-ux-event-popup-content");
         event_container.style.display = "none";
         calendarEl.style.display = "none";
