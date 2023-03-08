@@ -1,0 +1,296 @@
+
+.civicrm-ux-event-listing-image img {
+    display:block;
+    margin-top: 30px;
+    margin-left:auto;
+    margin-right:auto;
+    max-width: 100%;
+}
+
+.civicrm-ux-event-listing-name {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.civicrm-ux-event-popup-container {
+    padding: 15px;
+    background: #eeeeee;
+    box-shadow: 0 0 5px 2px rgb(145 145 145 / 35%);
+    border: 1px solid #dedade;
+    border-radius: 4px 4px 4px 4px;
+}
+
+.civicrm-ux-event-listing-type {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 20px;
+    margin: 15px 0 15px 0;
+    display: inline-block;
+    border-radius: 3px;
+    position: relative;
+    padding: 5px 15px 5px 15px;
+}
+
+.civicrm-ux-event-listing-hr {
+    margin-bottom: 10px !important;
+    background-color: black !important;
+}
+
+.civicrm-ux-event-listing-img {
+    display:block;
+    margin:auto;
+    margin-bottom: 30px;
+}
+
+.civicrm-ux-event-listing-register, #civicrm-ux-event-popup-register {
+    text-align: center !important;
+    margin: 10px 0 10px 0;
+    padding: 3px !important;
+    vertical-align: middle !important;
+    color: white;
+    cursor: pointer;
+    font-size: 13px !important;
+    background-color: #333333;
+    border-radius: 3px;
+    height: 30px;
+}
+
+.civicrm-ux-event-listing-desc {
+    font-size: 14px;
+    margin: 5px 0 0 0;
+}
+
+.civicrm-ux-event-listing {
+    margin-left: 30px;
+}
+
+.civicrm-event-listing p {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.civicrm-event-listing h3 {
+    font-size: 18px;
+}
+
+div.civicrm-event-listing-item {
+    margin: 0 0 1.8em 0;
+}
+
+
+.civicrm-ux-event-popup{
+    background-color: #eeeeee;
+    width: 100%;
+    padding: 30px 40px;
+    left: 50%;
+    top: 50%;
+    border-radius: 8px;
+    display: none;
+    font-family: "Poppins",sans-serif;
+    z-index: 1;
+}
+
+.civicrm-ux-event-popup button{
+    display: block;
+    margin:  0 0 20px auto;
+    background-color: transparent;
+    font-size: 30px;
+    color: #ffffff;
+    background: #000000;
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0px 0px 0px 0px;
+}
+
+.civicrm-ux-event-popup p{
+    font-size: 14px;
+    text-align: justify;
+    margin: 20px 0;
+    line-height: 25px;
+}
+
+.civicrm-ux-event-popup-img {
+    /*    max-width: 90%;
+        height: auto;*/
+    display:block;
+    margin:auto;
+    margin-bottom: 30px;
+}
+
+.civicrm-ux-event-popup-eventtype {
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    background: #ac5653;
+    line-height: 20px;
+    margin-bottom: 26px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    color: #ffffff;
+    position: relative;
+}
+
+#event-selector {
+    margin-left: 4em;
+}
+
+
+.fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button {
+    background-color: #4f4f4f !important;
+}
+
+.fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button:focus{background-color:black !important;}
+
+.fc-header-toolbar .fc-toolbar-chunk:first-child select {
+    background-color: #4f4f4f !important;
+}
+
+.fc-header-toolbar .fc-toolbar-chunk:first-child select:focus{background-color:black !important;}
+
+.fc-header-toolbar .fc-toolbar-chunk:last-child {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    background-color: black;
+}
+
+
+.fc-daygrid-day-number {
+    color: #666;
+    font-size: 16px;
+}
+
+.fc-button {
+    white-space: nowrap;
+}
+
+.fc-col-header-cell-cushion {
+    color: black;
+    font-size: 14px;
+    padding: 8px 0px 8px 0px !important;
+}
+
+.fc-col-header  {
+    margin: 0px 0px 0px 0px;
+}
+
+.fc-scrollgrid tbody td:nth-child(6) .fc-daygrid-day-frame .fc-daygrid-day-number, .fc-scrollgrid tbody td:nth-child(7) .fc-daygrid-day-frame .fc-daygrid-day-number {
+    color: red;
+}
+
+.fc-col-header-cell, .fc-day-other {
+    background-color: #f6f6f6;
+}
+
+.fc-header-toolbar, .fc-toolbar, .fc-toolbar-ltr {
+    display: inline-block !important;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0em !important;
+}
+
+.fc-toolbar-title {
+    color: #fff !important;
+    font-size: 15px !important;
+    padding-top: 5px !important;
+}
+
+.fc-button-group {
+    width: 33% !important;
+}
+
+.fc-button {
+    background-color: black !important;
+    border: 1px solid white !important;
+    font-size: 13px !important;
+}
+
+
+
+.tippy-box[data-theme~='fcvic'] {
+    background-color: #f0e8ce;
+    border-color: #f0e8ce;
+    color: black;
+}
+
+.tippy-box[data-theme~='fcvic'][data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: #f0e8ce;
+}
+.tippy-box[data-theme~='fcvic'][data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: #f0e8ce;
+}
+.tippy-box[data-theme~='fcvic'][data-placement^='left'] > .tippy-arrow::before {
+    border-left-color: #f0e8ce;
+}
+.tippy-box[data-theme~='fcvic'][data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: #f0e8ce;
+}
+
+
+.tippy-box[data-theme~='fcvic'] img {
+    max-width: 90%;
+    max-height: 50px;
+    height: auto;
+    margin: 10px 10px 0px 10px;
+    display: block;
+}
+
+
+.event-holder {
+    overflow: hidden;
+    padding: 3px 3px 3px 3px;
+    border-radius: 3px 3px 3px 3px;
+}
+
+.event-name {
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    background: #ac5653;
+    line-height: 20px;
+    margin: 6px 6px 6px 6px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px 15px 5px 15px;
+    color: #ffffff;
+    position: relative;
+}
+
+.event-time {
+    margin: 5px 0px 0px 10px;
+    display: inline-flex;
+}
+
+.event-time-text {
+    font-size: 14px;
+    color: #000000;
+    margin-left: 5px;
+}
+
+.event-location {
+    margin: 0px 0px 5px 10px;
+}
+
+.event-location-text {
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.civicrm-ux-event-listing-date .fa-clock-o {
+    margin-left: 5px;
+}
