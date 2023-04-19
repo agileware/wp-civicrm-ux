@@ -133,7 +133,7 @@ const domevent = function (eventName, detail) {
       },
       customButtons: {
         sortByType: {
-          text: "Sort by type: Filter by Event Type",
+           text: "Filter by Event Type",
         },
       },
       headerToolbar: {
@@ -142,8 +142,8 @@ const domevent = function (eventName, detail) {
         end: "prevYear,prev title next,nextYear",
       },
       buttonText: {
-        dayGridMonth: "Events: Calendar View",
-        listMonth: "List: List View",
+        dayGridMonth: "Calendar View",
+        listMonth: "List View",
         prevYear: "« Previous year",
         prev: "‹ Previous month",
         nextYear: "Next year »",
@@ -311,8 +311,8 @@ const domevent = function (eventName, detail) {
     let sortByTypeSelect = document.createElement("select");
     sortByTypeSelect.classList.add("fc-button");
     sortByTypeSelect.classList.add("fc-button-primary");
-    sortByTypeSelect.innerHTML = '<option selected value="all">Sort by type: Filter by Event Type</option>';
-    for (let i = 0; i < event_types.length; i++) {
+    sortByTypeSelect.innerHTML = '<option selected value="all">Filter by Event Type</option>';
+    for (const i in event_types) {
       sortByTypeSelect.innerHTML += '<option value="' + event_types[i] + '">' + event_types[i] + '</option>';
     }
     sortByTypeSelect.setAttribute("id", "event-selector");
