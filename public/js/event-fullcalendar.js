@@ -306,9 +306,8 @@ const domevent = function (eventName, detail) {
     calendarEl.dispatchEvent(domevent("fullcalendar:prerender"));
     calendar.render();
 
-    let sortByTypeBtn = document.querySelector(".fc-sortByType-button");
-    let parent = sortByTypeBtn.parentElement;
-    let sortByTypeSelect = document.createElement("select");
+    const sortByTypeBtn = document.querySelector(".fc-sortByType-button");
+    const sortByTypeSelect = document.createElement("select");
     sortByTypeSelect.classList.add("fc-button");
     sortByTypeSelect.classList.add("fc-button-primary");
     sortByTypeSelect.innerHTML = '<option selected value="all">Filter by Event Type</option>';
@@ -316,14 +315,9 @@ const domevent = function (eventName, detail) {
       sortByTypeSelect.innerHTML += '<option value="' + event_types[i] + '">' + event_types[i] + '</option>';
     }
     sortByTypeSelect.setAttribute("id", "event-selector");
-  
     sortByTypeBtn.style.display = "none";
-    parent.appendChild(sortByTypeSelect);
+    sortByTypeBtn.after(sortByTypeSelect);
   
-    let selector = document.querySelector(".event-selector");
-  
-    selector.addEventListener("change", function () {
-      calendar.refetchEvents();
-    });
+    sortByTypeSelect.addEventListener("change", () => calendar.refetchEvents());
   });
   
