@@ -83,8 +83,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 				$res['result'] = array();
 
-
-
+				$tz = wp_timezone();
 
 				foreach ($events as $event) {
 					$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
@@ -103,8 +102,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 					$event_obj = array(
 						'id' => $event['id'],
 						'title' => $event['title'],
-						'start' => date(DATE_ISO8601, strtotime($event['start_date'])),
-						'end' => date(DATE_ISO8601, strtotime($event['end_date'])),
+						'start' => (new DateTimeImmutable($event['start_date'], $tz))->setTimezone($tz)->format(DateTime::ISO8601),
+						'end' => (new DateTimeImmutable($event['end_date'], $tz))->setTimezone($tz)->format(DateTime::ISO8601),
 						'display' => 'auto',
 						'startStr' => $event['start_date'],
 						'endStr' => $event['end_date'],

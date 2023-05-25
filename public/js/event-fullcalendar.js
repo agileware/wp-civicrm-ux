@@ -17,14 +17,7 @@ const domevent = function (eventName, detail) {
     E.g. 2021-02-02T09:30:00+0000 => 9:30AM
   */
   function formatAMPM(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "am" : "pm";
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    const strTime = hours + ":" + minutes + " " + ampm;
-    return strTime;
+    return date.toLocaleTimeString([], { timeStyle: "short" });
   }
 
   function hidePopup() {
