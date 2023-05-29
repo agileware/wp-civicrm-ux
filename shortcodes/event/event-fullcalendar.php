@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4\Event;
+
 class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortcode {
 	/**
 	 * @return string The name of shortcode
@@ -58,7 +60,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		}
 
 		$types = array();
-		$types_ = \Civi\Api4\Event::getFields(FALSE)
+		$types_ = Event::getFields(FALSE)
 		                          ->setLoadOptions([
 			                          'name',
 			                          'label'

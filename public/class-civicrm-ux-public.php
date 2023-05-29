@@ -10,6 +10,8 @@
  * @subpackage Civicrm_Ux/public
  */
 
+use Civi\Api4\Event;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -138,7 +140,7 @@ class Civicrm_Ux_Public {
 		}
 
 		try {
-			$civi_event = $civi_id ? ( \Civi\Api4\Event::get( FALSE )
+			$civi_event = $civi_id ? ( Event::get( FALSE )
 			                                           ->addSelect( 'id', 'event_tz' )
 			                                           ->addWhere( 'id', '=', $civi_id )
 			                                           ->execute() )[0] : NULL;
