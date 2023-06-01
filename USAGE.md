@@ -220,7 +220,7 @@ For Access Control, grant all users the CiviCRM permission: ```CiviCRM: access a
 
 ### CiviCRM API caching
 
-CiviCRM API responses are cached as a WordPress transient with a minimum lifetime of 4 hours.
+CiviCRM API responses are cached as a WordPress transient with a minimum lifetime of 4 hours. With the exception when the page URL includes the ?reset parameter, these requests are not cached at all. This is particularly useful for Events and Contribution pages, so that the latest changes are always shown.
 
 If the API request is returning the incorrect results or if you have changed the parameters and are not seeing the correct results, then try flushing the WordPress transient cache.
 
