@@ -55,7 +55,7 @@ The following example code can be inserted into a WordPress page when using the 
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p><strong>Date:</strong> [api4:start_date:%B %E, %Y]</p>
+<p><strong>Date:</strong> [api4:start_date:F jS Y]</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 
@@ -101,7 +101,7 @@ The following example code can be inserted into a WordPress page when using the 
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p><strong>Date:</strong> [api4:start_date:%B %E, %Y]</p>
+<p><strong>Date:</strong> [api4:start_date:F jS Y]</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 
