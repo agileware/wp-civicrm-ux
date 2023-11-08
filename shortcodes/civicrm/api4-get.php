@@ -74,9 +74,14 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					$params['orderBy'][ $sort ] = $dir;
 					break;
 				default:
-					[ $op, $value ] = explode( ':', $v, 2 );
-					if ( ! $value ) {
-						$value = $op;
+					if (strpos($v, ':') !== false) {
+						[ $op, $value ] = explode( ':', $v, 2 );
+						if ( ! $value ) {
+							$value = $op;
+							$op    = '=';
+						}
+					} else {
+						$value = $v;
 						$op    = '=';
 					}
 
@@ -129,7 +134,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
 
-			$all = $_GET['reset'] ? FALSE : get_transient( $trkey );
+			$all = ($_GET['reset'] ?? FALSE) ? FALSE : get_transient( $trkey );
 
 			if ( $all !== FALSE ) {
 				return $all;
