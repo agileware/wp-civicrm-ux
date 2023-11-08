@@ -160,7 +160,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					$field = $fields[ $match['field'] ] ?? [];
 
 					if ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) {
-						$output = isset( $match['format'] ) ? strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
+						$output = isset( $match['format'] ) ? date( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
 					} elseif ( $field['fk_entity'] == 'File' ) {
 						$output = Civicrm_Ux::in_basepage( function () use ( $output ) {
 							return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [
@@ -179,7 +179,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						if ( is_array( $output ) ) {
 							$output = implode( ', ', $output );
 						}
-						if ( strcasecmp( $match['format'], 'br' ) === 0 ) {
+						if ( strcasecmp( $match['format'] ?? '', 'br' ) === 0 ) {
 							$output .= '<br />';
 						}
 					}
