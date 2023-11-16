@@ -327,7 +327,7 @@ class Civicrm_Ux {
 		global $civicrm_wp_title;
 		global $post;
 
-		if ( $tag == 'civicrm' && $attr['set_title'] && ! empty( $civicrm_wp_title ) ) {
+		if ( $tag == 'civicrm' && ( $attr['set_title'] ?? false ) && ! empty( $civicrm_wp_title ) ) {
 			$post->post_title = $civicrm_wp_title;
 
 			add_filter( 'single_post_title', [
