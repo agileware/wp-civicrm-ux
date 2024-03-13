@@ -236,7 +236,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$template = '<div class="civicrm-ux-event-listing">';
 		$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $image_url . '"></div>' : '';
 
-		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: ' . (count($colors) > 0 ? '#' . $colors[$event['event_type_id:label']] : '#333333') . ';">' . $event['event_type_id:label'] . '</div>
+		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: #' . ($colors[$event['event_type_id:label']] ?? '333333') . ';">' . $event['event_type_id:label'] . '</div>
 		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
 		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>
 		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
