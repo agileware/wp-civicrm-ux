@@ -151,9 +151,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 					$field = $fields[ $match['field'] ] ?? [];
 
-					if ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) {
+					if ( array_key_exists( 'data_type', $field ) && ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) ) {
 						$output = isset( $match['format'] ) ? strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
-					} elseif ( $field['fk_entity'] == 'File' ) {
+					} elseif ( ( $field['fk_entity'] ?? NULL ) == 'File' ) {
 						$output = Civicrm_Ux::in_basepage( function () use ( $output ) {
 							return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [
 								'id'     => (int) $output,
