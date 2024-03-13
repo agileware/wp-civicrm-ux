@@ -1,217 +1,271 @@
-[
-    {
-        "name": "sabre/uri",
-        "version": "2.1.1",
-        "version_normalized": "2.1.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabre-io/uri.git",
-            "reference": "a42126042c7dcb53e2978dadb6d22574d1359b4c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/uri/zipball/a42126042c7dcb53e2978dadb6d22574d1359b4c",
-            "reference": "a42126042c7dcb53e2978dadb6d22574d1359b4c",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=7"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^6.0",
-            "sabre/cs": "~1.0.0"
-        },
-        "time": "2017-02-20T20:02:35+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "lib/functions.php"
+{
+    "packages": [
+        {
+            "name": "php81_bc/strftime",
+            "version": "0.7.4",
+            "version_normalized": "0.7.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alphp/strftime.git",
+                "reference": "10c13faf2f65bfaec17dfa769918e0c7a4c9b3cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alphp/strftime/zipball/10c13faf2f65bfaec17dfa769918e0c7a4c9b3cc",
+                "reference": "10c13faf2f65bfaec17dfa769918e0c7a4c9b3cc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable"
+            },
+            "time": "2024-03-12T11:46:29+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/php-8.1-strftime.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
             ],
-            "psr-4": {
-                "Sabre\\Uri\\": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Evert Pot",
-                "email": "me@evertpot.com",
-                "homepage": "http://evertpot.com/",
-                "role": "Developer"
-            }
-        ],
-        "description": "Functions for making sense out of URIs.",
-        "homepage": "http://sabre.io/uri/",
-        "keywords": [
-            "rfc3986",
-            "uri",
-            "url"
-        ]
-    },
-    {
-        "name": "sabre/vobject",
-        "version": "4.2.0",
-        "version_normalized": "4.2.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabre-io/vobject.git",
-            "reference": "bd500019764e434ff65872d426f523e7882a0739"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/vobject/zipball/bd500019764e434ff65872d426f523e7882a0739",
-            "reference": "bd500019764e434ff65872d426f523e7882a0739",
-            "shasum": ""
-        },
-        "require": {
-            "ext-mbstring": "*",
-            "php": ">=5.5",
-            "sabre/xml": ">=1.5 <3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "> 4.8.35, <6.0.0"
-        },
-        "suggest": {
-            "hoa/bench": "If you would like to run the benchmark scripts"
-        },
-        "time": "2019-02-19T13:05:37+00:00",
-        "bin": [
-            "bin/vobject",
-            "bin/generate_vcards"
-        ],
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "4.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Sabre\\VObject\\": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Evert Pot",
-                "email": "me@evertpot.com",
-                "homepage": "http://evertpot.com/",
-                "role": "Developer"
+            "authors": [
+                {
+                    "name": "Fernando Herrero",
+                    "homepage": "https://github.com/alphp/strftime/graphs/contributors"
+                }
+            ],
+            "description": "Locale-formatted strftime using IntlDateFormatter (PHP 8.1 compatible)",
+            "support": {
+                "issues": "https://github.com/alphp/strftime/issues",
+                "source": "https://github.com/alphp/strftime"
             },
-            {
-                "name": "Dominik Tobschall",
-                "email": "dominik@fruux.com",
-                "homepage": "http://tobschall.de/",
-                "role": "Developer"
+            "install-path": "../php81_bc/strftime"
+        },
+        {
+            "name": "sabre/uri",
+            "version": "2.1.1",
+            "version_normalized": "2.1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sabre-io/uri.git",
+                "reference": "a42126042c7dcb53e2978dadb6d22574d1359b4c"
             },
-            {
-                "name": "Ivan Enderlin",
-                "email": "ivan.enderlin@hoa-project.net",
-                "homepage": "http://mnt.io/",
-                "role": "Developer"
-            }
-        ],
-        "description": "The VObject library for PHP allows you to easily parse and manipulate iCalendar and vCard objects",
-        "homepage": "http://sabre.io/vobject/",
-        "keywords": [
-            "availability",
-            "freebusy",
-            "iCalendar",
-            "ical",
-            "ics",
-            "jCal",
-            "jCard",
-            "recurrence",
-            "rfc2425",
-            "rfc2426",
-            "rfc2739",
-            "rfc4770",
-            "rfc5545",
-            "rfc5546",
-            "rfc6321",
-            "rfc6350",
-            "rfc6351",
-            "rfc6474",
-            "rfc6638",
-            "rfc6715",
-            "rfc6868",
-            "vCalendar",
-            "vCard",
-            "vcf",
-            "xCal",
-            "xCard"
-        ]
-    },
-    {
-        "name": "sabre/xml",
-        "version": "2.1.2",
-        "version_normalized": "2.1.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabre-io/xml.git",
-            "reference": "e15454e68805e3713271ea58c0b2d6a82dac56b7"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabre-io/xml/zipball/e15454e68805e3713271ea58c0b2d6a82dac56b7",
-            "reference": "e15454e68805e3713271ea58c0b2d6a82dac56b7",
-            "shasum": ""
-        },
-        "require": {
-            "ext-dom": "*",
-            "ext-xmlreader": "*",
-            "ext-xmlwriter": "*",
-            "lib-libxml": ">=2.6.20",
-            "php": ">=7.0",
-            "sabre/uri": ">=1.0,<3.0.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "*"
-        },
-        "time": "2019-01-09T13:50:52+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Sabre\\Xml\\": "lib/"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sabre-io/uri/zipball/a42126042c7dcb53e2978dadb6d22574d1359b4c",
+                "reference": "a42126042c7dcb53e2978dadb6d22574d1359b4c",
+                "shasum": ""
             },
-            "files": [
-                "lib/Deserializer/functions.php",
-                "lib/Serializer/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Evert Pot",
-                "email": "me@evertpot.com",
-                "homepage": "http://evertpot.com/",
-                "role": "Developer"
+            "require": {
+                "php": ">=7"
             },
-            {
-                "name": "Markus Staab",
-                "email": "markus.staab@redaxo.de",
-                "role": "Developer"
-            }
-        ],
-        "description": "sabre/xml is an XML library that you may not hate.",
-        "homepage": "https://sabre.io/xml/",
-        "keywords": [
-            "XMLReader",
-            "XMLWriter",
-            "dom",
-            "xml"
-        ]
-    }
-]
+            "require-dev": {
+                "phpunit/phpunit": "^6.0",
+                "sabre/cs": "~1.0.0"
+            },
+            "time": "2017-02-20T20:02:35+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "lib/functions.php"
+                ],
+                "psr-4": {
+                    "Sabre\\Uri\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Evert Pot",
+                    "email": "me@evertpot.com",
+                    "homepage": "http://evertpot.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Functions for making sense out of URIs.",
+            "homepage": "http://sabre.io/uri/",
+            "keywords": [
+                "rfc3986",
+                "uri",
+                "url"
+            ],
+            "install-path": "../sabre/uri"
+        },
+        {
+            "name": "sabre/vobject",
+            "version": "4.2.0",
+            "version_normalized": "4.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sabre-io/vobject.git",
+                "reference": "bd500019764e434ff65872d426f523e7882a0739"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sabre-io/vobject/zipball/bd500019764e434ff65872d426f523e7882a0739",
+                "reference": "bd500019764e434ff65872d426f523e7882a0739",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.5",
+                "sabre/xml": ">=1.5 <3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "> 4.8.35, <6.0.0"
+            },
+            "suggest": {
+                "hoa/bench": "If you would like to run the benchmark scripts"
+            },
+            "time": "2019-02-19T13:05:37+00:00",
+            "bin": [
+                "bin/vobject",
+                "bin/generate_vcards"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Sabre\\VObject\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Evert Pot",
+                    "email": "me@evertpot.com",
+                    "homepage": "http://evertpot.com/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Dominik Tobschall",
+                    "email": "dominik@fruux.com",
+                    "homepage": "http://tobschall.de/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Ivan Enderlin",
+                    "email": "ivan.enderlin@hoa-project.net",
+                    "homepage": "http://mnt.io/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "The VObject library for PHP allows you to easily parse and manipulate iCalendar and vCard objects",
+            "homepage": "http://sabre.io/vobject/",
+            "keywords": [
+                "availability",
+                "freebusy",
+                "iCalendar",
+                "ical",
+                "ics",
+                "jCal",
+                "jCard",
+                "recurrence",
+                "rfc2425",
+                "rfc2426",
+                "rfc2739",
+                "rfc4770",
+                "rfc5545",
+                "rfc5546",
+                "rfc6321",
+                "rfc6350",
+                "rfc6351",
+                "rfc6474",
+                "rfc6638",
+                "rfc6715",
+                "rfc6868",
+                "vCalendar",
+                "vCard",
+                "vcf",
+                "xCal",
+                "xCard"
+            ],
+            "install-path": "../sabre/vobject"
+        },
+        {
+            "name": "sabre/xml",
+            "version": "2.1.2",
+            "version_normalized": "2.1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sabre-io/xml.git",
+                "reference": "e15454e68805e3713271ea58c0b2d6a82dac56b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sabre-io/xml/zipball/e15454e68805e3713271ea58c0b2d6a82dac56b7",
+                "reference": "e15454e68805e3713271ea58c0b2d6a82dac56b7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-xmlreader": "*",
+                "ext-xmlwriter": "*",
+                "lib-libxml": ">=2.6.20",
+                "php": ">=7.0",
+                "sabre/uri": ">=1.0,<3.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "time": "2019-01-09T13:50:52+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Sabre\\Xml\\": "lib/"
+                },
+                "files": [
+                    "lib/Deserializer/functions.php",
+                    "lib/Serializer/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Evert Pot",
+                    "email": "me@evertpot.com",
+                    "homepage": "http://evertpot.com/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Markus Staab",
+                    "email": "markus.staab@redaxo.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "sabre/xml is an XML library that you may not hate.",
+            "homepage": "https://sabre.io/xml/",
+            "keywords": [
+                "XMLReader",
+                "XMLWriter",
+                "dom",
+                "xml"
+            ],
+            "install-path": "../sabre/xml"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

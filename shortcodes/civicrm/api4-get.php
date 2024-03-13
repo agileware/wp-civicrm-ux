@@ -1,4 +1,5 @@
 <?php
+use function PHP81_BC\strftime;
 
 /**
  * Class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get

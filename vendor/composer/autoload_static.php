@@ -10,6 +10,7 @@ class ComposerStaticInitfa85ac06b7f15758458f94c1334ceeb2
         '383eaff206634a77a1be54e64e6459c7' => __DIR__ . '/..' . '/sabre/uri/lib/functions.php',
         '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
         '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
+        '9e71c1459ef1226520e4b26dac3a180d' => __DIR__ . '/..' . '/php81_bc/strftime/src/php-8.1-strftime.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -36,11 +37,16 @@ class ComposerStaticInitfa85ac06b7f15758458f94c1334ceeb2
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitfa85ac06b7f15758458f94c1334ceeb2::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitfa85ac06b7f15758458f94c1334ceeb2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitfa85ac06b7f15758458f94c1334ceeb2::$classMap;
 
         }, null, ClassLoader::class);
     }
