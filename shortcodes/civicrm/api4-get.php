@@ -67,18 +67,14 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					break;
 				case 'sort':
 				case 'orderby':
-					[ $sort, $dir ] = explode( ':', $v, 2 );
+					[ $sort, $dir ] = str_contains($v, ':') ? explode( ':', $v, 2 ) : [ $v, 'ASC' ];
 					if ( $dir != 'DESC' ) {
 						$dir = 'ASC';
 					}
 					$params['orderBy'][ $sort ] = $dir;
 					break;
 				default:
-					[ $op, $value ] = explode( ':', $v, 2 );
-					if ( ! $value ) {
-						$value = $op;
-						$op    = '=';
-					}
+					[ $op, $value ] = str_contains($v, ':') ? explode( ':', $v, 2 ) : [ '=', $v ];
 
 					if ( preg_match( '{(^|\.|_) id $}x', $k ) &&
 					     preg_match( '{^\s* \d+ (\s* , \s* \d+)+ \s* $}x', $value ) ) {
@@ -129,7 +125,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
 
-			$all = $_GET['reset'] ? FALSE : get_transient( $trkey );
+			$all = !empty($_GET['reset']) ? FALSE : get_transient( $trkey );
 
 			if ( $all !== FALSE ) {
 				return $all;
@@ -174,7 +170,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						if ( is_array( $output ) ) {
 							$output = implode( ', ', $output );
 						}
-						if ( strcasecmp( $match['format'], 'br' ) === 0 ) {
+						if ( strcasecmp( $match['format'] ?? '', 'br' ) === 0 ) {
 							$output .= '<br />';
 						}
 					}
