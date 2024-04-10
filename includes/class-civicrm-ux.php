@@ -102,7 +102,7 @@ class Civicrm_Ux {
 	private function __construct( $plugin_file ) {
 		$this->version = \get_file_data( realpath( $plugin_file ), [ 'Version' => 'Version' ], 'plugin' )['Version'];
 		$this->civicrm_ux = 'civicrm-ux';
-		self::$directory = plugin_dir_path( $plugin_file );
+		self::$directory = trailingslashit( plugin_dir_path( $plugin_file ) );
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -113,8 +113,10 @@ class Civicrm_Ux {
 		$this->define_rest();
 		$this->define_magic_tag();
 
-		if( !function_exists( 'urlparam' ) && !empty( self::$directory ) ) {
-			include_once( self::$directory . '/packaged/url-params/urlparams.php');
+		if( !empty( self::$directory ) ) {
+            if ( !function_exists( 'urlparam' ) ){                                      
+                include_once( self::$directory . 'packaged/url-params/urlparams.php'); 
+            }                                                                           
 		}
 
 		$this->loader->add_action( 'init', $this, 'civicrm_init' );
@@ -418,4 +420,11 @@ class Civicrm_Ux {
 		return $this->version;
 	}
 
+    public function strftime ( string $format, $timestamp = null, ?string $locale = null ) : string {
+	    if ( !function_exists( 'PHP81_BC\\strftime' ) ){
+		    include_once( self::$directory . 'packaged/PHP81_BC/strftime.php');
+	    }
+
+	    return PHP81_BC\strftime( $format, $timestamp, $locale );
+    }
 }

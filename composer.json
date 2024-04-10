@@ -1,6 +1,5 @@
 {
   "require": {
-    "sabre/vobject": "^4.2",
-    "php81_bc/strftime": "^0.7.4"
+    "sabre/vobject": "^4.2"
   }
 }
