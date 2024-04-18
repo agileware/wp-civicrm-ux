@@ -12,6 +12,7 @@
  * Version:           1.13.2
  * Requires at least: 5.8
  * Requires PHP:      7.4
+ * Requires Plugins:  civicrm
  * Author:            Agileware
  * Author URI:        https://agileware.com.au/
  * License:           GPL-2.0+
