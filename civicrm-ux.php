@@ -27,13 +27,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// check CiviCRM activated
-add_action( 'admin_init', function() {
-    if ( ! is_plugin_active( 'civicrm/civicrm.php' ) && function_exists('deactivate_plugins') ) {
-        add_action( 'admin_notices', 'agileware_caldera_forms_magic_tags_child_plugin_notice' );
-    }
-});
-
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**
