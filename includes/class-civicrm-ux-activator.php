@@ -32,7 +32,7 @@ class Civicrm_Ux_Activator {
 	public static function activate() {
 		if ( !self::check_dependency() && function_exists( 'deactivate_plugins' ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'Please install and Activate CiviCRM.', 'civicrm-ux' ), 'Plugin dependency check', array( 'back_link' => true ) );
+			wp_die( __( 'Please install and activate CiviCRM.', 'civicrm-ux' ), 'Plugin dependency check', array( 'back_link' => true ) );
 		}
 	}
 
