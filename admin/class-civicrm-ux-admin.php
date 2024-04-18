@@ -104,6 +104,7 @@ class Civicrm_Ux_Admin {
 
 	public function create_menu() {
 		add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', 'civicrm-ux-setting.php', 'civicrm_ux_settings_page' );
+		add_filter('admin_footer_text', '__return_empty_string');
 	}
 
 	public function register_settings() {
