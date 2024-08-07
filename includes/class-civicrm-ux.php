@@ -230,6 +230,9 @@ class Civicrm_Ux {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
+		// WPCIVIUX-148 Implement plugin activation block
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'deactivate_blacklisted_plugins' );
+		$this->loader->add_action( 'activate_plugin', $plugin_admin, 'prevent_blacklisted_plugin_activation', 10, 2 );
 	}
 
 	/**
@@ -427,4 +430,5 @@ class Civicrm_Ux {
 
 	    return PHP81_BC\strftime( $format, $timestamp, $locale );
     }
+
 }

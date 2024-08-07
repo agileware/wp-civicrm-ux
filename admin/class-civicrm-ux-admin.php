@@ -41,6 +41,16 @@ class Civicrm_Ux_Admin {
 	private $version;
 
 	/**
+	 * A list of plugins blacklisted from activation.
+	 * 
+	 * Define plugin paths here.
+	 * Define the corresponding defaults for civicrm_plugin_activation_blocks setting in Civicrm_Ux_Option_Store.
+	 */
+	private $blocked_plugins = array(
+		'event_tickets' => 'event-tickets/event-tickets.php',
+	);
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $civicrm_ux The name of this plugin.
@@ -112,5 +122,62 @@ class Civicrm_Ux_Admin {
 		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION );
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_summary_options' );
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_contribution_ux' );
+
+		// WPCIVIUX-148 settings
+		register_setting( 'civicrm-ux-settings-group', 'civicrm_plugin_activation_blocks' );
+	}
+
+	/**
+	 * Blacklist plugins from activating
+	 * 
+	 * WPCIVIUX-148 : event-tickets
+	 */
+	public function prevent_blacklisted_plugin_activation($plugin, $network_wide) {
+		// Get the list of plugins to block
+		$plugin_activation_blocks = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_plugin_activation_blocks');
+
+		$plugin_activation_blocks = is_array($plugin_activation_blocks) ? $plugin_activation_blocks : [];
+
+		// Get the plugin slug from the plugin path
+		$plugin_slug = str_replace('-', '_', dirname($plugin));
+
+		// Check if the plugin is in the list of blocked plugins and if it should be blocked
+		if (isset($this->blocked_plugins[$plugin_slug]) && isset($plugin_activation_blocks[$plugin_slug]) && $plugin_activation_blocks[$plugin_slug]) {
+			// Abort the activation process and display an error message
+			wp_die(__('This plugin is blocked and cannot be activated.', 'textdomain'), __('Plugin Activation Error', 'textdomain'), array('back_link' => true));
+		}
+	}
+
+	/**
+	 * Deactivate currently active blacklisted plugins.
+	 * 
+	 * This is in case plugins have been blacklisted after they were already activated.
+	 * 
+	 * WPCIVIUX-148 : event-tickets
+	 */
+	public function deactivate_blacklisted_plugins() {
+		// Get the list of plugins to block
+		$plugin_activation_blocks = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_plugin_activation_blocks');
+
+		$plugin_activation_blocks = is_array($plugin_activation_blocks) ? $plugin_activation_blocks : [];
+
+		// Get the list of currently active plugins
+		$active_plugins = get_option('active_plugins', array());
+
+		// Loop through the list of plugins and remove any blocked plugins
+		foreach ( $this->blocked_plugins as $blocked_plugin => $path) {
+			if (!isset($plugin_activation_blocks[$blocked_plugin]) || !$plugin_activation_blocks[$blocked_plugin]) {
+				continue;
+			}
+
+			$index = array_search( $path, $active_plugins );
+			if ( false !== $index ) {
+				deactivate_plugins( $path );
+			}
+		}
 	}
 }
