@@ -26,6 +26,11 @@ function civicrm_ux_settings_page() {
   $opt_contribution_ux     = Civicrm_Ux::getInstance()
                          ->get_store()
                          ->get_option('civicrm_contribution_ux');
+
+  $plugin_activation_blocks = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_plugin_activation_blocks');
+
   ?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
@@ -104,6 +109,19 @@ function civicrm_ux_settings_page() {
                             <?php echo isset($opt_contribution_ux['is_autorenew_default']) ? ' checked="checked">' : '>'; ?>
                             <label for="is_autorenew_default">For all Membership Contribution Pages, set the membership to auto-renew by default.</label>
                         </td>
+                    </tr>
+                </table>
+                <h2>Plugin Activation Blocks</h2>
+                <p>Prevent the following plugins from being activated.</p>
+                <table>
+                    <?php
+                        // Add extra plugin options here.
+                        // Defaults set in /includes/class-civicrm-ux-option-store.php
+                    ?>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2"><input type="checkbox" id="event_tickets" name="civicrm_plugin_activation_blocks[event_tickets]"
+                            <?php echo isset($plugin_activation_blocks['event_tickets']) && $plugin_activation_blocks['event_tickets'] ? ' checked="checked">' : '>'; ?>
+                            <label for="event_tickets">Event Tickets</label></td>
                     </tr>
                 </table>
             </div>

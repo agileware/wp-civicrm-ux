@@ -31,6 +31,11 @@ class Civicrm_Ux_Option_Store {
 			'is_recur_default'     => FALSE,
 			'is_autorenew_default' => FALSE,
 		] );
+
+		// For Plugins we wish to block
+		$this->register_option( 'civicrm_plugin_activation_blocks', NULL, [
+			'event_tickets' => TRUE,
+		] );
 	}
 
 	public function register_option( $name, $instance, $default = '' ) {
