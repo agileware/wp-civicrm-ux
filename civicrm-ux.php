@@ -27,6 +27,11 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// Hide Upsell to install the Events Tickets plugin
+if ( !defined( 'TEC_HIDE_UPSELL' ) ) {
+	define( 'TEC_HIDE_UPSELL', true );
+}
+
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**
