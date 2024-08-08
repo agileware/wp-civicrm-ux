@@ -238,9 +238,11 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: #' . ($colors[$event['event_type_id:label']] ?? '333333') . ';">' . $event['event_type_id:label'] . '</div>
 		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
-		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>
-		<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
+		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>';
 
+		if ( !empty($event_location) ) {
+			$template .= '<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
+		}
 
 
 		$template .= $event['is_online_registration'] ? '<div class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' . $url . '\'">Click here to register</div>'  : '';
