@@ -252,7 +252,11 @@ const domevent = function (eventName, detail) {
                       <div class="event-time"><i class="fa fa-clock-o"></i><span class="event-time-text">${
                         formatAMPM(event_start) + " to " + formatAMPM(event_end)
                       }</span></div>
-                      <div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">${event_location}</span></div>
+                      ${
+                        event_location
+                          ? '<div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">' + event_location + '</span></div>'
+                          : ""
+                      }
                       `;
   
             let tooltip = new tippy(info.el, {
