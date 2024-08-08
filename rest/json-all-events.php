@@ -77,7 +77,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 				$events = Event::get(FALSE)
 				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.id', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
 				                          ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
-				                          ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
+				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
 				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
 				                          ->addWhere('event_type_id:label', 'IN', $types)
 				                          ->addWhere('start_date', '>=', $start_date)
@@ -145,7 +145,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 				$events = Event::get(FALSE)
 				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
-				                          ->addJoin('LocBlock AS loc_block', 'INNER', ['loc_block_id', '=', 'loc_block_id.id'])
+				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
 				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
 				                          ->addWhere('event_type_id:label', 'IN', $types)
 				                          ->addWhere('start_date', '>=', $start_date)
