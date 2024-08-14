@@ -92,10 +92,10 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 									['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']],
 								];
 								$params['where'][] = [ 
-									'participant.contact_id', $op, CRM_Core_Session::singleton()->getLoggedInContactID() 
+									'participant.contact_id', '=', CRM_Core_Session::singleton()->getLoggedInContactID() 
 								];
 								$params['where'][] = [ 
-									['participant.status_id', 'IN', [1, 7, 9, 5, 6, 16]], // Registered, On Waitlist, Pending from waitlist, Pending (pay later), Pending (incomplete transaction), Transferred
+									'participant.status_id', 'IN', [1, 7, 9, 5, 6, 16], // Registered, On Waitlist, Pending from waitlist, Pending (pay later), Pending (incomplete transaction), Transferred
 								];
 							}
 							break;
