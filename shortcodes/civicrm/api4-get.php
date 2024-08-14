@@ -86,11 +86,16 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 					switch ( $k ) {
 						case 'my_events':
-							// Only get events for the current logged in user
+							// Only get upcoming events for the current logged in user
 							if ($value && $atts['entity'] == 'Event') {
-								$params['where'][] = [ 'participant.contact_id', $op, CRM_Core_Session::singleton()->getLoggedInContactID() ];
 								$params['join'] = [
 									['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']],
+								];
+								$params['where'][] = [ 
+									'participant.contact_id', $op, CRM_Core_Session::singleton()->getLoggedInContactID() 
+								];
+								$params['where'][] = [ 
+									['participant.status_id', 'IN', [1, 7, 9, 5, 6, 16]], // Registered, On Waitlist, Pending from waitlist, Pending (pay later), Pending (incomplete transaction), Transferred
 								];
 							}
 							break;
