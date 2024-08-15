@@ -41,6 +41,11 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		$event = \Civi\Api4\Event::get(FALSE)
 				->addWhere('id', '=', $atts['eventid'])
 				->execute();
+		
+		// Respect the "Allow self-service cancellation or transfer?" event setting
+		if ( !$event[0]['allow_selfcancelxfer'] ) {
+			return '';
+		}
 
 		$confirmation_dialog = '<dialog id="event-cancellation-confirm-dialog-' . $atts['eventid'] . '" class="event-cancellation-confirm-dialog">
                                     <div class="modal-content">
