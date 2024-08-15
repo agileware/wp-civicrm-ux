@@ -40,7 +40,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
 		$params = [ 'checkPermissions' => FALSE ];
 
-		$cache_results = true; // cache results by default
+		// cache results by default
+		$cache_results = true;
 
 		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
 
@@ -60,7 +61,6 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					break;
 				case 'cacheresults':
 				case 'cache_results':
-					//$cache_results = (bool) $v;
 					$cache_results = filter_var($v, FILTER_VALIDATE_BOOLEAN);
 					break;
 				case 'limit':
@@ -69,7 +69,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					break;
 				case 'checkpermissions':
 				case 'check_permissions':
-					$params[ 'checkPermissions' ] = (bool) $v;
+					$params[ 'checkPermissions' ] = filter_var($v, FILTER_VALIDATE_BOOLEAN);
 					break;
 				case 'sort':
 				case 'orderby':
