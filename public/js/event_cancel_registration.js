@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Select all buttons with the class 'event-cancel-registration'
   const buttons = document.querySelectorAll("button.event-cancel-registration");
-  const wp_json_url = document.querySelector(
-    'link[rel="https://api.w.org/"]'
-  ).href;
+  const wp_json_url = document.querySelector('link[rel="https://api.w.org/"]').href;
+
+  // Custom error message
+  const error_message = document.querySelector(".event-cancellation-error");
 
   // Iterate over the NodeList and add an event listener to each button
   buttons.forEach((button) => {
@@ -18,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Handle the click event
       if (event_id) {
+        button.disabled = true;
+
         // Show the custom confirmation dialog
         const modal = document.getElementById("event-cancellation-confirm-dialog-" + event_id);
 
@@ -41,11 +44,17 @@ document.addEventListener("DOMContentLoaded", () => {
           if (response.ok) {
             // reload the page
             location.reload(true);
+          } else {
+            // display an error
+            const my_error_message = error_message.cloneNode(true);
+            my_error_message.style.display = 'block';
+            button.insertAdjacentElement('afterend', my_error_message);
           }
         };
 
         // Handle the "No" button click
         confirmNo.onclick = function () {
+          button.disabled = false;
           modal.close();
         };
       }
