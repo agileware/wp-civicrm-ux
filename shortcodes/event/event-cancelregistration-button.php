@@ -25,11 +25,13 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		// Ensure the button is only rendered for the current logged in user
+		// Ensure the button is only rendered for the current logged in user, when they have an active registration
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 		$participant = \Civi\Api4\Participant::get(FALSE)
+				->addJoin('ParticipantStatusType AS participant_status_type', 'LEFT')
 				->addWhere('event_id', '=', $atts['eventid'])
 				->addWhere('contact_id', '=', $cid)
+				->addWhere('participant_status_type.class', '!=', 'Negative')
 				->execute();
 
 		if ( count( $participant ) == 0 ) {
