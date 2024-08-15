@@ -40,6 +40,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
 		$params = [ 'checkPermissions' => FALSE ];
 
+		$cache_results = true; // cache results by default
+
 		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
 
 		// Interpret attributes as where clauses.
@@ -55,6 +57,11 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			switch ( $k ) {
 				case 'entity':
+					break;
+				case 'cacheresults':
+				case 'cache_results':
+					//$cache_results = (bool) $v;
+					$cache_results = filter_var($v, FILTER_VALIDATE_BOOLEAN);
 					break;
 				case 'limit':
 				case 'offset':
@@ -138,7 +145,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
 
-			$all = !empty($_GET['reset']) ? FALSE : get_transient( $trkey );
+			$all = !empty($_GET['reset']) || !$cache_results ? FALSE : get_transient( $trkey );
 
 			if ( $all !== FALSE ) {
 				return $all;
@@ -198,7 +205,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$all = trim( $all );
 
-			set_transient( $trkey, $all, 4 * HOUR_IN_SECONDS );
+			if ( $cache_results ) {
+				set_transient( $trkey, $all, 4 * HOUR_IN_SECONDS );
+			}
 
 			return $all;
 		}
