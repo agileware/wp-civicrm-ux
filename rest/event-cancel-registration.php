@@ -51,7 +51,7 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
         } catch ( CiviCRM_API3_Exception $e ) {
             $errorMessage = $e->getMessage();
             \CRM_Core_Error::debug_var( 'rest_cancel_event_registration', $errorMessage );
-            return new WP_Error( 'rest_cancel_event_registration', 'CiviCRM API error.', ['status' => 404] );
+            return new WP_Error( 'rest_cancel_event_registration', 'CiviCRM API error.', ['status' => 500] );
         }
 
         return $response;
