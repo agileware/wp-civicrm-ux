@@ -42,7 +42,7 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 
 		$confirmation_dialog = '<dialog id="event-cancellation-confirm-dialog-' . $atts['eventid'] . '" class="event-cancellation-confirm-dialog">
                                     <div class="modal-content">
-										<p><span class="heading">' . $event[0]['title'] . '</span></p>
+										<p><span class="event-title">' . $event[0]['title'] . '</span></p>
                                         <p>Are you sure you want to cancel this event registration?</p>
 										<div class="modal-buttons">
 											<button class="confirm-yes">Yes</button>
