@@ -295,6 +295,23 @@ The event listing displays the start date, the end date, the event name, the reg
 The 'days' parameter is optional. This can be used to limit the upcoming events to only those with a event start date in the next 'days'.
 The 'type' is optional. If the type is not specified, there will be an event listing of all types of events.
 This shortcode has been formatted in html with styling.
+
+## Event Cancel Registration Shortcodes
+
+These shortcodes will enable users to cancel their registration for an event. It requires a FormProcessor to handle the participant status update. This comes with the advantage of customisation for the FormProcessor, so you can do things like handle associated Contributions, trigger an email to be sent, and generate Activities.
+
+The following shortcodes *must* be used together:
+
+- *`[ux_event_cancelregistration]`* provides a WordPress nonce for authentication
+- *`[ux_event_cancelregistration_button text="My Button Text" eventid={{api4:id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. It will not render for events the current logged in user does not have an active registration for.
+
+You will also need to enable the Form Processor CiviCRM extension, and create a `cancel_event_registration` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
+
+### Troubleshooting
+
+- Ensure the REST API link tag from `rest_output_link_wp_head()` is correctly generated. If you cannot find it in the page source code, it may be being stripped by another plugin.
+- After canceling a registration from a listing created using `[ux_cv_api4_get]`, the page will reload. If the changes are not reflected in your event listing, the results of the API call may have been cached. See the section on *CiviCRM API caching* above for advice.
+
  
 ## Membership Shortcodes
 
