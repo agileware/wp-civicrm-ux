@@ -25,8 +25,30 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		// Ensure the button is only rendered for the current logged in user, when they have an active registration
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
+
+		// Make sure the current logged in user has permission to cancel their registration.
+		// This should match up to the permission set in the cancel_event_registration Form Processor,
+		// OR default to the 'register for events' permission
+		$formProcessorInstance = \Civi\Api4\FormProcessorInstance::get(FALSE)
+			->addSelect('permission')
+			->addWhere('name', '=', 'cancel_event_registration')
+			->execute();
+		
+		// Do not output anything if we couldn't find the Form Processor
+		if ( count( $formProcessorInstance ) == 0 ) {
+			return '';
+		}
+		
+		// If a permission is set on the FormProcessor, check that the user has that permission first
+		if ( isset( $formProcessorInstance[0]['permission'] ) && !CRM_Core_Permission::check($formProcessorInstance[0]['permission']) ) {
+			return '';
+		} else if ( !isset( $formProcessorInstance[0]['permission'] ) && !CRM_Core_Permission::check('register for events') ) {
+			// Otherwise default to check for the 'register for events' permission
+			return '';
+		}
+
+		// Ensure the button is only rendered for the current logged in user, when they have an active registration
 		$participant = \Civi\Api4\Participant::get(FALSE)
 				->addJoin('ParticipantStatusType AS participant_status_type', 'LEFT')
 				->addWhere('event_id', '=', $atts['eventid'])

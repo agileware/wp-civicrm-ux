@@ -42,6 +42,7 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
             
             $result = civicrm_api3('FormProcessor', 'cancel_event_registration', [
                 'eid' => $event_id,
+                'check_permissions' => true,
             ]);
         
             $response = new WP_REST_Response();
