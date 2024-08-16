@@ -45,6 +45,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$types = array();
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
 		$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
+		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
 		$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
 		$colors = $_REQUEST['colors'] ?? [];
 		filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
@@ -91,10 +92,20 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 				$tz = wp_timezone();
 
 				foreach ($events as $event) {
-					$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
+					if ( !empty($redirect_after_login) ) {
+						// If we have specified a custom redirection after login, apply that
+						$params = array(
+							'id' => $event['id'],
+							'reset' => 1
+						);
+						$url = add_query_arg($params, $redirect_after_login);
+					} else {
+						// Otherwise redirect to the standard civicrm event registration page
+						$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
+					}
 
 					if (!is_user_logged_in() and $force_login) {
-						$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
+						$url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
 					}
 
 					if (str_ends_with($upload, '/civicrm/custom')) {
@@ -158,10 +169,20 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 
 				foreach ($events as $event) {
-					$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
+					if ( !empty($redirect_after_login) ) {
+						// If we have specified a custom redirection after login, apply that
+						$params = array(
+							'id' => $event['id'],
+							'reset' => 1
+						);
+						$url = add_query_arg($params, $redirect_after_login);
+					} else {
+						// Otherwise redirect to the standard civicrm event registration page
+						$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
+					}
 
 					if (!is_user_logged_in() and $force_login) {
-						$url = get_site_url() . '/wp-login.php?redirect_to=' . $url;
+						$url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
 					}
 
 					$event_obj = array(
