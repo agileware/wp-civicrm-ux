@@ -32,8 +32,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			 !filter_var( $atts['id'], FILTER_VALIDATE_INT, [ 'options' => [ 'min-range' => 1 ] ] ) &&
 			 preg_match('{^ (?![_-]) [A-Za-z0-9_-]+ $}x', $atts['id']) ) {
 			$atts['id'] = filter_input(INPUT_GET, $atts['id'], FILTER_VALIDATE_INT, [ 'option' => [ 'min-range' => 1 ] ]);
+			// Not able to get id
 			if ( $atts['id'] < 1 ) {
-				return __( 'Invalid ID' );
+				return '';
 			}
 		}
 
