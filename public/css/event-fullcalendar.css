@@ -45,6 +45,12 @@
     margin-bottom: 30px;
 }
 
+.civicrm-ux-event-listing-details-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
 .civicrm-ux-event-listing-register, #civicrm-ux-event-popup-register {
     text-align: center !important;
     margin: 10px 0 10px 0;
@@ -55,7 +61,6 @@
     font-size: 13px !important;
     background-color: #333333;
     border-radius: 3px;
-    height: 30px;
 }
 
 .civicrm-ux-event-listing-desc {
@@ -79,7 +84,6 @@
 div.civicrm-event-listing-item {
     margin: 0 0 1.8em 0;
 }
-
 
 .civicrm-ux-event-popup{
     background-color: #eeeeee;
