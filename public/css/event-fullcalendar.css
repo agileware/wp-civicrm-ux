@@ -54,13 +54,14 @@
 .civicrm-ux-event-listing-register, #civicrm-ux-event-popup-register {
     text-align: center !important;
     margin: 10px 0 10px 0;
-    padding: 3px !important;
+    padding: 0.5em 1em !important;
     vertical-align: middle !important;
     color: white;
     cursor: pointer;
     font-size: 13px !important;
     background-color: #333333;
-    border-radius: 3px;
+    border-radius: 3px!important;
+	width: auto !important;
 }
 
 .civicrm-ux-event-listing-desc {
