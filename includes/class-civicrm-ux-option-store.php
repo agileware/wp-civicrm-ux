@@ -4,6 +4,8 @@
  * WIP
  *
  * Class Civicrm_Ux_Option_Store
+ * 
+ * NOTE: Register the setting in class-civicrm-ux-admin.php.
  */
 class Civicrm_Ux_Option_Store {
 
@@ -48,14 +50,15 @@ class Civicrm_Ux_Option_Store {
 			? file_get_contents($template_dir . 'self-serve-checksum-form-text.html') 
 			: '';
 
-		$defaults['email_body'] = file_exists($template_dir . 'self-serve-checksum-email-body.html') 
-			? file_get_contents($template_dir . 'self-serve-checksum-email-body.html') 
+		$defaults['email_message'] = file_exists($template_dir . 'self-serve-checksum-email-message.html') 
+			? file_get_contents($template_dir . 'self-serve-checksum-email-message.html') 
 			: '';
 
 		// For Self Serve Checksum Forms
 		$this->register_option( 'self_serve_checksum', NULL, [
 			'form_text' => $defaults['form_text'],
-			'email_body' => $defaults['email_body'],
+			'email_subject' => "Thank you! Continue with your form submission by following this link.",
+			'email_message' => $defaults['email_message'],
 		] );
 	}
 

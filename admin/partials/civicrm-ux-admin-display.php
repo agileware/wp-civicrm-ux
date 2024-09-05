@@ -135,6 +135,7 @@ function civicrm_ux_settings_page() {
                 <table>
                     <tr style="vertical-align: text-top;">
                         <td colspan="2">
+                            <label for="self_serve_checksum_form_text">Form Text</label>
                             <?php
                             wp_editor(
                                 $self_serve_checksum['form_text'],      // Content of the editor
@@ -152,12 +153,22 @@ function civicrm_ux_settings_page() {
                     </tr>
                     <tr style="vertical-align: text-top;">
                         <td colspan="2">
+                            <label for="self_serve_checksum_email_subject">Email Subject</label>
+                            <input type="text"
+                                   id="self_serve_checksum_email_subject"
+                                   name="self_serve_checksum[email_subject]"
+                                   value="<?php echo $self_serve_checksum['email_subject']; ?>"/>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2">
+                            <label for="self_serve_checksum_email_message">Email Message</label>
                             <?php
                             wp_editor(
-                                $self_serve_checksum['email_body'],      // Content of the editor
-                                'self_serve_checksum_email_body',      // Unique ID for the editor
+                                $self_serve_checksum['email_message'],      // Content of the editor
+                                'self_serve_checksum_email_message',      // Unique ID for the editor
                                 array(
-                                    'textarea_name' => "self_serve_checksum[email_body]", // Name used to save the content
+                                    'textarea_name' => "self_serve_checksum[email_message]", // Name used to save the content
                                     'media_buttons' => true,   // Show media upload buttons
                                     'textarea_rows' => 10,     // Set the number of rows in the editor
                                     'teeny' => false,          // Use the full editor toolbar
