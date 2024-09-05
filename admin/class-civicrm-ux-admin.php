@@ -125,6 +125,9 @@ class Civicrm_Ux_Admin {
 
 		// WPCIVIUX-148 settings
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_plugin_activation_blocks' );
+
+		// GFCV-107 settings
+		register_setting( 'civicrm-ux-settings-group', 'self_serve_checksum' );
 	}
 
 	/**

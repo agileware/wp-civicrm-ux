@@ -36,6 +36,27 @@ class Civicrm_Ux_Option_Store {
 		$this->register_option( 'civicrm_plugin_activation_blocks', NULL, [
 			'event_tickets' => TRUE,
 		] );
+
+		// Define the path to your template files
+		$template_dir = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/';
+    
+		// Load default values from files
+		$defaults = [];
+	
+		// Load the default content for event tickets from a template file
+		$defaults['form_text'] = file_exists($template_dir . 'self-serve-checksum-form-text.html') 
+			? file_get_contents($template_dir . 'self-serve-checksum-form-text.html') 
+			: '';
+
+		$defaults['email_body'] = file_exists($template_dir . 'self-serve-checksum-email-body.html') 
+			? file_get_contents($template_dir . 'self-serve-checksum-email-body.html') 
+			: '';
+
+		// For Self Serve Checksum Forms
+		$this->register_option( 'self_serve_checksum', NULL, [
+			'form_text' => $defaults['form_text'],
+			'email_body' => $defaults['email_body'],
+		] );
 	}
 
 	public function register_option( $name, $instance, $default = '' ) {

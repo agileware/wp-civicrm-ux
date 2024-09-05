@@ -31,6 +31,11 @@ function civicrm_ux_settings_page() {
                         ->get_store()
                         ->get_option('civicrm_plugin_activation_blocks');
 
+  $self_serve_checksum = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('self_serve_checksum');
+
+
   ?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
@@ -122,6 +127,45 @@ function civicrm_ux_settings_page() {
                         <td colspan="2"><input type="checkbox" id="event_tickets" name="civicrm_plugin_activation_blocks[event_tickets]"
                             <?php echo isset($plugin_activation_blocks['event_tickets']) && $plugin_activation_blocks['event_tickets'] ? ' checked="checked">' : '>'; ?>
                             <label for="event_tickets">Event Tickets</label></td>
+                    </tr>
+                </table>
+                <h2>Self Serve Checksum Form</h2>
+                <p>The [self_serve_checksum] shortcode can be used to protect your forms and force a valid checksum before form submission. Users must provide their email address and request a link with their checksum token to be sent to their email to access the form.</p>
+                <p>Configure the contents of the form and the email to be sent below.</p>
+                <table>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2">
+                            <?php
+                            wp_editor(
+                                $self_serve_checksum['form_text'],      // Content of the editor
+                                'self_serve_checksum_form_text',      // Unique ID for the editor
+                                array(
+                                    'textarea_name' => "self_serve_checksum[form_text]", // Name used to save the content
+                                    'media_buttons' => false,   // Show media upload buttons
+                                    'textarea_rows' => 10,     // Set the number of rows in the editor
+                                    'teeny' => false,          // Use the full editor toolbar
+                                    'quicktags' => true        // Enable quicktags (HTML editor)
+                                )
+                            );
+                            ?>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2">
+                            <?php
+                            wp_editor(
+                                $self_serve_checksum['email_body'],      // Content of the editor
+                                'self_serve_checksum_email_body',      // Unique ID for the editor
+                                array(
+                                    'textarea_name' => "self_serve_checksum[email_body]", // Name used to save the content
+                                    'media_buttons' => true,   // Show media upload buttons
+                                    'textarea_rows' => 10,     // Set the number of rows in the editor
+                                    'teeny' => false,          // Use the full editor toolbar
+                                    'quicktags' => true        // Enable quicktags (HTML editor)
+                                )
+                            );
+                            ?>
+                        </td>
                     </tr>
                 </table>
             </div>
