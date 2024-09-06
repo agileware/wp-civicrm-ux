@@ -389,6 +389,7 @@ For example: to display the External ID of a Contact, use this shortcode
 
 `[ux_self_serve_checksum]`
 Protect your CiviCRM integrated forms by forcing users to access them with a valid checksum URL.
+Read more about [CiviCRM Checksum Tokens here](https://docs.civicrm.org/user/en/latest/common-workflows/tokens-and-mail-merge/#checksum).
 
 Wrap the content and form you wish to protect in the shortcode. When the page is accessed without a valid checksum in the URL, the Self Serve Checksum request form will be displayed. After providing their email address, an email will be sent to them with a link back to the page containing a valid checksum. The form will then be rendered for them to complete.
 
@@ -410,25 +411,24 @@ Wrap the content and form you wish to protect in the shortcode. When the page is
 
 Comes with settings in the CiviCRM UX settings page to quickly change:
   - the content of the Self Serve Checksum request form text
-  - the email subject
   - the email message
 
 Also comes with the following filter hooks:
-  - *`self_serve_checksum_email_link`* - Changes the output of the checksum URL link in the email message.
-  - *`self_serve_checksum_confirmation_message`* - Changes the confirmation message displayed with the Self Serve Checksum request form.
+  - *`ux_self_serve_checksum_email_subject`* - Changes the subject line for the email sent to user.
+  - *`ux_self_serve_checksum_confirmation_message`* - Changes the confirmation message displayed with the Self Serve Checksum request form.
 
 ```
+// Hook to modify the subject line of the Self Serve Checksum email
+add_filter('ux_self_serve_checksum_email_subject', function($subject, $pageTitle) {
+    $subject = $pageTitle . This is a custom subject line modified by filters';
+    return $subject;
+}, 10, 2);
+
 // Hook to modify the Self Serve Checksum confirmation message
-add_filter('self_serve_checksum_confirmation_message', function($confirmation, $pageTitle) {
+add_filter('ux_self_serve_checksum_confirmation_message', function($confirmation, $pageTitle) {
     $confirmation .= '<p>This is a custom confirmation message modified by filters. ' . $pageTitle . '</p>';
     return $confirmation;
 }, 10, 2);
-
-// Hook to modify the checksum link output in the Self Serve Checksum email
-add_filter('self_serve_checksum_email_link', function($link, $checksumUrl, $pageTitle) {
-    $link = '<br><br><a href="' . $checksumUrl . '">Continue to ' . $pageTitle . '</a>';
-    return $link;
-}, 10, 3);
 ```
 
 
