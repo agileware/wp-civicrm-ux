@@ -17,7 +17,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
-		$isValid = false;
+		$displayInvalidMessage = false;
 		// IF there is a valid CID and checksum in the  URL, display the content inside the shortcode
 		if ( isset( $_GET['cid'] ) && !empty( $_GET['cid'] ) && isset( $_GET['cid'] ) && !empty( $_GET['cid'] ) ) {
 			$cid = $_GET['cid'];
@@ -28,6 +28,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 			if ( $isValid ) {
 				return do_shortcode( $content );
+			} else {
+				$displayInvalidMessage = true;
 			}
 		}
     
@@ -54,13 +56,13 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			->get_store()
 			->get_option('self_serve_checksum');
 		
-		$errorMessage = !$isValid ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
+		$invalidMessage = $displayInvalidMessage ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
 		$formText = wpautop( $self_serve_checksum['form_text'] );
 
         ob_start();
         ?>
 
-		<?php echo $errorMessage; ?>
+		<?php echo $invalidMessage; ?>
 		<?php echo $formText; ?>
         <form id="ss-cs-form" method="post">
             <label for="ss-cs-email">Your email:</label>
