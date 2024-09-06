@@ -31,6 +31,11 @@ function civicrm_ux_settings_page() {
                         ->get_store()
                         ->get_option('civicrm_plugin_activation_blocks');
 
+  $self_serve_checksum = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('self_serve_checksum');
+
+
   ?>
     <div class="wrap">
         <h1>CiviCRM UX</h1>
@@ -122,6 +127,63 @@ function civicrm_ux_settings_page() {
                         <td colspan="2"><input type="checkbox" id="event_tickets" name="civicrm_plugin_activation_blocks[event_tickets]"
                             <?php echo isset($plugin_activation_blocks['event_tickets']) && $plugin_activation_blocks['event_tickets'] ? ' checked="checked">' : '>'; ?>
                             <label for="event_tickets">Event Tickets</label></td>
+                    </tr>
+                </table>
+                <h2>Self Serve Checksum Form</h2>
+                <p>The <code>[ux_self_serve_checksum]</code> shortcode can be used to protect your forms and force a valid checksum before form submission.</p>
+                <p>Read more on how to use the shortcode in the <a href="https://github.com/agileware/wp-civicrm-ux/blob/GFCV-107/USAGE.md#self-serve-checksum-shortcode" target="_blank">CiviCRM UX User Guide.</a></p>
+                <p>Configure the contents of the Self Serve Checksum request form and the email to be sent to the user below.</p>
+                <table width="100%">
+                    <colgroup>
+                        <col class="col-label" width="200px" />
+                        <col />
+                        <col class="col-value" />
+                    </colgroup>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2">
+                            <label for="self_serve_checksum_form_text" style="font-size: 1.2em; font-weight:500;">Protection Form Text</label>
+                        </td>
+                        <td>
+                            <?php
+                            wp_editor(
+                                $self_serve_checksum['form_text'],      // Content of the editor
+                                'self_serve_checksum_form_text',      // Unique ID for the editor
+                                array(
+                                    'textarea_name' => "self_serve_checksum[form_text]", // Name used to save the content
+                                    'media_buttons' => false,   // Show media upload buttons
+                                    'textarea_rows' => 10,     // Set the number of rows in the editor
+                                    'teeny' => false,          // Use the full editor toolbar
+                                    'quicktags' => true        // Enable quicktags (HTML editor)
+                                )
+                            );
+                            ?>
+                            <p>Appears above the Self Serve Checksum request form.</p>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: text-top;">
+                        <td colspan="2">
+                            <label for="self_serve_checksum_email_message" style="font-size: 1.2em; font-weight:500;">Email Message</label>
+                        </td>
+                        <td>
+                            <?php
+                            wp_editor(
+                                $self_serve_checksum['email_message'],      // Content of the editor
+                                'self_serve_checksum_email_message',      // Unique ID for the editor
+                                array(
+                                    'textarea_name' => "self_serve_checksum[email_message]", // Name used to save the content
+                                    'media_buttons' => true,   // Show media upload buttons
+                                    'textarea_rows' => 10,     // Set the number of rows in the editor
+                                    'teeny' => false,          // Use the full editor toolbar
+                                    'quicktags' => true        // Enable quicktags (HTML editor)
+                                )
+                            );
+                            ?>
+                            <p>Use the following tokens to build your email message to the user:</p>
+                            <ul>
+                                <li><code>{checksum_url}</code> - <strong>Required.</strong> Outputs the unique URL for the contact to complete the form.</li>
+                                <li><code>{page_title}</code> - Outputs the title of the form page the email was requested from.</li>
+                            </ul>
+                        </td>
                     </tr>
                 </table>
             </div>

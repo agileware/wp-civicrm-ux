@@ -125,6 +125,47 @@ class Civicrm_Ux_Admin {
 
 		// WPCIVIUX-148 settings
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_plugin_activation_blocks' );
+
+		// GFCV-107 settings
+		register_setting( 'civicrm-ux-settings-group', 'self_serve_checksum', 
+			array(
+				'type' => 'array',
+				'sanitize_callback' => function($input) {
+					// Custom sanitize callback to handle HTML content
+					$sanitized = [];
+					foreach ($input as $field => $value) {
+						switch ($field) {
+							case 'form_text':
+								// Use wp_kses_post to allow only safe HTML for WYSIWYG content
+								$sanitized[$field] = wp_kses_post($value);
+								break;
+							case 'email_message':
+								// Validate that the {checksum_url} custom token is present in the content
+								if (strpos($value, '{checksum_url}') === false) {
+									// Add a settings error if the token is missing
+									add_settings_error(
+										'self_serve_checksum', // Slug title of the setting
+										'missing_checksum_token', // Error code
+										'The Self Serve Checksum email message must include the {checksum_url} to be valid.', // Error message
+										'error' // Type of the message
+									);
+	
+									// Prevent saving by returning false
+									return false;
+								}
+								// Use wp_kses_post to allow only safe HTML for WYSIWYG content
+								$sanitized[$field] = wp_kses_post($value);
+								break;
+							default:
+								$sanitized[$field] = sanitize_text_field($value);
+								break;
+						}
+					}
+
+					return $sanitized;
+				},
+			)
+		);
 	}
 
 	/**
