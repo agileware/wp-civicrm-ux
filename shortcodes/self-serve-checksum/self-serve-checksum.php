@@ -86,31 +86,33 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	private function self_serve_checksum_handle_form_submission() {
 		if ( isset( $_POST['ss-cs-submit'] ) && !empty( $_POST['ss-cs-email'] ) ) {
 			$email = sanitize_email( $_POST['ss-cs-email'] );
-			$url = isset( $_POST['ss-cs-url'] ) ? esc_url( $_POST['ss-cs-url'] ) : '';
+			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
+			$url = trailingslashit( esc_url( $_POST['ss-cs-url'] ) );
 
-			if ( !str_ends_with($url, '/') ) {
-				$url .= '/';
-			}
-
-			// TODO
-			// Get contact cid and checksom from civicrm via api calls?
-			$contacts = \Civi\Api4\Contact::get(FALSE)
-				->addSelect('id')
-				->addJoin('Email AS email', 'LEFT', ['email.contact_id', '=', 'id'])
-				->addWhere('email.email', '=', $email)
-				->addGroupBy('id')
+			// Get contact cid and checksom from civicrm via api calls
+			$contacts = \Civi\Api4\Contact::get( FALSE )
+				->addSelect( 'id' )
+				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+				->addWhere( 'email.email', '=', $email )
+				->addGroupBy( 'id' )
 				->execute();
 
-			// TODO There should only be one contact, but if there happens to be multiple, maybe throw an error?
-
+			/**
+			 * WARNING 
+			 * 
+			 * There should only be one contact, but if there happens to be multiple (duplicate contacts), 
+			 * this will send the email to the last cid.
+			 * 
+			 * The only true fix is for the duplicate contacts to be merged.
+			 */
 			$cid = null;
 			$cs = null;
 			// Get the cid and generate a checksum
-			foreach ($contacts as $contact) {
+			foreach ( $contacts as $contact ) {
 				$cid = $contact['id'];
 
-				$checksums = \Civi\Api4\Contact::getChecksum(FALSE)
-					->setContactId($cid)
+				$checksums = \Civi\Api4\Contact::getChecksum( FALSE )
+					->setContactId( $cid )
 					->execute();
 
 				$cs = $checksums[0]['checksum'];
@@ -119,25 +121,47 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			// Build url with cid and checksum
 			// `${URL}/?cid=${cid}&cs=${checksum}`
 			$checksumUrl = $url . '?cid=' . $cid . '&cs=' . $cs;
-			error_log(print_r($checksumUrl, true));
-			
 
-			// TODO Get email body from a template setting
-			if ( is_email( $email ) ) {
-				$subject = 'Thank you for your submission';
-				$message = 'This is a confirmation email that we received your request.'; // TODO get body from settings
-
-				// Append the URL to the message if provided
-				if ( !empty( $url ) ) {
-					$message .= '<br><br>You can visit the following link: <a href="' . $url . '">' . $url . '</a>';
+			// TODO handle membership(s) checksums
+			$checksumURLs_memberships = [];
+			if ( $_POST['ss-cs-mid'] ) {
+				$memberships = \Civi\Api4\Membership::get( FALSE )
+					->addWhere( 'contact_id', '=', $cid )
+					->execute();
+				
+				foreach ( $memberships as $membership ) {
+					$checksumURLs_memberships[] = $checksumUrl . '&mid=' . $membership['id'];
 				}
+			}
 
-				$headers = array('Content-Type: text/html; charset=UTF-8');
+			// Build and send the email to the contact.
+			if ( is_email( $email ) ) {
+				// Get the Self Serve Checksum settings
+				$self_serve_checksum = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option( 'self_serve_checksum' );
+				
+				$subject = $self_serve_checksum['email_subject'] . ' - ' . $pageTitle;
+				$message = wpautop( $self_serve_checksum['email_message'] );
 
-				// TODO: Send via civicrm with checksum appended?
+				// Append the checksum URL(s) to the message
+				$link = '<br><br>Follow this link to continue your form submission for ' . $pageTitle . ': <a href="' . $checksumUrl . '">' . $checksumUrl . '</a>';
+
+				// Apply filters to alter the link content
+				$link = apply_filters( 'self_serve_checksum_email_link', $link, $checksumUrl, $pageTitle );
+
+				$message .= $link;
+
+				$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
 				wp_mail( $email, $subject, $message, $headers );
 
-				echo '<p>Thank you! An email has been sent to your address with a link to complete this form.</p>';
+				$confirmation = '<p>Thank you! An email has been sent to your address with a link to complete this form.</p>';
+
+				// Apply filters to alter the confirmation message
+				$confirmation = apply_filters( 'self_serve_checksum_confirmation_message', $confirmation, $pageTitle );
+
+				echo $confirmation;
 			} else {
 				echo '<p>Please enter a valid email address.</p>';
 			}
