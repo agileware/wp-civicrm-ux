@@ -57,7 +57,7 @@ class Civicrm_Ux_Option_Store {
 		// For Self Serve Checksum Forms
 		$this->register_option( 'self_serve_checksum', NULL, [
 			'form_text' => $defaults['form_text'],
-			'email_subject' => "Thank you! Continue with your form submission by following this link.",
+			'email_subject' => "Continue with your form submission",
 			'email_message' => $defaults['email_message'],
 		] );
 	}

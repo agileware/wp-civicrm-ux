@@ -134,8 +134,10 @@ function civicrm_ux_settings_page() {
                 <p>Configure the contents of the form and the email to be sent below.</p>
                 <table>
                     <tr style="vertical-align: text-top;">
-                        <td colspan="2">
+                        <td>
                             <label for="self_serve_checksum_form_text">Form Text</label>
+                        </td>
+                        <td>
                             <?php
                             wp_editor(
                                 $self_serve_checksum['form_text'],      // Content of the editor
@@ -152,17 +154,22 @@ function civicrm_ux_settings_page() {
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
-                        <td colspan="2">
+                        <td>
                             <label for="self_serve_checksum_email_subject">Email Subject</label>
+                        </td>
+                        <td>
                             <input type="text"
                                    id="self_serve_checksum_email_subject"
                                    name="self_serve_checksum[email_subject]"
+                                   size="40"
                                    value="<?php echo $self_serve_checksum['email_subject']; ?>"/>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
-                        <td colspan="2">
+                        <td>
                             <label for="self_serve_checksum_email_message">Email Message</label>
+                        </td>
+                        <td>
                             <?php
                             wp_editor(
                                 $self_serve_checksum['email_message'],      // Content of the editor
