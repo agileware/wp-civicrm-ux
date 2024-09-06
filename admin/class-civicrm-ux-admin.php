@@ -127,7 +127,29 @@ class Civicrm_Ux_Admin {
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_plugin_activation_blocks' );
 
 		// GFCV-107 settings
-		register_setting( 'civicrm-ux-settings-group', 'self_serve_checksum' );
+		register_setting( 'civicrm-ux-settings-group', 'self_serve_checksum', 
+			array(
+				'type' => 'array',
+				'sanitize_callback' => function($input) {
+					// Custom sanitize callback to handle HTML content
+					$sanitized = [];
+					foreach ($input as $field => $value) {
+						switch ($field) {
+							case 'form_text':
+							case 'email_message':
+								// Use wp_kses_post to allow only safe HTML for WYSIWYG content
+								$sanitized[$field] = wp_kses_post($value);
+								break;
+							default:
+								$sanitized[$field] = sanitize_text_field($value);
+								break;
+						}
+					}
+
+					return $sanitized;
+				},
+			)
+		);
 	}
 
 	/**
