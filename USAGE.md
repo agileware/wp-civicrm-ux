@@ -410,7 +410,7 @@ Wrap the content and form you wish to protect in the shortcode. When the page is
 ```
 
 Comes with settings in the CiviCRM UX settings page to quickly change:
-  - the content of the Self Serve Checksum request form text
+  - the content of the Self Serve Checksum protection form text
   - the email message
 
 Also comes with the following filter hooks:
@@ -430,6 +430,8 @@ add_filter('ux_self_serve_checksum_confirmation_message', function($confirmation
     return $confirmation;
 }, 10, 2);
 ```
+
+[Demo Screen Recording](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=sharing)
 
 
 ## Caldera magic tags
