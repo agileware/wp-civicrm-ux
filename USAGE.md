@@ -385,8 +385,9 @@ Parameters:
 For example: to display the External ID of a Contact, use this shortcode
 `[ux_contact_value field="external_identifier"]`
 
-## Self Serve Checksum Shortcode
+## Self Serve Checksum Form
 
+### Shortcode
 `[ux_self_serve_checksum]`
 Protect your CiviCRM integrated forms by forcing users to access them with a valid checksum URL.
 Read more about [CiviCRM Checksum Tokens here](https://docs.civicrm.org/user/en/latest/common-workflows/tokens-and-mail-merge/#checksum).
@@ -409,6 +410,7 @@ Wrap the content and form you wish to protect in the shortcode. When the page is
 <!-- /wp:paragraph -->
 ```
 
+### Settings and Customisation
 Comes with settings in the CiviCRM UX settings page to quickly change:
   - the content of the Self Serve Checksum protection form text
   - the email message
