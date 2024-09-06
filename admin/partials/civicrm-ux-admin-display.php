@@ -130,12 +130,18 @@ function civicrm_ux_settings_page() {
                     </tr>
                 </table>
                 <h2>Self Serve Checksum Form</h2>
-                <p>The [self_serve_checksum] shortcode can be used to protect your forms and force a valid checksum before form submission. Users must provide their email address and request a link with their checksum token to be sent to their email to access the form.</p>
-                <p>Configure the contents of the form and the email to be sent below.</p>
-                <table>
+                <p>The <code>[ux_self_serve_checksum]</code> shortcode can be used to protect your forms and force a valid checksum before form submission.</p>
+                <p>Read more on how to use the shortcode in the <a href="https://github.com/agileware/wp-civicrm-ux/blob/GFCV-107/USAGE.md#self-serve-checksum-shortcode" target="_blank">CiviCRM UX User Guide.</a></p>
+                <p>Configure the contents of the Self Serve Checksum request form and the email to be sent to the user below.</p>
+                <table width="100%">
+                    <colgroup>
+                        <col class="col-label" width="200px" />
+                        <col />
+                        <col class="col-value" />
+                    </colgroup>
                     <tr style="vertical-align: text-top;">
-                        <td>
-                            <label for="self_serve_checksum_form_text">Form Text</label>
+                        <td colspan="2">
+                            <label for="self_serve_checksum_form_text" style="font-size: 1.2em; font-weight:500;">Protection Form Text</label>
                         </td>
                         <td>
                             <?php
@@ -151,23 +157,12 @@ function civicrm_ux_settings_page() {
                                 )
                             );
                             ?>
+                            <p>Appears above the Self Serve Checksum request form.</p>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
-                        <td>
-                            <label for="self_serve_checksum_email_subject">Email Subject</label>
-                        </td>
-                        <td>
-                            <input type="text"
-                                   id="self_serve_checksum_email_subject"
-                                   name="self_serve_checksum[email_subject]"
-                                   size="40"
-                                   value="<?php echo $self_serve_checksum['email_subject']; ?>"/>
-                        </td>
-                    </tr>
-                    <tr style="vertical-align: text-top;">
-                        <td>
-                            <label for="self_serve_checksum_email_message">Email Message</label>
+                        <td colspan="2">
+                            <label for="self_serve_checksum_email_message" style="font-size: 1.2em; font-weight:500;">Email Message</label>
                         </td>
                         <td>
                             <?php
@@ -183,6 +178,11 @@ function civicrm_ux_settings_page() {
                                 )
                             );
                             ?>
+                            <p>Use the following tokens to build your email message to the user:</p>
+                            <ul>
+                                <li><code>{checksum_url}</code> - <strong>Required.</strong> Outputs the unique URL for the contact to complete the form.</li>
+                                <li><code>{page_title}</code> - Outputs the title of the form page the email was requested from.</li>
+                            </ul>
                         </td>
                     </tr>
                 </table>

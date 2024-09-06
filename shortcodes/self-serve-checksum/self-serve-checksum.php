@@ -60,7 +60,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		<?php echo $formText; ?>
         <form id="ss-cs-form" method="post">
-            <label for="ss-cs-email">Enter your email:</label>
+            <label for="ss-cs-email">Your email:</label>
             <input type="email" id="ss-cs-email" name="ss-cs-email" required>
 			<input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
             <input type="hidden" name="ss-cs-url" value="<?php echo $url; ?>">
@@ -141,30 +141,49 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
                         ->get_store()
                         ->get_option( 'self_serve_checksum' );
 				
-				$subject = $self_serve_checksum['email_subject'] . ' - ' . $pageTitle;
+				$subject = get_bloginfo( 'name' ) . ' - ' . $pageTitle . ' link';
+				// Apply filters to alter the email subject
+				$subject = apply_filters( 'ux_self_serve_checksum_email_subject', $subject, $pageTitle );
+				
+				// Apply <p> tags to the email message, then do token replacements
 				$message = wpautop( $self_serve_checksum['email_message'] );
 
+				$tokenData = [
+					'page_title' => $pageTitle,
+					'checksum_url' => $checksumUrl,
+				];
+				$message = $this->self_serve_checksum_replace_custom_tokens($message, $tokenData);
+
 				// Append the checksum URL(s) to the message
-				$link = '<br><br><a href="' . $checksumUrl . '">Return to ' . $pageTitle . '</a>';
-
-				// Apply filters to alter the link content
-				$link = apply_filters( 'self_serve_checksum_email_link', $link, $checksumUrl, $pageTitle );
-
-				$message .= $link;
+				//$link = '<a href="' . $checksumUrl . '">Here is your unique link to access the ' . $pageTitle . ' page.</a>';
 
 				$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 				wp_mail( $email, $subject, $message, $headers );
 
-				$confirmation = '<p>Thank you! An email has been sent to your address with a link to complete this form.</p>';
+				$confirmation = '<p>If ' . $email . ' is a valid contact, an email will be sent with instructions.</p>';
 
 				// Apply filters to alter the confirmation message
-				$confirmation = apply_filters( 'self_serve_checksum_confirmation_message', $confirmation, $pageTitle );
+				$confirmation = apply_filters( 'ux_self_serve_checksum_confirmation_message', $confirmation, $pageTitle );
 
 				echo $confirmation;
 			} else {
 				echo '<p>Please enter a valid email address.</p>';
 			}
 		}
+	}
+
+	private function self_serve_checksum_replace_custom_tokens($content, $tokenData = [] ) {
+		// Define your custom tokens and their replacements
+		$tokens = array(
+			'{page_title}' => $tokenData['page_title'],
+			'{checksum_url}' => $tokenData['checksum_url'],
+			// Add more tokens and their replacements as needed
+		);
+	
+		// Replace tokens in the content
+		$content = str_replace(array_keys($tokens), array_values($tokens), $content);
+	
+		return $content;
 	}
 }
