@@ -385,6 +385,39 @@ Parameters:
 For example: to display the External ID of a Contact, use this shortcode
 `[ux_contact_value field="external_identifier"]`
 
+## Self Serve Checksum Shortcode
+
+`[ux_self_serve_checksum]`
+Protect your CiviCRM integrated forms by forcing users to access them with a valid checksum URL.
+
+Wrap the content and form you wish to protect in the shortcode. When the page is accessed without a valid checksum in the URL, the Self Serve Checksum request form will be displayed. After providing their email address, an email will be sent to them with a link back to the page containing a valid checksum. The form will then be rendered for them to complete.
+
+```
+<!-- wp:shortcode -->
+[ux_self_serve_checksum]
+<!-- /wp:shortcode -->
+
+<!-- wp:gravityforms/form {"formId":"1","title":false,"inputPrimaryColor":"#204ce5"} /-->
+
+<!-- wp:shortcode -->
+[/ux_self_serve_checksum]
+<!-- /wp:shortcode -->
+
+<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->
+```
+
+Comes with settings in the CiviCRM UX settings page to quickly change:
+  - the content of the Self Serve Checksum request form text
+  - the email subject
+  - the email message
+
+Also comes with the following filter hooks:
+  - *`self_serve_checksum_email_link`* - Changes the output of the checksum URL link in the email message.
+  - *`self_serve_checksum_confirmation_message`* - Changes the confirmation message displayed with the Self Serve Checksum request form.
+
+
 ## Caldera magic tags
 
 Provides additional Caldera magic tags when using both [Caldera Forms](https://wordpress.org/plugins/caldera-forms/) and [Caldera Forms CiviCRM](https://wordpress.org/plugins/cf-civicrm/) plugins to integrate CiviCRM with WordPress.
