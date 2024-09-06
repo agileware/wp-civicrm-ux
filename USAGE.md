@@ -417,6 +417,20 @@ Also comes with the following filter hooks:
   - *`self_serve_checksum_email_link`* - Changes the output of the checksum URL link in the email message.
   - *`self_serve_checksum_confirmation_message`* - Changes the confirmation message displayed with the Self Serve Checksum request form.
 
+```
+// Hook to modify the Self Serve Checksum confirmation message
+add_filter('self_serve_checksum_confirmation_message', function($confirmation, $pageTitle) {
+    $confirmation .= '<p>This is a custom confirmation message modified by filters. ' . $pageTitle . '</p>';
+    return $confirmation;
+}, 10, 2);
+
+// Hook to modify the checksum link output in the Self Serve Checksum email
+add_filter('self_serve_checksum_email_link', function($link, $checksumUrl, $pageTitle) {
+    $link = '<br><br><a href="' . $checksumUrl . '">Continue to ' . $pageTitle . '</a>';
+    return $link;
+}, 10, 3);
+```
+
 
 ## Caldera magic tags
 
