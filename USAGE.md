@@ -387,6 +387,8 @@ For example: to display the External ID of a Contact, use this shortcode
 
 ## Self Serve Checksum Form
 
+[![Watch the demo video](https://drive.google.com/uc?export=view&id=1zz7e4-uIT8hiK03_8pbOA49veQZwCSAU)]([https://www.youtube.com/watch?v=dQw4w9WgXcQ](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=drive_link))
+
 ### Shortcode
 `[ux_self_serve_checksum]`
 Protect your CiviCRM integrated forms by forcing users to access them with a valid checksum URL.
@@ -432,8 +434,6 @@ add_filter('ux_self_serve_checksum_confirmation_message', function($confirmation
     return $confirmation;
 }, 10, 2);
 ```
-
-[Demo Screen Recording](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=sharing)
 
 
 ## Caldera magic tags
