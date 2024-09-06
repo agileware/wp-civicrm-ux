@@ -145,7 +145,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				$message = wpautop( $self_serve_checksum['email_message'] );
 
 				// Append the checksum URL(s) to the message
-				$link = '<br><br>Follow this link to continue your form submission for ' . $pageTitle . ': <a href="' . $checksumUrl . '">' . $checksumUrl . '</a>';
+				$link = '<br><br><a href="' . $checksumUrl . '">Return to ' . $pageTitle . '</a>';
 
 				// Apply filters to alter the link content
 				$link = apply_filters( 'self_serve_checksum_email_link', $link, $checksumUrl, $pageTitle );
