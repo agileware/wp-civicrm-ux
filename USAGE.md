@@ -387,6 +387,8 @@ For example: to display the External ID of a Contact, use this shortcode
 
 ## Self Serve Checksum Form
 
+Watch the video below which demonstrates how to use the Self Serve Checksum Form.
+
 [![Watch the demo video](images/self-serve-checksum--thumbnail.png)](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=drive_link)
 
 ### Shortcode
@@ -434,35 +436,6 @@ add_filter('ux_self_serve_checksum_confirmation_message', function($confirmation
     return $confirmation;
 }, 10, 2);
 ```
-
-
-## Caldera magic tags
-
-Provides additional Caldera magic tags when using both [Caldera Forms](https://wordpress.org/plugins/caldera-forms/) and [Caldera Forms CiviCRM](https://wordpress.org/plugins/cf-civicrm/) plugins to integrate CiviCRM with WordPress.
-
-1. `{contact:related_subtype}`
-Return the sub-type of the related contact.
-
-2. `{contact:subtype}`
-Return all sub-types of the login user.
-
-3. `{member:membership}`
-Will return the membership type name of the current membership of the logged-in user. If there is no current membership, nothing will be returned.
-
-4. `{member:membership_type}`
-Will return the membership type name for most recent membership of the logged-in user. If there is a current membership, this will be returned. Otherwise, all other memberships will be checked. If a membership has been Cancelled it will be skipped. If there are no membership records, nothing will be returned.
-
-5. `{member:membership_value}`
-Return the price field value id of the login user's membership.
-
-6. `{member:renewal}`
-Return 0 if there is no membership for the login user; 1 if the membership of the login user is going to expire in three months.
-
-7. `{user:roles}`
-Return the user roles of the logged in user, each role is comma separated
-
-8. `{activity:id}`, `{activity:subject}`, `{activity:duration}`
-Returns details of an activity added to the URL using an `aid=` URL parameter; e.g. `https://example.org/my-form?aid=1234` will return details of the Activity with the ID 1234.
 
 # For Developers
 
