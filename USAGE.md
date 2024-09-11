@@ -387,8 +387,7 @@ For example: to display the External ID of a Contact, use this shortcode
 
 ## Self Serve Checksum Form
 
-[![Watch the demo video](https://drive.google.com/uc?export=view&id=1zz7e4-uIT8hiK03_8pbOA49veQZwCSAU)](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=drive_link)
-
+[![Watch the demo video](images/self-serve-checksum--thumbnail.png)](https://drive.google.com/file/d/1FZk2okVlxxqDQg178vOorxbEVDGMLVVD/view?usp=drive_link)
 
 ### Shortcode
 `[ux_self_serve_checksum]`
