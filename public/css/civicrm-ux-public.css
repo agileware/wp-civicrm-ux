@@ -78,3 +78,8 @@
  .civicrm-activities-wrap label {
      display: block;
  }
+
+ /* Self Serve Checksum */
+ .ss-cs-status-message {
+    font-size: 1.2em;
+ }
