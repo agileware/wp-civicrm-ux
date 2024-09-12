@@ -39,24 +39,30 @@ class Civicrm_Ux_Option_Store {
 			'event_tickets' => TRUE,
 		] );
 
-		// Define the path to your template files
-		$template_dir = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/';
-    
-		// Load default values from files
-		$defaults = [];
+		// Define the path to the template files
+		$template_dir = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/self-serve-checksum/';
 	
-		// Load the default content for event tickets from a template file
-		$defaults['form_text'] = file_exists($template_dir . 'self-serve-checksum-form-text.html') 
-			? file_get_contents($template_dir . 'self-serve-checksum-form-text.html') 
-			: '';
+		// Load the default content 
+		$defaults = [];
 
-		$defaults['email_message'] = file_exists($template_dir . 'self-serve-checksum-email-message.html') 
-			? file_get_contents($template_dir . 'self-serve-checksum-email-message.html') 
-			: '';
+		$fields = [
+			'form_text' => 'ss-cs-form-text.html',
+			'form_confirmation_text' => 'ss-cs-form-confirmation-text.html',
+			'form_invalid_contact_text' => 'ss-cs-form-invalid-contact-text.html',
+			'email_message' => 'ss-cs-email-message.html',
+		];
+
+		foreach ($fields as $field => $file) {
+			$defaults[$field] = file_exists($template_dir . $file) 
+				? file_get_contents($template_dir . $file) 
+				: '';
+		}
 
 		// For Self Serve Checksum Forms
 		$this->register_option( 'self_serve_checksum', NULL, [
 			'form_text' => $defaults['form_text'],
+			'form_confirmation_text' => $defaults['form_confirmation_text'],
+			'form_invalid_contact_text' => $defaults['form_invalid_contact_text'],
 			'email_message' => $defaults['email_message'],
 		] );
 	}

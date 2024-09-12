@@ -35,19 +35,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
     
 		// Otherwise, display the self serve form
 
-		// Define shortcode tags
-		$atts = shortcode_atts(
-			array(
-				'mid' => false, // Does not need a value
-			),
-			$atts
-		);
-
-		// Check if the 'mid' tag exists and is not false. Can just be present without a value to be considered true.
-		$mid = ( !empty( $atts['mid'] ) && array_key_exists( 'mid', $atts ) && ( $atts['mid'] == null || filter_var( $atts['mid'], FILTER_VALIDATE_BOOLEAN ) != false ) ) 
-				? '<input type="hidden" name="ss-cs-mid" value="true">' 
-				: null;
-
 		// Get the current page URL
 		$url = get_permalink();
 
@@ -59,22 +46,45 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$invalidMessage = $displayInvalidMessage ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
 		$formText = wpautop( $self_serve_checksum['form_text'] );
 
-        ob_start();
-        ?>
+		// Check if the form was submitted, so we can hide the form if it has
+		$form_submitted = isset($_POST['ss-cs-submit']);
+		
+		if ( $form_submitted && isset($_POST['ss-cs-email']) ) {
+			// We still want to show the form if the previous submission was an invalid contact
+			$contacts = \Civi\Api4\Contact::get( FALSE )
+				->addSelect( 'id' )
+				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+				->addWhere( 'email.email', '=', $_POST['ss-cs-email'] )
+				->addGroupBy( 'id' )
+				->execute();
+			
+			$form_submitted = count($contacts) > 0 ? true : false;
+		}
+		var_dump($_POST);
 
-		<?php echo $invalidMessage; ?>
-		<?php echo $formText; ?>
-        <form id="ss-cs-form" method="post">
-            <label for="ss-cs-email">Your email:</label>
-            <input type="email" id="ss-cs-email" name="ss-cs-email" required>
-			<input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
-            <input type="hidden" name="ss-cs-url" value="<?php echo $url; ?>">
-			<?php echo $mid; ?>
-            <button type="submit" name="ss-cs-submit">Submit</button>
-        </form>
+        ob_start();
+
+		?>
+		<div class='ss-cs-status-message status'>
+			<?php
+			echo $invalidMessage;
+			$this->self_serve_checksum_handle_form_submission();
+			?>
+		</div>
+		<?php
+		if ( !$form_submitted ) {
+			echo $formText; ?>
+			<form id="ss-cs-form" method="post">
+				<label for="ss-cs-email">Your email:</label>
+				<input type="email" id="ss-cs-email" name="ss-cs-email" required>
+				<input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
+				<input type="hidden" name="ss-cs-url" value="<?php echo $url; ?>">
+				<button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
+			</form>
+		<?php } ?>
 
 		<?php
-        $this->self_serve_checksum_handle_form_submission();
+        
         return ob_get_clean();
 	}
 
@@ -91,10 +101,17 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	private function self_serve_checksum_handle_form_submission() {
 		if ( isset( $_POST['ss-cs-submit'] ) && !empty( $_POST['ss-cs-email'] ) ) {
 			$email = sanitize_email( $_POST['ss-cs-email'] );
+
+			// Exit early if we have an invalid email
+			if ( !is_email($email) ) {
+				echo '<p>Please enter a valid email address.</p>';
+				return;
+			}
+
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
 			$url = trailingslashit( esc_url( $_POST['ss-cs-url'] ) );
 
-			// Get contact cid and checksom from civicrm via api calls
+			// Get contact cid
 			$contacts = \Civi\Api4\Contact::get( FALSE )
 				->addSelect( 'id' )
 				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
@@ -109,6 +126,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			 * this will send the email to the last cid.
 			 * 
 			 * The only true fix is for the duplicate contacts to be merged.
+			 * 
 			 */
 			$cid = null;
 			$cs = null;
@@ -127,26 +145,17 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			// `${URL}/?cid=${cid}&cs=${checksum}`
 			$checksumUrl = $url . '?cid=' . $cid . '&cs=' . $cs;
 
-			// TODO handle membership(s) checksums
-			$checksumURLs_memberships = [];
-			if ( $_POST['ss-cs-mid'] ) {
-				$memberships = \Civi\Api4\Membership::get( FALSE )
-					->addWhere( 'contact_id', '=', $cid )
-					->execute();
-				
-				foreach ( $memberships as $membership ) {
-					$checksumURLs_memberships[] = $checksumUrl . '&mid=' . $membership['id'];
-				}
-			}
+			// Get the Self Serve Checksum settings
+			$self_serve_checksum = Civicrm_Ux::getInstance()
+				->get_store()
+				->get_option( 'self_serve_checksum' );
 
+			$submissionMessage = '';
+			
 			// Build and send the email to the contact.
-			if ( is_email( $email ) ) {
-				// Get the Self Serve Checksum settings
-				$self_serve_checksum = Civicrm_Ux::getInstance()
-                        ->get_store()
-                        ->get_option( 'self_serve_checksum' );
-				
+			if ( $cid != null && $cs != null ) {
 				$subject = get_bloginfo( 'name' ) . ' - ' . $pageTitle . ' link';
+
 				// Apply filters to alter the email subject
 				$subject = apply_filters( 'ux_self_serve_checksum_email_subject', $subject, $pageTitle );
 				
@@ -157,32 +166,34 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					'page_title' => $pageTitle,
 					'checksum_url' => $checksumUrl,
 				];
-				$message = $this->self_serve_checksum_replace_custom_tokens($message, $tokenData);
-
-				// Append the checksum URL(s) to the message
-				//$link = '<a href="' . $checksumUrl . '">Here is your unique link to access the ' . $pageTitle . ' page.</a>';
+				$message = $this->ss_cs_replace_custom_tokens($message, $tokenData);
 
 				$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
 				wp_mail( $email, $subject, $message, $headers );
 
-				$confirmation = '<p>If ' . $email . ' is a valid contact, an email will be sent with instructions.</p>';
-
-				// Apply filters to alter the confirmation message
-				$confirmation = apply_filters( 'ux_self_serve_checksum_confirmation_message', $confirmation, $pageTitle );
-
-				echo $confirmation;
+				$submissionMessage = wpautop( $self_serve_checksum['form_confirmation_text'] );
 			} else {
-				echo '<p>Please enter a valid email address.</p>';
+				// No valid contact was found
+				$submissionMessage = wpautop( $self_serve_checksum['form_invalid_contact_text'] );
 			}
+			
+			$tokenData = [
+				'page_title' => $pageTitle,
+				'email_address' => $email,
+			];
+			$submissionMessage = $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+
+			echo $submissionMessage;
 		}
 	}
 
-	private function self_serve_checksum_replace_custom_tokens($content, $tokenData = [] ) {
-		// Define your custom tokens and their replacements
+	private function ss_cs_replace_custom_tokens($content, $tokenData = [] ) {
+		// Define custom tokens and their replacements
 		$tokens = array(
-			'{page_title}' => $tokenData['page_title'],
-			'{checksum_url}' => $tokenData['checksum_url'],
+			'{page_title}' => isset( $tokenData['page_title'] ) ? $tokenData['page_title'] : '{page_title}',
+			'{email_address}' => isset( $tokenData['email_address'] ) ? $tokenData['email_address'] : '{email_address}',
+			'{checksum_url}' => isset( $tokenData['checksum_url'] ) ? $tokenData['checksum_url'] : '{checksum_url}',
 			// Add more tokens and their replacements as needed
 		);
 	

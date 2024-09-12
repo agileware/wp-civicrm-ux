@@ -136,6 +136,8 @@ class Civicrm_Ux_Admin {
 					foreach ($input as $field => $value) {
 						switch ($field) {
 							case 'form_text':
+							case 'form_confirmation_text':
+							case 'form_invalid_contact_text':
 								// Use wp_kses_post to allow only safe HTML for WYSIWYG content
 								$sanitized[$field] = wp_kses_post($value);
 								break;
@@ -146,7 +148,7 @@ class Civicrm_Ux_Admin {
 									add_settings_error(
 										'self_serve_checksum', // Slug title of the setting
 										'missing_checksum_token', // Error code
-										'The Self Serve Checksum email message must include the {checksum_url} to be valid.', // Error message
+										'The Self Serve Checksum email message must include the {checksum_url} token to be valid.', // Error message
 										'error' // Type of the message
 									);
 	
