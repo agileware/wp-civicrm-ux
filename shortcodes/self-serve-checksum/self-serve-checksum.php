@@ -60,7 +60,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			
 			$form_submitted = count($contacts) > 0 ? true : false;
 		}
-		var_dump($_POST);
 
         ob_start();
 
