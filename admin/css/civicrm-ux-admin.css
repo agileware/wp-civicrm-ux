@@ -3,7 +3,7 @@
  * included in this file.
  */
 
- .settings_page_civicrm-ux-setting {
+ .settings_page_civicrm-ux-setting #wpcontent {
     h2 {
         font-size: 1.4em;
         margin-top: 1.5em;
