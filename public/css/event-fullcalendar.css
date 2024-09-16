@@ -194,6 +194,10 @@ div.civicrm-event-listing-item {
     color: red;
 }
 
+.fc .fc-scrollgrid-section-body table, .fc .fc-scrollgrid-section-footer table {
+    margin-bottom: 0;
+}
+
 .fc-col-header-cell, .fc-day-other {
     background-color: #f6f6f6;
 }

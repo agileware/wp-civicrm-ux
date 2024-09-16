@@ -103,6 +103,7 @@ class Civicrm_Ux_Public {
 
 		// Only enqueue this script if cancel_event_registration is present
 		if ( has_shortcode( $post->post_content, 'ux_event_cancelregistration' ) && has_shortcode( $post->post_content, 'ux_event_cancelregistration_button' ) ) {
+			wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
 			wp_enqueue_script( 'event_cancel_registration', plugin_dir_url( __FILE__ ) . 'js/event_cancel_registration.js', array('jquery'), $this->version, true );
 		}
 
