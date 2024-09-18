@@ -271,7 +271,7 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 	private function get_cache_key() {
 		$string = $this->slug;
 
-		return 'gfcv_vi_' . md5( $string );
+		return 'wpciviux_vi_' . md5( $string );
 	}
 
 	private function allowCached() : bool {
