@@ -27,12 +27,24 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+define( 'WP_CIVICRM_UX_PLUGIN_NAME', basename(plugin_dir_path(__FILE__ )) );
+define( 'WP_CIVICRM_UX_PLUGIN_URL', plugins_url('', dirname(__FILE__) ) . '/');
+define( 'WP_CIVICRM_UX_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'WP_CIVICRM_UX_PLUGIN_GITHUB_REPO', 'agileware/wp-civicrm-ux' ); // GitHub username and repo
+
 // Hide Upsell to install the Events Tickets plugin
 if ( !defined( 'TEC_HIDE_UPSELL' ) ) {
 	define( 'TEC_HIDE_UPSELL', true );
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+
+// Include the upgrader class
+require_once WP_CIVICRM_UX_PLUGIN_PATH . 'includes/class-civicrm-ux-upgrader.php';
+
+// Initialize the upgrader
+$upgrader = new Civicrm_Ux_Upgrader( __FILE__ );
+$upgrader->init();
 
 /**
  * The code that runs during plugin activation.
@@ -76,9 +88,5 @@ function run_civicrm_ux() {
 	$plugin->run();
 
 }
-
-define('WP_CIVICRM_UX_PLUGIN_NAME', basename(plugin_dir_path(__FILE__ )) );
-define( 'WP_CIVICRM_UX_PLUGIN_URL', plugins_url('', dirname(__FILE__) ) . '/');
-define( 'WP_CIVICRM_UX_PLUGIN_PATH', plugin_dir_path(__FILE__ ));
 
 run_civicrm_ux();
