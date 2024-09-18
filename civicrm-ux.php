@@ -37,7 +37,7 @@ if ( !defined( 'TEC_HIDE_UPSELL' ) ) {
 	define( 'TEC_HIDE_UPSELL', true );
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+require_once WP_CIVICRM_UX_PLUGIN_PATH . 'vendor/autoload.php';
 
 // Include the upgrader class
 require_once WP_CIVICRM_UX_PLUGIN_PATH . 'includes/class-civicrm-ux-upgrader.php';
@@ -51,7 +51,7 @@ $upgrader->init();
  * This action is documented in includes/class-civicrm-ux-activator.php
  */
 function activate_civicrm_ux() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux-activator.php';
+	require_once WP_CIVICRM_UX_PLUGIN_PATH . 'includes/class-civicrm-ux-activator.php';
 	Civicrm_Ux_Activator::activate();
 }
 
@@ -60,7 +60,7 @@ function activate_civicrm_ux() {
  * This action is documented in includes/class-civicrm-ux-deactivator.php
  */
 function deactivate_civicrm_ux() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux-deactivator.php';
+	require_once WP_CIVICRM_UX_PLUGIN_PATH . 'includes/class-civicrm-ux-deactivator.php';
 	Civicrm_Ux_Deactivator::deactivate();
 }
 
@@ -71,7 +71,7 @@ register_deactivation_hook( __FILE__, 'deactivate_civicrm_ux' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-civicrm-ux.php';
+require WP_CIVICRM_UX_PLUGIN_PATH . 'includes/class-civicrm-ux.php';
 
 /**
  * Begins execution of the plugin.
