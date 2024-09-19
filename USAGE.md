@@ -19,6 +19,7 @@ You can include additional parameters in the fullcalendar shortcode to limit the
 - *`colors`* is a comma-separated list of hex rgb codes that can be used to apply a background colour to each event type label, *without* the leading `#` character in the codes; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the colours `#52246d`, `#c45472` and `#ce8d8b` to the Workshop, Meeting and Exhibition type events respectively. Including the `types` parameter when specifying colours is highly recommended as best practice.
 - *`start`* is the date from which active events will be displayed. For example, `[ux_event_fullcalendar start="2021-01-01"]` will show only events from the 1st of January 2021 onwards. If this parameter is not specified, the calendar will show events starting from 1 year prior to the current date.
 - *`force_login`* - true or false; when true, the calendar forces anonymous users to log in before registering for an event.
+- *`redirect_after_login`* - optionally provide a URL to redirect to after login. Useful if you have a custom Event registration page, instead of the default CiviCRM event registration page.
 - *`image_id_field`*: if you have a custom CiviCRM events field for event images/thumbnails you can include the name of the custom options group & field to display them as a thumbnail. For example, if you have a custom events field called 'Upload' under the custom option group 'Thumbnail_upload', you would include it the shortcode like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload"]`.
   - *`img_src_field`*: the field containing the filename and relative path with respect to upload folder (see below). The default is `file.uri` and should not be changed unless you use a different field name.
   - *`upload`* specifies the upload directory where event images are located. By default this is set as the CiviCRM custom uploads folder (the directory where image uploads from custom fields are placed) but if your images are placed in another folder (for example, the default Wordpress uploads directory) you can specify this like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload" upload="http://example.com/wp-content/uploads"]`
@@ -226,6 +227,8 @@ If the API request is returning the incorrect results or if you have changed the
 
 ```wp transient delete --all```
 
+Alternatively, add the optional shortcode parameter *`cache_results=false`* to bypass caching. This is useful if you do not want to add the ?reset parameter to the URL. For example, `[ux_cv_api4_get entity=Event cache_results=false id=id]`.
+
 ## Campaign Shortcode
 
 The Campaign shortcodes accept a CiviCRM Campaign ID as a parameter and display the fundraising goals by querying the CiviCRM Campaign and associated Contributions.
@@ -293,6 +296,23 @@ The event listing displays the start date, the end date, the event name, the reg
 The 'days' parameter is optional. This can be used to limit the upcoming events to only those with a event start date in the next 'days'.
 The 'type' is optional. If the type is not specified, there will be an event listing of all types of events.
 This shortcode has been formatted in html with styling.
+
+## Event Cancel Registration Shortcodes
+
+These shortcodes will enable users to cancel their registration for an event. It requires a FormProcessor to handle the participant status update. This comes with the advantage of customisation for the FormProcessor, so you can do things like handle associated Contributions, trigger an email to be sent, and generate Activities.
+
+The following shortcodes *must* be used together:
+
+- *`[ux_event_cancelregistration]`* provides a WordPress nonce for authentication
+- *`[ux_event_cancelregistration_button text="My Button Text" eventid={{api4:id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. It will not render for events the current logged in user does not have an active registration for.
+
+You will also need to enable the Form Processor CiviCRM extension, and create a `cancel_event_registration` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
+
+### Troubleshooting
+
+- Ensure the REST API link tag from `rest_output_link_wp_head()` is correctly generated. If you cannot find it in the page source code, it may be being stripped by another plugin.
+- After canceling a registration from a listing created using `[ux_cv_api4_get]`, the page will reload. If the changes are not reflected in your event listing, the results of the API call may have been cached. See the section on *CiviCRM API caching* above for advice.
+
  
 ## Membership Shortcodes
 

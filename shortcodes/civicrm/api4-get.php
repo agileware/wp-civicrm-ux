@@ -32,13 +32,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			 !filter_var( $atts['id'], FILTER_VALIDATE_INT, [ 'options' => [ 'min-range' => 1 ] ] ) &&
 			 preg_match('{^ (?![_-]) [A-Za-z0-9_-]+ $}x', $atts['id']) ) {
 			$atts['id'] = filter_input(INPUT_GET, $atts['id'], FILTER_VALIDATE_INT, [ 'option' => [ 'min-range' => 1 ] ]);
+			// Not able to get id
 			if ( $atts['id'] < 1 ) {
-				return __( 'Invalid ID' );
+				return '';
 			}
 		}
 
 		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
 		$params = [ 'checkPermissions' => FALSE ];
+
+		// cache results by default
+		$cache_results = true;
 
 		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
 
@@ -56,13 +60,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			switch ( $k ) {
 				case 'entity':
 					break;
+				case 'cacheresults':
+				case 'cache_results':
+					$cache_results = filter_var($v, FILTER_VALIDATE_BOOLEAN);
+					break;
 				case 'limit':
 				case 'offset':
 					$params[ $k ] = (int) $v;
 					break;
 				case 'checkpermissions':
 				case 'check_permissions':
-					$params[ 'checkPermissions' ] = (bool) $v;
+					$params[ 'checkPermissions' ] = filter_var($v, FILTER_VALIDATE_BOOLEAN);
 					break;
 				case 'sort':
 				case 'orderby':
@@ -85,6 +93,19 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					}
 
 					switch ( $k ) {
+						case 'my_events':
+							// Only get events for the current logged in user, where they have active registrations
+							if ($value && $atts['entity'] == 'Event') {
+								$params['join'] = [
+									['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']],
+									['ParticipantStatusType AS participant_status_type', 'LEFT'],
+								];
+								$params['where'] = [ 
+									['participant.contact_id', '=', CRM_Core_Session::singleton()->getLoggedInContactID()],
+									['participant_status_type.class', '!=', 'Negative']
+								];
+							}
+							break;
 						case 'event_type':
 						case 'financial_type':
 						default:
@@ -124,7 +145,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
 
-			$all = !empty($_GET['reset']) ? FALSE : get_transient( $trkey );
+			$all = !empty($_GET['reset']) || !$cache_results ? FALSE : get_transient( $trkey );
 
 			if ( $all !== FALSE ) {
 				return $all;
@@ -184,7 +205,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$all = trim( $all );
 
-			set_transient( $trkey, $all, 4 * HOUR_IN_SECONDS );
+			if ( $cache_results ) {
+				set_transient( $trkey, $all, 4 * HOUR_IN_SECONDS );
+			}
 
 			return $all;
 		}
