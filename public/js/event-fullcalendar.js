@@ -105,6 +105,7 @@ const domevent = function (eventName, detail) {
               image_id_field: wp_site_obj.image_id_field,
               image_src_field: wp_site_obj.image_src_field,
               force_login: wp_site_obj.force_login,
+              redirect_after_login: wp_site_obj.redirect_after_login,
               extra_fields: wp_site_obj.extra_fields
             },
             // Store events in client's browser after success to prevent further AJAX requests
@@ -262,7 +263,6 @@ const domevent = function (eventName, detail) {
             let tooltip = new tippy(info.el, {
               interactive: true,
               delay: 300,
-              theme: "fcvic",
               maxWidth: 400,
               allowHTML: true,
               placement: "top",

@@ -1,0 +1,69 @@
+{
+    "title": "cancel_event_registration",
+    "name": "cancel_event_registration",
+    "is_active": "1",
+    "description": "",
+    "output_handler": "OutputAllActionOutput",
+    "output_handler_configuration": [],
+    "enable_default_data": "0",
+    "permission": "register for events",
+    "inputs": [
+        {
+            "weight": "1",
+            "include_formatted_params": "1",
+            "title": "Event Id",
+            "name": "eid",
+            "type": "Integer",
+            "is_required": "1",
+            "default_value": "",
+            "configuration": [],
+            "parameter_mapping": [],
+            "default_data_parameter_mapping": [],
+            "validators": []
+        }
+    ],
+    "actions": [
+        {
+            "title": "Get Contact ID",
+            "name": "get_cid",
+            "type": "GetLoggedInContactId",
+            "configuration": {
+                "fallback_contact_id": ""
+            },
+            "mapping": [],
+            "condition_configuration": "",
+            "delay_configuration": ""
+        },
+        {
+            "title": "Cancel Participant Event Registration",
+            "name": "cancel_participant_event_registration",
+            "type": "CreateOrUpdateParticipant",
+            "configuration": {
+                "status_id": "4",
+                "role_id": "1",
+                "update_existing": "1",
+                "source": ""
+            },
+            "mapping": {
+                "event_id": "input.eid",
+                "contact_id": "action.get_cid.contact_id",
+                "campaign_id": "",
+                "custom_CPD_Points_Participant_CPD_Event_Category_Participant": [],
+                "custom_CPD_Points_Participant_CPD_Event_Points_Participant": "",
+                "custom_zoom_registrant_zoom_id": "",
+                "custom_zoom_registrant_registrant_id": "",
+                "custom_zoom_registrant_join_url": ""
+            },
+            "condition_configuration": "",
+            "delay_configuration": ""
+        }
+    ],
+    "default_data_inputs": [],
+    "default_data_actions": [],
+    "validate_actions": [],
+    "validate_validators": [],
+    "calculate_actions": [],
+    "default_data_output_configuration": [],
+    "calculation_output_configuration": [],
+    "calculations_configuration_url": "https:\/\/members.fcan.org.au\/wp-admin\/admin.php?page=CiviCRM&q=civicrm%2Fadmin%2Fautomation%2Fformprocessor%2Fcalculationconfiguration&action=update&reset=1&id=4"
+}

@@ -54,7 +54,10 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				$atts['image_src_field'] = preg_replace('/[^a-zA-Z0-9._]/', '', $atts['image_src_field']);
 			}
 			if (isset($atts['force_login'])) {
-				$atts['force_login'] = preg_replace('/[^0-1]/', '', $atts['force_login']);
+				$atts['force_login'] = filter_var($atts['force_login'], FILTER_VALIDATE_BOOLEAN);
+			}
+			if (isset($atts['redirect_after_login'])) {
+				$atts['redirect_after_login'] = sanitize_text_field($atts['redirect_after_login']);
 			}
 
 		}
@@ -72,6 +75,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			array_push($types, $type['name']);
 		}
 
+		// Shortcode parameters defaults
 		$wporg_atts = shortcode_atts(
 			array(
 				'types' => join(',', $types),
@@ -82,6 +86,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag
 		);
+
+		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 
 		$colors = array();
 
@@ -120,6 +126,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			       'image_id_field' => $atts['image_id_field'],
 			       'image_src_field' => $wporg_atts['image_src_field'],
 			       'force_login' => $wporg_atts['force_login'],
+				   'redirect_after_login' => $redirect_after_login,
 			       'extra_fields' => $wporg_atts['extra_fields']));
 
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
