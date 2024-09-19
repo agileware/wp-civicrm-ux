@@ -53,12 +53,11 @@
 
 .civicrm-ux-event-listing-register, #civicrm-ux-event-popup-register {
     text-align: center !important;
-    margin: 10px 0 10px 0;
+    margin: 0;
     padding: 0.5em 1em !important;
     vertical-align: middle !important;
     color: white;
     cursor: pointer;
-    font-size: 13px !important;
     background-color: #333333;
     border-radius: 3px!important;
 	width: auto !important;
@@ -70,7 +69,7 @@
 }
 
 .civicrm-ux-event-listing {
-    margin-left: 30px;
+    margin: 0 30px;
 }
 
 .civicrm-event-listing p {
@@ -98,11 +97,10 @@ div.civicrm-event-listing-item {
     z-index: 1;
 }
 
-.civicrm-ux-event-popup button{
+.civicrm-ux-event-popup button {
     display: block;
-    margin:  0 0 20px auto;
+    margin:  0;
     background-color: transparent;
-    font-size: 30px;
     color: #ffffff;
     background: #000000;
     border-radius: 100%;
@@ -112,6 +110,10 @@ div.civicrm-event-listing-item {
     outline: none;
     cursor: pointer;
     padding: 0px 0px 0px 0px;
+}
+
+.civicrm-ux-event-popup button:hover, .civicrm-ux-event-popup button:focus {
+    background: #444444;
 }
 
 .civicrm-ux-event-popup p{
@@ -224,6 +226,10 @@ div.civicrm-event-listing-item {
     background-color: black !important;
     border: 1px solid white !important;
     font-size: 13px !important;
+}
+
+.fc .fc-list-sticky .fc-list-day > * {
+    z-index: 1;
 }
 
 
