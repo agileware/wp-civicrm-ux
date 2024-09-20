@@ -157,9 +157,9 @@ function civicrm_ux_settings_page() {
                     <tr style="vertical-align: text-top;">
                         <td><label for="theme_select">Theme</label></td>
                         <td><select name="civicrm_ux_cf_turnstile[theme]" id="theme_select">
+                                <option value="auto" <?php selected($civicrm_ux_cf_turnstile['theme'], 'auto'); ?>>Auto</option>
                                 <option value="light" <?php selected($civicrm_ux_cf_turnstile['theme'], 'light'); ?>>Light</option>
                                 <option value="dark" <?php selected($civicrm_ux_cf_turnstile['theme'], 'dark'); ?>>Dark</option>
-                                <option value="auto" <?php selected($civicrm_ux_cf_turnstile['theme'], 'auto'); ?>>Auto</option>
                             </select>
                         </td>
                     </tr>

@@ -70,7 +70,7 @@ class Civicrm_Ux_Option_Store {
 		$this->register_option( 'civicrm_ux_cf_turnstile', NULL, [
 			'sitekey' => '',
 			'secret_key' => '',
-			'theme'	=> 'Light',
+			'theme'	=> 'auto',
 		] );
 	}
 
