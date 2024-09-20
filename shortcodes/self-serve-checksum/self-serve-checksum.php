@@ -58,7 +58,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		// Otherwise, display the self serve form
 
 		// Get the current page URL
-		$url = get_permalink();
+		$url = $this->get_protected_page_url();
 
 		// Get the Self Serve Checksum settings
 		$self_serve_checksum = Civicrm_Ux::getInstance()
@@ -146,7 +146,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	/**
 	 * Verify the Cloudflare Turnstile response.
 	 */
-	private function verify_turnstile($turnstile_response) {
+	private function verify_turnstile($turnstileResponse) {
 		$civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
                         ->get_store()
                         ->get_option('civicrm_ux_cf_turnstile');
@@ -159,15 +159,60 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$response = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
 			'body' => array(
 				'secret'   => $secret,
-				'response' => $turnstile_response,
+				'response' => $turnstileResponse,
 				'remoteip' => $_SERVER['REMOTE_ADDR'], // Optional, include user's IP address
 			),
 		));
 	
-		$response_body = wp_remote_retrieve_body($response);
-		$result = json_decode($response_body, true);
+		$body = wp_remote_retrieve_body($response);
+		$result = json_decode($body, true);
 	
 		return isset($result['success']) && $result['success'];
+	}
+
+	/**
+	 * Get the url of the page protected by the Self Serve Checksum form.
+	 */
+	private function get_protected_page_url( $url = null ) {
+		global $wp;
+
+		// Get the current page URL
+		$url = $url ?? add_query_arg( $_GET, home_url( $wp->request ) );
+
+		$queryArgs = $this->remove_query_args_case_insensitive($url);
+
+		// Rebuild the URL without the case-insensitive query parameters
+		// TODO fix weird URL
+		$url = add_query_arg( $queryArgs, home_url( $wp->request ) );
+
+		return $url;
+	}
+
+	/**
+	 * Removes URL query parameters that we don't want to pass on through the email.
+	 */
+	private function remove_query_args_case_insensitive($url) {
+		$removeArgs = ['page', 'pagename', 'cs'];
+
+		$parsedUrl = wp_parse_url($url);
+
+		if ( isset($parsedUrl['query']) ) {
+			parse_str($parsedUrl['query'], $queryArgs);
+
+			$queryArgs = array_change_key_case($queryArgs, CASE_LOWER);
+
+			// Remove the normalized parameters
+			foreach ( $removeArgs as $arg ) {
+				if ( isset( $queryArgs[ strtolower( $arg ) ] ) ) {
+					unset( $queryArgs[ $arg ] );
+				}
+			}
+		
+			// Output the cleaned URL
+			return $queryArgs;
+		}
+
+		return null;
 	}
 
     // Handle form submission and send an email with the URL
@@ -250,9 +295,9 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					->first()['checksum'];
 
 			// Build url with cid and checksum
-			// `${URL}/?cid=${cid}&cs=${checksum}`
-			// TODO keep URL parameters other than CID and CS
-			$checksumUrl = $url . '?cid=' . $cid . '&cs=' . $cs;
+			// `${URL}/?{maybeotherargs}&cid=${cid}&cs=${checksum}`
+			$connector = isset($parsedUrl['query']) ? '&' : '?';
+			$checksumUrl = $url . $connector . 'cid=' . $cid . '&cs=' . $cs;
 			
 			// Build and send the email to the contact.
 			if ( !empty( $cs ) ) {
