@@ -207,56 +207,58 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
 			$url = trailingslashit( esc_url( $_POST['ss-cs-url'] ) );
 
-			// Get contact cid
-			$contacts = \Civi\Api4\Contact::get( FALSE )
-				->addSelect( 'id' )
-				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
-				->addWhere( 'email.email', '=', $email )
-				->addGroupBy( 'id' )
-				->execute();
+			// Get the Self Serve Checksum settings
+			$self_serve_checksum_setting = Civicrm_Ux::getInstance()
+				->get_store()
+				->get_option( 'self_serve_checksum' );
 
 			/**
 			 * WARNING 
 			 * 
 			 * There should only be one contact, but if there happens to be multiple (duplicate contacts), 
-			 * this will send the email to the last cid.
+			 * this will send the email to the first cid.
 			 * 
 			 * The only true fix is for the duplicate contacts to be merged.
 			 * 
 			 */
-			$cid = null;
-			$cs = null;
+
+			// Get contact cid
+			$cid = \Civi\Api4\Contact::get( FALSE )
+				->addSelect( 'id' )
+				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+				->addWhere( 'email.email', '=', $email )
+				->addGroupBy( 'id' )
+				->execute()
+				->first()['id'];
+
 			// Get the cid and generate a checksum
-			foreach ( $contacts as $contact ) {
-				$cid = $contact['id'];
-
-				$checksums = \Civi\Api4\Contact::getChecksum( FALSE )
-					->setContactId( $cid )
-					->execute();
-
-				$cs = $checksums[0]['checksum'];
+			if ( empty( $cid ) ) {
+				// No valid contact was found
+				$submissionMessage = wpautop( $self_serve_checksum_setting['form_invalid_contact_text'] );
+				return;
 			}
+
+			$cs = \Civi\Api4\Contact::getChecksum( FALSE )
+					->setContactId( $cid )
+					->execute()
+					->first()['checksum'];
 
 			// Build url with cid and checksum
 			// `${URL}/?cid=${cid}&cs=${checksum}`
+			// TODO keep URL parameters other than CID and CS
 			$checksumUrl = $url . '?cid=' . $cid . '&cs=' . $cs;
-
-			// Get the Self Serve Checksum settings
-			$self_serve_checksum = Civicrm_Ux::getInstance()
-				->get_store()
-				->get_option( 'self_serve_checksum' );
 
 			$submissionMessage = '';
 			
 			// Build and send the email to the contact.
-			if ( $cid != null && $cs != null ) {
+			if ( !empty( $cs ) ) {
 				$subject = get_bloginfo( 'name' ) . ' - ' . $pageTitle . ' link';
 
 				// Apply filters to alter the email subject
 				$subject = apply_filters( 'ux_self_serve_checksum_email_subject', $subject, $pageTitle );
 				
 				// Apply <p> tags to the email message, then do token replacements
-				$message = wpautop( $self_serve_checksum['email_message'] );
+				$message = wpautop( $self_serve_checksum_setting['email_message'] );
 
 				$tokenData = [
 					'page_title' => $pageTitle,
@@ -268,10 +270,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 				wp_mail( $email, $subject, $message, $headers );
 
-				$submissionMessage = wpautop( $self_serve_checksum['form_confirmation_text'] );
-			} else {
-				// No valid contact was found
-				$submissionMessage = wpautop( $self_serve_checksum['form_invalid_contact_text'] );
+				$submissionMessage = wpautop( $self_serve_checksum_setting['form_confirmation_text'] );
 			}
 			
 			$tokenData = [
