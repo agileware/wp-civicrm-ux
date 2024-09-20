@@ -37,11 +37,12 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$form_submitted = count($contacts) > 0 ? true : false;
 		}
 
-		$displayInvalidMessage = false;
 		// IF there is a valid CID and checksum in the  URL, display the content inside the shortcode
-		if ( !$form_submitted && !empty( $_GET['cid'] ) && !empty( $_GET['cid'] ) ) {
-			$cid = $_GET['cid'];
-			$cs = $_GET['cs'];
+		$displayInvalidMessage = false;
+		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
+		if ( !$form_submitted && !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cid'] ) ) {
+			$cid = $urlParamsKeys['cid'];
+			$cs = $urlParamsKeys['cs'];
 
 			// Test if checksum is valid
 			$isValid = $this->validateChecksum( $cid, $cs );
