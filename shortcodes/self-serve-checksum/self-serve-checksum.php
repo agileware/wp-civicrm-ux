@@ -17,9 +17,24 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
+		// Check if the form was just submitted, so we can hide the form if it has
+		$form_submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
+
+		// We still want to show the form if the previous submission was an invalid contact
+		if ( $form_submitted && !empty($_POST['ss-cs-email']) ) {
+			$contacts = \Civi\Api4\Contact::get( FALSE )
+				->addSelect( 'id' )
+				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+				->addWhere( 'email.email', '=', $_POST['ss-cs-email'] )
+				->addGroupBy( 'id' )
+				->execute();
+			
+			$form_submitted = count($contacts) > 0 ? true : false;
+		}
+
 		$displayInvalidMessage = false;
 		// IF there is a valid CID and checksum in the  URL, display the content inside the shortcode
-		if ( isset( $_GET['cid'] ) && !empty( $_GET['cid'] ) && isset( $_GET['cid'] ) && !empty( $_GET['cid'] ) ) {
+		if ( !$form_submitted && !empty( $_GET['cid'] ) && !empty( $_GET['cid'] ) ) {
 			$cid = $_GET['cid'];
 			$cs = $_GET['cs'];
 
