@@ -17,6 +17,11 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	 * @return mixed Should be the html output of the shortcode
 	 */
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
+		// If the user is logged in AND has a CiviCRM contact, display the content inside the shortcode
+		if ( CRM_Core_Session::singleton()->getLoggedInContactID() !== null ) {
+			return do_shortcode( $content );
+		}
+
 		// Check if the form was just submitted, so we can hide the form if it has
 		$form_submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
 
