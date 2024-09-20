@@ -220,20 +220,18 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		// First verify the turnstile
 		// If the form doesn't have a turnstile, we can still continue
 		$turnstilePassed = true;
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-			// Check if Turnstile response exists
-			if ( isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
-				$turnstile_response = sanitize_text_field($_POST['cf-turnstile-response']);
-				
-				if ( !$this->verify_turnstile( $turnstile_response ) ) {
-					// Turnstile failed
-					echo 'Turnstile verification failed, please try again.';
-					$turnstilePassed = false;
-				}
-			} else if ( isset( $_POST['cf-turnstile-response'] ) && empty( $_POST['cf-turnstile-response'] ) ) {
-				// Turnstile response is missing
+		// Check if Turnstile response exists
+		if ( isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
+			$turnstileResponse = sanitize_text_field($_POST['cf-turnstile-response']);
+			
+			if ( !$this->verify_turnstile( $turnstileResponse ) ) {
+				// Turnstile failed
+				echo 'Turnstile verification failed, please try again.';
 				$turnstilePassed = false;
 			}
+		} else if ( isset( $_POST['cf-turnstile-response'] ) && empty( $_POST['cf-turnstile-response'] ) ) {
+			// Turnstile response is missing
+			$turnstilePassed = false;
 		}
 
 		if ( !$turnstilePassed ) {
