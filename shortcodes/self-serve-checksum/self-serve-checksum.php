@@ -248,7 +248,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			}
 
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
-			$url = trailingslashit( esc_url( $_POST['ss-cs-url'] ) );
+			$url = esc_url( $_POST['ss-cs-url'] );
+			$parsedUrl = wp_parse_url($url); // To get additional info from the URL paramaeters if provided
 
 			// Get the Self Serve Checksum settings
 			$self_serve_checksum_setting = Civicrm_Ux::getInstance()
@@ -265,15 +266,39 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			 * 
 			 */
 
-			// Get contact cid
-			$cid = \Civi\Api4\Contact::get( FALSE )
+			// Get the Contact ID by email.
+			// If a cid was provided, check if the email and cid combination is valid. If not, return null.
+			/**
+			 * TODO 
+			 * 		- Check for email
+			 * 		- If cid is provided, check for a contact with that cid and email
+			 * 		- If they don't match, find a contact with that email. 
+			 * 			- If multiple contacts found, return the oldest one, i.e. the lowest cid. We are ASSUMING this is the correct one.
+			 */
+			$apiQuery = \Civi\Api4\Contact::get( FALSE )
 				->addSelect( 'id' )
 				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
 				->addWhere( 'email.email', '=', $email )
-				->addGroupBy( 'id' )
-				->execute()
-				->first()['id'];
+				->addOrderBy('id', 'ASC');
+			
+			if ( isset( $parsedUrl['query'] ) ) {
+				parse_str($parsedUrl['query'], $queryArgs);
+				$queryArgs = array_change_key_case($queryArgs, CASE_LOWER);
 
+				// Remove the normalized parameters
+				if ( isset( $queryArgs['cid'] ) ) {
+					// Check if a contact exists with the same contact id and email address
+					$apiQuery->addWhere( 'id', '=', $queryArgs['cid'] );
+				}
+
+				$cid = $apiQuery->execute()->first()['id'];
+			}
+
+			if ( empty($cid) ) {
+				// TODO cid and email mismatch. Go back to looking for a contact just by email.
+			}
+
+			// TODO If still empty, that contact record doesn't exist in our CiviCRM Installation
 			if ( empty( $cid ) ) {
 				// No valid contact was found
 				$submissionMessage = wpautop( $self_serve_checksum_setting['form_invalid_contact_text'] );
