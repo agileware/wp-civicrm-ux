@@ -37,7 +37,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$form_submitted = count($contacts) > 0 ? true : false;
 		}
 
-		// IF there is a valid CID and checksum in the  URL, display the content inside the shortcode
+		// IF there is a valid CID and checksum in the URL, display the content inside the shortcode
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
 		if ( !$form_submitted && !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cid'] ) ) {
@@ -53,6 +53,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				$displayInvalidMessage = true;
 			}
 		}
+		$invalidMessage = $displayInvalidMessage ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
     
 		// Otherwise, display the self serve form
 
@@ -64,7 +65,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			->get_store()
 			->get_option('self_serve_checksum');
 		
-		$invalidMessage = $displayInvalidMessage ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
 		$formText = wpautop( $self_serve_checksum['form_text'] );
 
 		// Get the Cloudflare Turnstile
@@ -87,7 +87,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			?>
 		</div>
 		<?php
-		if ( !$form_submitted ) {
+		if ( !$form_submitted || ( $form_submitted && !$turnstile_passed ) ) {
 			echo $formText; ?>
 			<form id="ss-cs-form" method="post" data-turnstilepassed="<?php echo $turnstile_passed ? 'true' : 'false'; ?>">
 				<label for="ss-cs-email">Your email:</label>
@@ -231,13 +231,19 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				->execute()
 				->first()['id'];
 
-			// Get the cid and generate a checksum
 			if ( empty( $cid ) ) {
 				// No valid contact was found
 				$submissionMessage = wpautop( $self_serve_checksum_setting['form_invalid_contact_text'] );
+				
+				$tokenData = [
+					'page_title' => $pageTitle,
+					'email_address' => $email,
+				];
+				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
 				return;
 			}
 
+			// Get a checksum
 			$cs = \Civi\Api4\Contact::getChecksum( FALSE )
 					->setContactId( $cid )
 					->execute()
@@ -247,8 +253,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			// `${URL}/?cid=${cid}&cs=${checksum}`
 			// TODO keep URL parameters other than CID and CS
 			$checksumUrl = $url . '?cid=' . $cid . '&cs=' . $cs;
-
-			$submissionMessage = '';
 			
 			// Build and send the email to the contact.
 			if ( !empty( $cs ) ) {
@@ -271,15 +275,13 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				wp_mail( $email, $subject, $message, $headers );
 
 				$submissionMessage = wpautop( $self_serve_checksum_setting['form_confirmation_text'] );
-			}
-			
-			$tokenData = [
-				'page_title' => $pageTitle,
-				'email_address' => $email,
-			];
-			$submissionMessage = $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
 
-			echo $submissionMessage;
+				$tokenData = [
+					'page_title' => $pageTitle,
+					'email_address' => $email,
+				];
+				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+			}
 		}
 	}
 
