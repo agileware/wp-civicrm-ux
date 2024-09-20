@@ -65,6 +65,13 @@ class Civicrm_Ux_Option_Store {
 			'form_invalid_contact_text' => $defaults['form_invalid_contact_text'],
 			'email_message' => $defaults['email_message'],
 		] );
+
+		// For Cloudflare Turnstiles
+		$this->register_option( 'civicrm_ux_cf_turnstile', NULL, [
+			'sitekey' => '',
+			'secret_key' => '',
+			'theme'	=> 'Light',
+		] );
 	}
 
 	public function register_option( $name, $instance, $default = '' ) {

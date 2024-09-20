@@ -46,20 +46,15 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$invalidMessage = $displayInvalidMessage ? '<p>That link has expired or is invalid. Please request a new link below.</p>' : '';
 		$formText = wpautop( $self_serve_checksum['form_text'] );
 
-		// Check if the form was submitted, so we can hide the form if it has
-		$form_submitted = isset($_POST['ss-cs-submit']);
-		
-		if ( $form_submitted && isset($_POST['ss-cs-email']) ) {
-			// We still want to show the form if the previous submission was an invalid contact
-			$contacts = \Civi\Api4\Contact::get( FALSE )
-				->addSelect( 'id' )
-				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
-				->addWhere( 'email.email', '=', $_POST['ss-cs-email'] )
-				->addGroupBy( 'id' )
-				->execute();
-			
-			$form_submitted = count($contacts) > 0 ? true : false;
+		// Get the Cloudflare Turnstile
+		$turnstile = $this->getTurnstile();
+		$turnstile_passed = !empty($_POST['cf-turnstile-response']) && $this->verify_turnstile($_POST['cf-turnstile-response']);
+
+		// Load scripts
+		if ( !empty($turnstile) ) {
+			wp_enqueue_script('turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', array(), null, true);
 		}
+		wp_enqueue_script('ss-cs-form', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/self-serve-checksum.js', []);
 
         ob_start();
 
@@ -73,20 +68,51 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		<?php
 		if ( !$form_submitted ) {
 			echo $formText; ?>
-			<form id="ss-cs-form" method="post">
+			<form id="ss-cs-form" method="post" data-turnstilepassed="<?php echo $turnstile_passed ? 'true' : 'false'; ?>">
 				<label for="ss-cs-email">Your email:</label>
 				<input type="email" id="ss-cs-email" name="ss-cs-email" required>
 				<input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
 				<input type="hidden" name="ss-cs-url" value="<?php echo $url; ?>">
+				<?php echo $turnstile; ?>
 				<button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
 			</form>
-		<?php } ?>
+			<?php
+			if ( !empty($turnstile) ) { ?>
+			<script>
+				let turnstileCompleted = false;
+				
+				// This function will be called when Turnstile completes successfully
+				function onTurnstileComplete(token) {
+					turnstileCompleted = true;
 
+					let submitButton = document.getElementById('ss-cs-submit');
+					submitButton.disabled = false;
+				}
+			</script>
+			<?php } ?>
+		<?php } ?>
+			
 		<?php
         
         return ob_get_clean();
 	}
 
+	private function getTurnstile() {
+		// Check if Cloudflare Turnstile Sitekey and Secret Key are provided.
+		$civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_ux_cf_turnstile');
+
+		return !empty($civicrm_ux_cf_turnstile['sitekey']) && !empty($civicrm_ux_cf_turnstile['secret_key']) 
+			? '<div class="cf-turnstile" data-sitekey="' . $civicrm_ux_cf_turnstile['sitekey'] . 
+				'" data-theme="' . $civicrm_ux_cf_turnstile['theme'] . 
+				'" data-callback="onTurnstileComplete"></div>'
+			: '';
+	}
+
+	/**
+	 * Validate the Checksum with the Contact ID in CiviCRM.
+	 */
 	private function validateChecksum( $cid, $cs ) {
 		$results = \Civi\Api4\Contact::validateChecksum( FALSE )
 			->setContactId( $cid )
@@ -96,9 +122,59 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		return $results[0]['valid'];
 	}
 
+	/**
+	 * Verify the Cloudflare Turnstile response.
+	 */
+	private function verify_turnstile($turnstile_response) {
+		$civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_ux_cf_turnstile');
+		
+		$secret = !empty($civicrm_ux_cf_turnstile['secret_key']) ? $civicrm_ux_cf_turnstile['secret_key'] : false;
+		if ( !$secret ) {
+			return $secret;
+		}
+
+		$response = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+			'body' => array(
+				'secret'   => $secret,
+				'response' => $turnstile_response,
+				'remoteip' => $_SERVER['REMOTE_ADDR'], // Optional, include user's IP address
+			),
+		));
+	
+		$response_body = wp_remote_retrieve_body($response);
+		$result = json_decode($response_body, true);
+	
+		return isset($result['success']) && $result['success'];
+	}
+
     // Handle form submission and send an email with the URL
 	private function self_serve_checksum_handle_form_submission() {
-		if ( isset( $_POST['ss-cs-submit'] ) && !empty( $_POST['ss-cs-email'] ) ) {
+		// First verify the turnstile
+		// If the form doesn't have a turnstile, we can still continue
+		$turnstilePassed = true;
+		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+			// Check if Turnstile response exists
+			if ( isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
+				$turnstile_response = sanitize_text_field($_POST['cf-turnstile-response']);
+				
+				if ( !$this->verify_turnstile( $turnstile_response ) ) {
+					// Turnstile failed
+					echo 'Turnstile verification failed, please try again.';
+					$turnstilePassed = false;
+				}
+			} else if ( isset( $_POST['cf-turnstile-response'] ) && empty( $_POST['cf-turnstile-response'] ) ) {
+				// Turnstile response is missing
+				$turnstilePassed = false;
+			}
+		}
+
+		if ( !$turnstilePassed ) {
+			return;
+		}
+
+		if ( !empty( $_POST['ss-cs-email'] ) ) {
 			$email = sanitize_email( $_POST['ss-cs-email'] );
 
 			// Exit early if we have an invalid email

@@ -126,7 +126,7 @@ class Civicrm_Ux_Admin {
 		// WPCIVIUX-148 settings
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_plugin_activation_blocks' );
 
-		// GFCV-107 settings
+		// WPCIVIUX-162 settings
 		register_setting( 'civicrm-ux-settings-group', 'self_serve_checksum', 
 			array(
 				'type' => 'array',
@@ -168,6 +168,9 @@ class Civicrm_Ux_Admin {
 				},
 			)
 		);
+
+		// WPCIVIUX-167 settings
+		register_setting( 'civicrm-ux-settings-group', 'civicrm_ux_cf_turnstile' );
 	}
 
 	/**

@@ -35,6 +35,10 @@ function civicrm_ux_settings_page() {
                         ->get_store()
                         ->get_option('self_serve_checksum');
 
+  $civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
+                        ->get_store()
+                        ->get_option('civicrm_ux_cf_turnstile');
+
 
   ?>
     <div class="wrap">
@@ -127,6 +131,37 @@ function civicrm_ux_settings_page() {
                         <td colspan="2"><input type="checkbox" id="event_tickets" name="civicrm_plugin_activation_blocks[event_tickets]"
                             <?php echo isset($plugin_activation_blocks['event_tickets']) && $plugin_activation_blocks['event_tickets'] ? ' checked="checked">' : '>'; ?>
                             <label for="event_tickets">Event Tickets</label></td>
+                    </tr>
+                </table>
+                <h2>Cloudflare Turnstile</h2>
+                <p>Protect your Self Serve Checksum Form against spam using Cloudflare Turnstile.</p>
+                <p><a href="https://www.cloudflare.com/en-gb/products/turnstile/" target="_blank">Learn more about this free service.</a></p>
+                <p>Create a widget and get your sitekey and secret key from <a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank">https://dash.cloudflare.com/?to=/:account/turnstile</a></p>
+                <table>
+                    <tr style="vertical-align: text-top;">
+                        <td><label for="sitekey">Sitekey</label></td>
+                        <td><input type="text"
+                                   id="sitekey"
+                                   name="civicrm_ux_cf_turnstile[sitekey]"
+                                   value="<?php echo $civicrm_ux_cf_turnstile['sitekey']; ?>"/>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: text-top;">
+                        <td><label for="secret_key">Secret Key</label></td>
+                        <td><input type="text"
+                                   id="secret_key"
+                                   name="civicrm_ux_cf_turnstile[secret_key]"
+                                   value="<?php echo $civicrm_ux_cf_turnstile['secret_key']; ?>"/>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: text-top;">
+                        <td><label for="theme_select">Theme</label></td>
+                        <td><select name="civicrm_ux_cf_turnstile[theme]" id="theme_select">
+                                <option value="light" <?php selected($civicrm_ux_cf_turnstile['theme'], 'light'); ?>>Light</option>
+                                <option value="dark" <?php selected($civicrm_ux_cf_turnstile['theme'], 'dark'); ?>>Dark</option>
+                                <option value="auto" <?php selected($civicrm_ux_cf_turnstile['theme'], 'auto'); ?>>Auto</option>
+                            </select>
+                        </td>
                     </tr>
                 </table>
                 <h2>Self Serve Checksum Form</h2>
