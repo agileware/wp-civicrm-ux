@@ -89,10 +89,6 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			return "CiviCRM API error.";
 		}
 
-		foreach ( $hide_fields as $hide_field ) {
-			foreach($result['values'] as &$value) { unset($value[$hide_field]); }
-		}
-
     return $this->render( $result, $header, $content, $mod_atts['format'],$mod_atts['css_id']);
 	}
 
