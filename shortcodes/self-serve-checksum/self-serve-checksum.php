@@ -40,7 +40,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		// IF there is a valid CID and checksum in the URL, display the content inside the shortcode
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
-		if ( !$form_submitted && !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cid'] ) ) {
+		if ( !$form_submitted && !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
 			$cid = $urlParamsKeys['cid'];
 			$cs = $urlParamsKeys['cs'];
 
@@ -179,10 +179,10 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		// Get the current page URL
 		$url = $url ?? add_query_arg( $_GET, home_url( $wp->request ) );
 
-		$queryArgs = $this->remove_query_args_case_insensitive($url);
+		$removeArgs = ['page', 'pagename', 'cs'];
+		$queryArgs = $this->remove_query_args_case_insensitive($url, $removeArgs);
 
 		// Rebuild the URL without the case-insensitive query parameters
-		// TODO fix weird URL
 		$url = add_query_arg( $queryArgs, home_url( $wp->request ) );
 
 		return $url;
@@ -191,9 +191,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	/**
 	 * Removes URL query parameters that we don't want to pass on through the email.
 	 */
-	private function remove_query_args_case_insensitive($url) {
-		$removeArgs = ['page', 'pagename', 'cs'];
-
+	private function remove_query_args_case_insensitive($url, $removeArgs) {
 		$parsedUrl = wp_parse_url($url);
 
 		if ( isset($parsedUrl['query']) ) {
@@ -212,7 +210,20 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			return $queryArgs;
 		}
 
-		return null;
+		return [];
+	}
+
+	function get_base_url($url) {
+		// Parse the URL into its components
+		$parsedUrl = parse_url($url);
+	
+		// Rebuild the base URL (scheme, host, and path)
+		$scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+		$host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+		$path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
+	
+		// Concatenate the parts to form the base URL
+		return $scheme . $host . $path;
 	}
 
     // Handle form submission and send an email with the URL
@@ -248,8 +259,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			}
 
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
-			$url = esc_url( $_POST['ss-cs-url'] );
-			$parsedUrl = wp_parse_url($url); // To get additional info from the URL paramaeters if provided
+			$parsedUrl = wp_parse_url( $_POST['ss-cs-url'] ); // To get additional info from the URL paramaeters if provided
+			$url = esc_url( $this->get_base_url( $_POST['ss-cs-url'] ) );
 
 			// Get the Self Serve Checksum settings
 			$self_serve_checksum_setting = Civicrm_Ux::getInstance()
@@ -264,22 +275,10 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			 * 
 			 * The only true fix is for the duplicate contacts to be merged.
 			 * 
+			 * 	- If cid is provided, check for a contact with that cid and email combination.
+			 * 	- If they don't match, find a contact with that email.
+			 * 		- If multiple contacts found, return the oldest one, i.e. the lowest cid. We are ASSUMING this is the correct one.
 			 */
-
-			// Get the Contact ID by email.
-			// If a cid was provided, check if the email and cid combination is valid. If not, return null.
-			/**
-			 * TODO 
-			 * 		- Check for email
-			 * 		- If cid is provided, check for a contact with that cid and email
-			 * 		- If they don't match, find a contact with that email. 
-			 * 			- If multiple contacts found, return the oldest one, i.e. the lowest cid. We are ASSUMING this is the correct one.
-			 */
-			$apiQuery = \Civi\Api4\Contact::get( FALSE )
-				->addSelect( 'id' )
-				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
-				->addWhere( 'email.email', '=', $email )
-				->addOrderBy('id', 'ASC');
 			
 			if ( isset( $parsedUrl['query'] ) ) {
 				parse_str($parsedUrl['query'], $queryArgs);
@@ -288,19 +287,32 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				// Remove the normalized parameters
 				if ( isset( $queryArgs['cid'] ) ) {
 					// Check if a contact exists with the same contact id and email address
-					$apiQuery->addWhere( 'id', '=', $queryArgs['cid'] );
-				}
+					$cid = \Civi\Api4\Contact::get( FALSE )
+						->addSelect( 'id' )
+						->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+						->addWhere( 'email.email', '=', $email )
+						->addWhere( 'id', '=', $queryArgs['cid'] )
+						->execute()
+						->first()['id'];
 
-				$cid = $apiQuery->execute()->first()['id'];
+					unset($queryArgs['cid']);
+				}
 			}
 
 			if ( empty($cid) ) {
-				// TODO cid and email mismatch. Go back to looking for a contact just by email.
+				// cid and email mismatch. Look for a contact just by email.
+				$cid = \Civi\Api4\Contact::get( FALSE )
+					->addSelect( 'id' )
+					->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
+					->addWhere( 'email.email', '=', $email )
+					->addOrderBy('id', 'ASC')
+					->execute()
+					->first()['id'];
 			}
 
-			// TODO If still empty, that contact record doesn't exist in our CiviCRM Installation
+			// If still empty, display an error message 
 			if ( empty( $cid ) ) {
-				// No valid contact was found
+				// No valid contact was found, that contact record doesn't exist in our CiviCRM Installation
 				$submissionMessage = wpautop( $self_serve_checksum_setting['form_invalid_contact_text'] );
 				
 				$tokenData = [
@@ -316,14 +328,15 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					->setContactId( $cid )
 					->execute()
 					->first()['checksum'];
-
-			// Build url with cid and checksum
-			// `${URL}/?{maybeotherargs}&cid=${cid}&cs=${checksum}`
-			$connector = isset($parsedUrl['query']) ? '&' : '?';
-			$checksumUrl = $url . $connector . 'cid=' . $cid . '&cs=' . $cs;
 			
 			// Build and send the email to the contact.
 			if ( !empty( $cs ) ) {
+				// Build url with cid and checksum
+				// `${URL}/?{maybeotherargs}&cid=${cid}&cs=${checksum}`
+				$queryArgs['cid'] = $cid;
+				$queryArgs['cs'] = $cs;
+				$checksumUrl = add_query_arg( $queryArgs, $url );
+				
 				$subject = get_bloginfo( 'name' ) . ' - ' . $pageTitle . ' link';
 
 				// Apply filters to alter the email subject
