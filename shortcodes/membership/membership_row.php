@@ -43,7 +43,9 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 			'renewal_url' => $atts['renewal_url']
         ];
 
-		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( null, $atts['membership_type'], $atts['membership_status'] );
+		$cid = null; // FOR TESTING
+
+		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $cid, $atts['membership_type'], $atts['membership_status'], $atts['expiry_date'] );
 
         // Buffer the output
         ob_start();
