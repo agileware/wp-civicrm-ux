@@ -173,6 +173,11 @@ class Civicrm_Ux {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-cf-magic-tag-manager.php';
 
 		/**
+		 * Template functions.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/template-functions.php';
+
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
