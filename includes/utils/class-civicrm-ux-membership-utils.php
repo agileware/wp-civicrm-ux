@@ -295,4 +295,36 @@ class Civicrm_Ux_Membership_Utils {
 
 	}
 
+	static public function get_all_memberships_for_contact( $queryCid = null, $types = [], $statuses = [] ) {
+		$cid = CRM_Core_Session::singleton()->getLoggedInContactID() != null 
+				? CRM_Core_Session::singleton()->getLoggedInContactID()
+				: $queryCid;
+
+		// If there's no contact, return null
+		if ( $cid == null ) {
+			// TODO if no contact found, display some kind of error
+
+			return null;
+		}
+
+		// User may have multiple memberships
+		$apiQuery = \Civi\Api4\Membership::get(FALSE)
+				->addSelect('id', 'membership_type_id', 'membership_type_id:label', 'membership_type_id:name', 'status_id', 'status_id:label', 'status_id:name', 'end_date', 'contact_id', 'contact.display_name', 'owner_membership_id.contact_id', 'contact_owner.display_name')
+				->addJoin('Contact AS contact', 'LEFT', ['contact_id', '=', 'contact_id'])
+				->addJoin('Contact AS contact_owner', 'LEFT', ['contact_owner.id', '=', 'owner_membership_id.contact_id'])
+				->addWhere('contact_id', '=', $cid);
+		
+		if ( !empty($types) ) {
+			$apiQuery->addWhere('membership_type_id', 'IN', $types);
+		}
+
+		if ( !empty($statuses) ) {
+			$apiQuery->addWhere('status_id:name', 'IN', $statuses);
+		}
+				
+		$memberships = $apiQuery->execute();
+		
+		return (array) $memberships;
+	}
+
 }
