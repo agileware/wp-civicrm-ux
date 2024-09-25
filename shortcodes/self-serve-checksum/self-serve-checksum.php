@@ -45,7 +45,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$cs = $urlParamsKeys['cs'];
 
 			// Test if checksum is valid
-			$isValid = $this->validateChecksum( $cid, $cs );
+			$isValid = Civicrm_Ux_Contact_Utils::validate_checksum( $cid, $cs );
 
 			if ( $isValid ) {
 				return do_shortcode( $content );
@@ -129,18 +129,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 				'" data-theme="' . $civicrm_ux_cf_turnstile['theme'] . 
 				'" data-callback="onTurnstileComplete"></div>'
 			: '';
-	}
-
-	/**
-	 * Validate the Checksum with the Contact ID in CiviCRM.
-	 */
-	private function validateChecksum( $cid, $cs ) {
-		$results = \Civi\Api4\Contact::validateChecksum( FALSE )
-			->setContactId( $cid )
-			->setChecksum( $cs )
-			->execute();
-		
-		return $results[0]['valid'];
 	}
 
 	/**
