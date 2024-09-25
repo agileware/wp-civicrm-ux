@@ -55,11 +55,6 @@ class Civicrm_Ux_Contact_Utils {
 		$cid = $urlParamsKeys['cid'] ?? null;
 		$cs = $urlParamsKeys['cs'] ?? null;
 
-		// If we have no valid Contact ID and Checksum, return nothing
-		if ( empty($cid) && empty($cs)) {
-			return false;
-		}
-
 		if ( !empty( $cid ) && !empty( $cs ) ) {
 			// Test if checksum is valid
 			$isValid = Civicrm_Ux_Contact_Utils::validate_checksum( $cid, $cs );
@@ -74,7 +69,7 @@ class Civicrm_Ux_Contact_Utils {
 			}
 		}
 
-		// We're missing either cid or cs, and the user is not logged in.
+		// We're missing cid, cs or both, and the user is not logged in.
 		return false;
 	}
 
