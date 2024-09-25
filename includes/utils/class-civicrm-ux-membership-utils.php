@@ -302,13 +302,25 @@ class Civicrm_Ux_Membership_Utils {
 
 		// If there's no contact, return null
 		if ( $cid == null ) {
-			// TODO if no contact found, display some kind of error
-			echo 'No user was found.';
 			return null;
 		}
 
 		$apiQuery = \Civi\Api4\Membership::get(FALSE)
-				->addSelect('id', 'membership_type_id', 'membership_type_id:label', 'membership_type_id:name', 'status_id', 'status_id:label', 'status_id:name', 'end_date', 'contact_id', 'contact.display_name', 'owner_membership_id.contact_id', 'contact_owner.display_name')
+				->addSelect(
+					'id', 
+					'membership_type_id', 
+					'membership_type_id:label', 
+					'membership_type_id:name', 
+					'status_id', 
+					'status_id:label', 
+					'status_id:name', 
+					'join_date',
+					'start_date',
+					'end_date', 
+					'contact_id', 
+					'contact.display_name', 
+					'owner_membership_id.contact_id', 
+					'contact_owner.display_name')
 				->addJoin('Contact AS contact', 'LEFT', ['contact.id', '=', 'contact_id'])
   				->addJoin('Contact AS contact_owner', 'LEFT', ['contact_owner.id', '=', 'owner_membership_id.contact_id'])
 				->addWhere('contact_id', '=', $cid);
@@ -323,9 +335,9 @@ class Civicrm_Ux_Membership_Utils {
 
 		if ( $endDate != null ) {
 			$formattedDate = date("Y-m-d", strtotime($endDate));
-			$apiQuery->addWhere('end_date', '>=', $formattedDate);
+			$apiQuery->addWhere('end_date', '<=', $formattedDate);
 		}
-				
+		
 		$memberships = $apiQuery->execute();
 		
 		// User may have multiple memberships
