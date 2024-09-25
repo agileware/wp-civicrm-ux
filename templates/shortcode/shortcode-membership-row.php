@@ -19,14 +19,23 @@
             $formattedDate = '-';
         }
 
+        // Build the renewal link
+        // If cid and cs are used for user authentication, the renewal links will also contain them.
+        // TODO: Logged in users do not need a checksum in their link?
+        $queryArgs = [
+            'cid' => $args['cid'],
+            'cs' => $args['cs'],
+            'mid' => $membership['id']
+        ];
+        $renewal_url = add_query_arg( $queryArgs, $args['renewal_url'] );
 ?>
 
-<tr>
+<tr class="<?php echo $args['renewal_url']; ?>">
     <td><?php echo $membership['contact_owner.display_name'] ?? $membership['contact.display_name']; ?></td>
     <td><?php echo $membership['membership_type_id:label']; ?></td>
     <td><?php echo $membership['status_id:label']; ?></td>
     <td><?php echo $formattedDate; ?></td>
-    <td><a href="<?php echo $args['renewal_url']; ?>" target="_blank">Renew this Membership</a></td>
+    <td><a href="<?php echo esc_url($renewal_url); ?>" target="_blank">Renew this Membership</a></td>
 </tr>
 
 <?php
