@@ -28,13 +28,21 @@ class Civicrm_Ux_Shortcode_Membership extends Abstract_Civicrm_Ux_Shortcode {
 
         $args = [];
 
+		$contactAuth = Civicrm_Ux_Contact_Utils::validate_cid_and_checksum_from_url_params();
+
+		// If we have an invalid contact, abort
+		if ( !$contactAuth ) {
+			// Display an error message
+			return '<p>You do not have access to this page.</p>';
+		}
+
         // Buffer the output
         ob_start();
 
         // Process the inner shortcodes and content
         $content = do_shortcode( $content );
 
-        civicrm_ux_load_template_part( 'shortcode', 'membership', array_merge($args, ['content' => $content]) );
+        civicrm_ux_load_template_part( 'shortcode', 'membership', array_merge($args, $contactAuth, ['content' => $content]) );
         
         return ob_get_clean();
 	}

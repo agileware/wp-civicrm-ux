@@ -43,14 +43,19 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 			'renewal_url' => $atts['renewal_url']
         ];
 
-		$cid = null; // FOR TESTING
+		$contactAuth = Civicrm_Ux_Contact_Utils::validate_cid_and_checksum_from_url_params();
 
-		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $cid, $atts['membership_type'], $atts['membership_status'], $atts['expiry_date'] );
+		// If we have an invalid contact, abort
+		if ( !$contactAuth ) {
+			return;
+		}
+
+		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $contactAuth['cid'], $atts['membership_type'], $atts['membership_status'], $atts['expiry_date'] );
 
         // Buffer the output
         ob_start();
 
-        civicrm_ux_load_template_part( 'shortcode', 'membership-row', array_merge( $args, ['memberships' => $memberships] ) );
+        civicrm_ux_load_template_part( 'shortcode', 'membership-row', array_merge( $args, $contactAuth, ['memberships' => $memberships] ) );
         
         return ob_get_clean();
 	}
