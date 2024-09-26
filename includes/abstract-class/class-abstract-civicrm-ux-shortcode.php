@@ -40,7 +40,7 @@ abstract class Abstract_Civicrm_Ux_Shortcode implements iCivicrm_Ux_Managed_Inst
 		$default_regex = '/<p>(\s*&nbsp;\s*|\s*)<\/p>|<\/p>\s*<p>|<br\s*\/?>/';
     
 		// Apply a filter so users can change the regex pattern
-		$custom_regex = apply_filters('my_shortcode_clean_regex', $default_regex);
+		$custom_regex = apply_filters('ux_shortcode_clean_content_output_regex', $default_regex);
 
 		$cleaned = preg_replace($custom_regex, '', $content);
 
