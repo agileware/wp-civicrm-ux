@@ -37,12 +37,9 @@ abstract class Abstract_Civicrm_Ux_Shortcode implements iCivicrm_Ux_Managed_Inst
 	 */
 	public function clean_content_output($content = '') {
 		// Default regex patterns to remove empty and misconfigured <p> tags and <br> tags
-		$default_regex = '/<p>(\s*&nbsp;\s*|\s*)<\/p>|<\/p>\s*<p>|<br\s*\/?>/';
-    
-		// Apply a filter so users can change the regex pattern
-		$custom_regex = apply_filters('ux_shortcode_clean_content_output_regex', $default_regex);
+		$regex = '/<p>(\s*&nbsp;\s*|\s*)<\/p>|<\/p>\s*<p>|<br\s*\/?>/';
 
-		$cleaned = preg_replace($custom_regex, '', $content);
+		$cleaned = preg_replace($regex, '', $content);
 
 		return $cleaned;
 	}
