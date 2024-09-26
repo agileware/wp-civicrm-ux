@@ -323,11 +323,11 @@ Outputs a table for memberships information. Designed to wrap around `[ux_member
 Outputs a table row of membership data. Checks for the logged in contact's cid, or cid and checksum in the URL parameters. If multiple memberships are found for the contact based on the filters provided, each membership will output a row. Override the shortcode-membership-row template part in your theme to customise. Uses the following parameters:
 - *`membership_type`* Optional: A comma separated list of membership type IDs to filter by.
 - *`membership_status`* Optional: A comma separated list of membership status names to filter by.
-- *`expiry_date`* Optional: A relative date format string to filter membership end_date by. For example, if set to "30 days", will filter memberships by those whose `end_date` is before today + 30 days.
+- *`expiration_offset`* Optional: A relative date format string to filter membership end_date by. For example, if set to "30 days", will filter memberships by those whose `end_date` is before today + 30 days.
 - *`renewal_url`* Optional: A URL to a page the user should be directed to in order to process their membership renewal. This URL will have the contact's cid, maybe their checksum if they are not logged in, and the membership id appended to it. This allows you to define separate membership renewal forms based on the other filter criteria above.
 
 ```
-[ux_membership_row membership_type="1,5" membership_status="Current,Grace,Expired" expiry_date="30 days" renewal_url="/civicrm/contribute/transact/?reset=1&id=1"]
+[ux_membership_row membership_type="1,5" membership_status="Current,Grace,Expired" expiration_offset="30 days" renewal_url="/civicrm/contribute/transact/?reset=1&id=1"]
 ```
 
 *The following shortcodes are marked for deprecation in a future release in favour of the above shortcodes.*

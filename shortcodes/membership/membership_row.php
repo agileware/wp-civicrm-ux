@@ -33,13 +33,13 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 		$atts = shortcode_atts( [
 			'membership_type' => [],
 			'membership_status' => [],
-			'expiry_date' => '',
+			'expiration_offset' => '',
 			'renewal_url' => ''
 		], $atts, $tag );
 
         $args = [
             'content' => $content,
-			'expiry_date' => $atts['expiry_date'],
+			'expiration_offset' => $atts['expiration_offset'],
 			'renewal_url' => $atts['renewal_url']
         ];
 
@@ -50,7 +50,7 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 			return;
 		}
 
-		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $contactAuth['cid'], $atts['membership_type'], $atts['membership_status'], $atts['expiry_date'] );
+		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $contactAuth['cid'], $atts['membership_type'], $atts['membership_status'], $atts['expiration_offset'] );
 
         // Buffer the output
         ob_start();
