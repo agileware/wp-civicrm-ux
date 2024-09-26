@@ -31,7 +31,7 @@ $dateFormat = get_option('date_format');
             'cs' => $args['cs'],
             'mid' => $membership['id']
         ];
-        $renewal_url = add_query_arg( $queryArgs, $args['renewal_url'] );
+        $renewalUrl = add_query_arg( $queryArgs, $args['renewal_url'] );
 ?>
 
 <tr>
@@ -39,7 +39,7 @@ $dateFormat = get_option('date_format');
     <td><?php echo $membership['membership_type_id:label']; ?></td>
     <td><?php echo $membership['status_id:label']; ?></td>
     <td><?php echo $formattedDate; ?></td>
-    <td><a href="<?php echo esc_url($renewal_url); ?>" target="_blank">Renew this Membership</a></td>
+    <td><a href="<?php echo esc_url($renewalUrl); ?>" target="_blank">Renew this Membership</a></td>
 </tr>
 
 <?php
