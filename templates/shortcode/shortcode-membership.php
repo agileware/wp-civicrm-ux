@@ -8,7 +8,7 @@
 
 <table class="civicrm-ux-membership">
     <tr>
-        <th>Contact</th>
+        <th>Member</th>
         <th>Membership Type</th>
         <th>Membership Status</th>
         <th>Expiry Date</th>
