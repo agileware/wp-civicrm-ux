@@ -5,6 +5,8 @@
  * To customise, copy this file into your theme and make changes as needed.
  */
 
+// Get the default date format from WordPress settings
+$dateFormat = get_option('date_format');
 
 /**
  * There may be multiple memberships returned depending on the parameters fed to the shortcode. 
@@ -14,7 +16,9 @@
 
         if ( isset($membership['end_date']) ) {
             $endDate = date_create($membership['end_date']);
-            $formattedDate = date_format($endDate,"j M, Y");
+
+            // Format the datetime value using the default date format
+            $formattedDate = date_i18n($dateFormat, $endDate);
         } else {
             $formattedDate = '-';
         }
