@@ -32,8 +32,13 @@ class Civicrm_Ux_Shortcode_Membership extends Abstract_Civicrm_Ux_Shortcode {
 
 		// If we have an invalid contact, abort
 		if ( !$contactAuth ) {
+			// Buffer the output
+			ob_start();
+			
 			// Display an error message
-			return '<p>You do not have access to this page.</p>';
+			civicrm_ux_load_template_part( 'shortcode', 'membership-no-access', array_merge($args) );
+
+			return ob_get_clean();
 		}
 
         // Buffer the output
