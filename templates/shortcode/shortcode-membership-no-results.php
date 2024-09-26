@@ -6,4 +6,4 @@
  */
 ?>
 
-<p>There are no memberships.</p>
+<p>Your contact either has no memberships or none that meet the criteria.</p>

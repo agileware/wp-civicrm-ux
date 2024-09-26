@@ -47,7 +47,7 @@ class Civicrm_Ux_Shortcode_Membership extends Abstract_Civicrm_Ux_Shortcode {
 		// Clean up unwanted tags added to the content by WordPress
 		$content = $this->clean_content_output($content);
 
-		if ( !empty($content) ) {
+		if ( !empty(trim($content)) ) {
 			civicrm_ux_load_template_part( 'shortcode', 'membership', array_merge($args, $contactAuth, ['content' => $content]) );
 		} else {
 			civicrm_ux_load_template_part( 'shortcode', 'membership-no-results', array_merge($args, $contactAuth, ['content' => $content]) );
