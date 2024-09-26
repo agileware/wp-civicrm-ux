@@ -39,10 +39,19 @@ class Civicrm_Ux_Shortcode_Membership extends Abstract_Civicrm_Ux_Shortcode {
         // Buffer the output
         ob_start();
 
-        // Process the inner shortcodes and content
-        $content = do_shortcode( $content );
+		// Process the inner shortcodes and content
+		// Both the inner content and this shortcode will attempt to wrap their content in unnecessary <p> tags.
+		// We need to manually strip out the empty or misconfigured <p> tags missed by shortcode_unautop().
+        $content = do_shortcode( shortcode_unautop($content) );
 
-        civicrm_ux_load_template_part( 'shortcode', 'membership', array_merge($args, $contactAuth, ['content' => $content]) );
+		// Clean up unwanted tags added to the content by WordPress
+		$content = $this->clean_content_output($content);
+
+		if ( !empty($content) ) {
+			civicrm_ux_load_template_part( 'shortcode', 'membership', array_merge($args, $contactAuth, ['content' => $content]) );
+		} else {
+			civicrm_ux_load_template_part( 'shortcode', 'membership-no-results', array_merge($args, $contactAuth, ['content' => $content]) );
+		}
         
         return ob_get_clean();
 	}

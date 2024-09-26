@@ -19,7 +19,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	public function shortcode_callback( $atts = [], $content = null, $tag = '' ) {
 		// If the user is logged in AND has a CiviCRM contact, display the content inside the shortcode
 		if ( CRM_Core_Session::singleton()->getLoggedInContactID() !== null ) {
-			return do_shortcode( $content );
+			return do_shortcode( shortcode_unautop($content) );
 		}
 
 		// Check if the form was just submitted, so we can hide the form if it has
@@ -48,7 +48,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$isValid = Civicrm_Ux_Contact_Utils::validate_checksum( $cid, $cs );
 
 			if ( $isValid ) {
-				return do_shortcode( $content );
+				return do_shortcode( shortcode_unautop($content) );
 			} else {
 				$displayInvalidMessage = true;
 			}
