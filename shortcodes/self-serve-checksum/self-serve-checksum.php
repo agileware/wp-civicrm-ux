@@ -77,43 +77,25 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		}
 		wp_enqueue_script('ss-cs-form', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/self-serve-checksum.js', []);
 
-        ob_start();
+		$args = [
+			'form_submitted' => $form_submitted,
+			'turnstile' => $turnstile,
+			'turnstile_passed' => $turnstile_passed,
+			'form_text' => $formText,
+			'url' => $url,
+			'invalidMessage' => $invalidMessage,
+		];
 
+        ob_start();
 		?>
 		<div class='ss-cs-status-message status'>
 			<?php
-			echo $invalidMessage;
+			echo $args['invalid_message'];
 			$this->self_serve_checksum_handle_form_submission();
 			?>
 		</div>
 		<?php
-		if ( !$form_submitted || ( $form_submitted && !$turnstile_passed ) ) {
-			echo $formText; ?>
-			<form id="ss-cs-form" method="post" data-turnstilepassed="<?php echo $turnstile_passed ? 'true' : 'false'; ?>">
-				<label for="ss-cs-email">Your email:</label>
-				<input type="email" id="ss-cs-email" name="ss-cs-email" required>
-				<input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
-				<input type="hidden" name="ss-cs-url" value="<?php echo $url; ?>">
-				<?php echo $turnstile; ?>
-				<button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
-			</form>
-			<?php
-			if ( !empty($turnstile) ) { ?>
-			<script>
-				let turnstileCompleted = false;
-				
-				// This function will be called when Turnstile completes successfully
-				function onTurnstileComplete(token) {
-					turnstileCompleted = true;
-
-					let submitButton = document.getElementById('ss-cs-submit');
-					submitButton.disabled = false;
-				}
-			</script>
-			<?php } ?>
-		<?php } ?>
-			
-		<?php
+		civicrm_ux_load_template_part( 'shortcode', 'self-serve-checksum', array_merge($args) );
         
         return ob_get_clean();
 	}
