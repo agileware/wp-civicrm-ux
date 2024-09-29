@@ -473,6 +473,9 @@ add_filter('ux_self_serve_checksum_email_subject', function($subject, $pageTitle
 }, 10, 2);
 ```
 
+### Cloudflare Turnstile
+You can protect your Self Serve Checksum Form against spam using the free service [Cloudflare Turnstile](https://www.cloudflare.com/en-gb/products/turnstile/). Once you have a sitekey and secret key, simply add them to the settings.
+
 # For Developers
 
 ## REST API
