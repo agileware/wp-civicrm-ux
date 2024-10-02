@@ -40,7 +40,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		// IF there is a valid CID and checksum in the URL, display the content inside the shortcode
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
-		if ( !$form_submitted && !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
+		if ( !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
 			$cid = $urlParamsKeys['cid'];
 			$cs = $urlParamsKeys['cs'];
 
