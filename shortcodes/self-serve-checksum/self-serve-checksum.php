@@ -91,7 +91,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		<div class='ss-cs-status-message status'>
 			<?php
 			echo $args['invalid_message'];
-			$this->self_serve_checksum_handle_form_submission();
+			// Pass along whether or not the turnstile check was passed at this point, so we won't have to check again.
+			$this->self_serve_checksum_handle_form_submission($turnstile_passed);
 			?>
 		</div>
 		<?php
@@ -197,13 +198,15 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	}
 
     // Handle form submission and send an email with the URL
-	private function self_serve_checksum_handle_form_submission() {
+	private function self_serve_checksum_handle_form_submission($turnstile_passed = false) {
 		// First verify the turnstile
 		// If the form doesn't have a turnstile, we can still continue
 		$turnstilePassed = true;
 		// Check if Turnstile response exists
-		if ( isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
-			$turnstileResponse = sanitize_text_field($_POST['cf-turnstile-response']);
+		// $turnstile_passed argument refers to the first time the turnstile was verified on page load, since
+		// the shortcode_callback occurs before handling form submission.
+		if ( !$turnstile_passed && isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
+			$turnstileResponse = $_POST['cf-turnstile-response'];
 			
 			if ( !$this->verify_turnstile( $turnstileResponse ) ) {
 				// Turnstile failed
