@@ -6,7 +6,9 @@
  */
 
 
-if ( !$args['form_submitted'] || ( $args['form_submitted'] && !$args['turnstile_passed'] ) ) {
+if ( !$args['form_submitted'] || 
+        ( $args['form_submitted'] && isset( $args['turnstile_passed'] ) && !$args['turnstile_passed'] ) ) {
+    
     echo $args['form_text']; ?>
     <form id="ss-cs-form" method="post" data-turnstilepassed="<?php echo $args['turnstile_passed'] ? 'true' : 'false'; ?>">
         <label for="ss-cs-email">Your email:</label>

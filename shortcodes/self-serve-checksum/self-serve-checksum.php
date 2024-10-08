@@ -79,12 +79,17 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		$args = [
 			'form_submitted' => $form_submitted,
-			'turnstile' => $turnstile,
-			'turnstile_passed' => $turnstile_passed,
 			'form_text' => $formText,
 			'url' => $url,
 			'invalidMessage' => $invalidMessage,
 		];
+
+		if ( !empty( $turnstile ) ) {
+			$args = array_merge($args, [
+				'turnstile' => $turnstile,
+				'turnstile_passed' => $turnstile_passed,
+			]);
+		}
 
         ob_start();
 		?>
@@ -200,25 +205,21 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
     // Handle form submission and send an email with the URL
 	private function self_serve_checksum_handle_form_submission($turnstile_passed = false) {
 		// First verify the turnstile
-		// If the form doesn't have a turnstile, we can still continue
-		$turnstilePassed = true;
-		// Check if Turnstile response exists
-		// $turnstile_passed argument refers to the first time the turnstile was verified on page load, since
+		// $turnstile_passed argument is the result when the turnstile was verified on page load, since
 		// the shortcode_callback occurs before handling form submission.
+
 		if ( !$turnstile_passed && isset( $_POST['cf-turnstile-response'] ) && !empty( $_POST['cf-turnstile-response'] ) ) {
-			$turnstileResponse = $_POST['cf-turnstile-response'];
-			
-			if ( !$this->verify_turnstile( $turnstileResponse ) ) {
-				// Turnstile failed
-				echo 'Turnstile verification failed, please try again.';
-				$turnstilePassed = false;
-			}
+			// Turnstile failed
+			echo 'Turnstile verification failed, please try again.';
 		} else if ( isset( $_POST['cf-turnstile-response'] ) && empty( $_POST['cf-turnstile-response'] ) ) {
 			// Turnstile response is missing
-			$turnstilePassed = false;
+			$turnstile_passed = false;
+		} else if ( !isset( $_POST['cf-turnstile-response'] ) ) {
+			// If the form doesn't have a turnstile, we can still continue
+			$turnstile_passed = true;
 		}
 
-		if ( !$turnstilePassed ) {
+		if ( !$turnstile_passed ) {
 			return;
 		}
 
