@@ -27,17 +27,20 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		// We still want to show the form if the previous submission was an invalid contact
 		if ( $form_submitted && !empty($_POST['ss-cs-email']) ) {
+			$email = sanitize_email( $_POST['ss-cs-email'] );
+
 			$contacts = \Civi\Api4\Contact::get( FALSE )
 				->addSelect( 'id' )
 				->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
-				->addWhere( 'email.email', '=', $_POST['ss-cs-email'] )
+				->addWhere( 'email.email', '=', $email )
+				->addWhere( 'contact_type', '=', 'Individual')
 				->addGroupBy( 'id' )
 				->execute();
 			
 			$form_submitted = count($contacts) > 0 ? true : false;
 		}
 
-		// IF there is a valid CID and checksum in the URL, display the content inside the shortcode
+		// If there is a valid CID and checksum in the URL, display the content inside the shortcode
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
 		if ( !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
@@ -233,7 +236,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			}
 
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
-			$parsedUrl = wp_parse_url( $_POST['ss-cs-url'] ); // To get additional info from the URL paramaeters if provided
+			$parsedUrl = wp_parse_url( $_POST['ss-cs-url'] ); // To get additional info from the URL parameters if provided
 			$url = esc_url( $this->get_base_url( $_POST['ss-cs-url'] ) );
 
 			// Get the Self Serve Checksum settings
@@ -266,6 +269,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 						->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
 						->addWhere( 'email.email', '=', $email )
 						->addWhere( 'id', '=', $queryArgs['cid'] )
+						->addWhere( 'contact_type', '=', 'Individual')
 						->execute()
 						->first()['id'];
 
@@ -279,6 +283,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					->addSelect( 'id' )
 					->addJoin( 'Email AS email', 'LEFT', ['email.contact_id', '=', 'id'] )
 					->addWhere( 'email.email', '=', $email )
+					->addWhere( 'contact_type', '=', 'Individual')
 					->addOrderBy('id', 'ASC')
 					->execute()
 					->first()['id'];
