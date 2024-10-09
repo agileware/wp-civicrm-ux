@@ -21,11 +21,11 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-		if ( isset($atts['membership_type']) ) {
+		if ( !empty($atts['membership_type']) ) {
 			$atts['membership_type'] = explode(',', $atts['membership_type']);
 		}
 
-		if ( isset($atts['membership_status']) ) {
+		if ( !empty($atts['membership_status']) ) {
 			$atts['membership_status'] = explode(',', $atts['membership_status']);
 		}
 
@@ -50,7 +50,7 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 			return;
 		}
 
-		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $contactAuth['cid'], $atts['membership_type'], $atts['membership_status'], $atts['expiration_offset'] );
+		$memberships = Civicrm_Ux_Membership_Utils::get_all_memberships_for_contact( $contactAuth['cid'], $atts['membership_type'], $atts['membership_status'] );
 
         // Buffer the output
         ob_start();

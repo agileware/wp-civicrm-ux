@@ -9,7 +9,7 @@
  * Plugin Name:       WP CiviCRM UX
  * Plugin URI:        https://github.com/agileware/wp-civicrm-ux
  * Description:       A better user experience for integrating WordPress and CiviCRM
- * Version:           1.18.0
+ * Version:           1.19.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Requires Plugins:  civicrm
