@@ -18,7 +18,7 @@ $dateFormat = get_option('date_format');
             $endDate = date_create($membership['end_date']);
 
             // Format the datetime value using the default date format
-            $formattedDate = date_i18n($dateFormat, $endDate);
+            $formattedDate = date_i18n($dateFormat, $endDate->getTimestamp());
         } else {
             $formattedDate = '-';
         }
