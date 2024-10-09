@@ -14,13 +14,19 @@ $dateFormat = get_option('date_format');
  */
     foreach($args['memberships'] as $membership) {
 
-        if ( isset($membership['end_date']) ) {
+        if (isset($membership['end_date'])) {
             $endDate = date_create($membership['end_date']);
 
             // Format the datetime value using the default date format
-            $formattedDate = date_i18n($dateFormat, $endDate->getTimestamp());
+            $formattedEndDate = date_i18n($dateFormat, $endDate->getTimestamp());
         } else {
-            $formattedDate = '-';
+            $formattedEndDate = '-';
+        }
+
+        if ($args['expiration_offset'] != null) {
+            $expiration_offset_date = strtotime($args['expiration_offset']);
+        } else {
+            $expiration_offset_date = FALSE;
         }
 
         // Build the renewal link
@@ -38,8 +44,13 @@ $dateFormat = get_option('date_format');
     <td><?php echo $membership['contact_owner.display_name'] ?? $membership['contact.display_name']; ?></td>
     <td><?php echo $membership['membership_type_id:label']; ?></td>
     <td><?php echo $membership['status_id:label']; ?></td>
-    <td><?php echo $formattedDate; ?></td>
-    <td><a href="<?php echo esc_url($renewalUrl); ?>" target="_blank">Renew this Membership</a></td>
+    <td><?php echo $formattedEndDate; ?></td>
+    <td>
+    <?php if (($expiration_offset_date && $endDate->getTimestamp() <= $expiration_offset_date) || $endDate->getTimestamp() <= time()) { ?>
+    <a href="<?php echo esc_url($renewalUrl); ?>" target="_blank">Renew this membership</a></td>
+    <?php } else { ?>
+    No renewal required</td>
+    <?php } ?>
 </tr>
 
 <?php

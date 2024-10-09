@@ -295,7 +295,7 @@ class Civicrm_Ux_Membership_Utils {
 
 	}
 
-	static public function get_all_memberships_for_contact( $queryCid = null, $types = [], $statuses = [], $expirationOffset = null ) {
+	static public function get_all_memberships_for_contact( $queryCid = null, $types = [], $statuses = [] ) {
 		$cid = $queryCid == null 
 				? CRM_Core_Session::singleton()->getLoggedInContactID()
 				: $queryCid;
@@ -332,12 +332,9 @@ class Civicrm_Ux_Membership_Utils {
 		if ( !empty($statuses) ) {
 			$apiQuery->addWhere('status_id:name', 'IN', $statuses);
 		}
-
-		if ( $expirationOffset != null ) {
-			$formattedDate = date("Y-m-d", strtotime($expirationOffset));
-			$apiQuery->addWhere('end_date', '<=', $formattedDate);
-		}
 		
+		$apiQuery->addOrderBy('end_date', 'ASC');
+
 		$memberships = $apiQuery->execute();
 		
 		// User may have multiple memberships
