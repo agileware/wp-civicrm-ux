@@ -38,9 +38,9 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 		// Make sure the current logged in user has permission to edit their registration.
 		// This should match up to the permission set in the mark_event_attendance Form Processor,
 		// OR default to the 'register for events' permission
-		/*$formProcessorInstance = \Civi\Api4\FormProcessorInstance::get(FALSE)
+		$formProcessorInstance = \Civi\Api4\FormProcessorInstance::get(FALSE)
 			->addSelect('permission')
-			->addWhere('name', '=', 'cancel_event_registration')
+			->addWhere('name', '=', 'mark_event_attendance')
 			->execute();
 		
 		// Do not output anything if we couldn't find the Form Processor
@@ -55,13 +55,13 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 			// Otherwise default to check for the 'register for events' permission
 			return '';
 		}
-        */
-		// Ensure the button is only rendered for the current logged in user, when they have an active registration
+        
+		// Ensure the button is only rendered for the current logged in user, 
+        // when they have an active registration - i.e. Registered status
 		$participant = \Civi\Api4\Participant::get(FALSE)
-				->addJoin('ParticipantStatusType AS participant_status_type', 'LEFT')
 				->addWhere('event_id', '=', $mod_atts['eventid'])
 				->addWhere('contact_id', '=', $cid)
-				->addWhere('participant_status_type.class', '!=', 'Negative')
+				->addWhere('status_id', '=', 1) // registered
 				->execute();
 
 		if ( count( $participant ) == 0 ) {
