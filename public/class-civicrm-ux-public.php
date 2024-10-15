@@ -107,6 +107,12 @@ class Civicrm_Ux_Public {
 			wp_enqueue_script( 'event_cancel_registration', plugin_dir_url( __FILE__ ) . 'js/event_cancel_registration.js', array('jquery'), $this->version, true );
 		}
 
+		// Only enqueue this script if event_markattendance is present
+		if ( has_shortcode( $post->post_content, 'ux_event_markattendance' ) && has_shortcode( $post->post_content, 'ux_event_markattendance_button' ) ) {
+			wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
+			wp_enqueue_script( 'event_mark_attendance', plugin_dir_url( __FILE__ ) . 'js/event_mark_attendance.js', array('jquery'), $this->version, true );
+		}
+
     	$opt_contribution_ux = Civicrm_Ux::getInstance()
 		                 ->get_store()
 		                 ->get_option( 'civicrm_contribution_ux' );
