@@ -62,9 +62,10 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 				->addWhere('event_id', '=', $mod_atts['eventid'])
 				->addWhere('contact_id', '=', $cid)
 				->addWhere('status_id', '=', 1) // registered
-				->execute();
+				->execute()
+                ->first();
 
-		if ( count( $participant ) == 0 ) {
+		if ( empty($participant) ) {
 			return '';
 		}
 
@@ -100,6 +101,6 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
                                     </div>
                                 </dialog>';
 
-		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" class="event-mark-attendance">' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
+		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" data-participantId="' . $participant['id'] . '" class="event-mark-attendance">' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
 	}
 }
