@@ -68,9 +68,17 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 			return '';
 		}
 
+        // Only display this button for events that have already passed.
+        $today = current_time('mysql');
 		$event = \Civi\Api4\Event::get(FALSE)
 				->addWhere('id', '=', $mod_atts['eventid'])
-				->execute();
+                ->addWhere('end_date', '<=', $today)
+				->execute()
+                ->first();
+        
+        if ( empty($event) ) {
+            return '';
+        }
 
 		$confirmation_dialog = '<dialog id="event-markattendance-confirm-dialog-' . $mod_atts['eventid'] . '" class="event-markattendance-confirm-dialog">
                                     <div class="modal-content">
