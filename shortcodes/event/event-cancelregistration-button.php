@@ -60,6 +60,18 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 			return '';
 		}
 
+		// Only display this button for events that have not already finished.
+        $today = current_time('mysql');
+		$event = \Civi\Api4\Event::get(FALSE)
+				->addWhere('id', '=', $atts['eventid'])
+                ->addWhere('start_date', '>', $today)
+				->execute()
+                ->first();
+        
+        if ( empty($event) ) {
+            return '';
+        }
+
 		$event = \Civi\Api4\Event::get(FALSE)
 				->addWhere('id', '=', $atts['eventid'])
 				->execute();
