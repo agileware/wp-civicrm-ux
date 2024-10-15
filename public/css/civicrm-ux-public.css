@@ -79,7 +79,8 @@
      display: block;
  }
 
- .event-cancellation-confirm-dialog {
+ .event-cancellation-confirm-dialog,
+ .event-markattendance-confirm-dialog {
 	padding: 2rem;
     width: 80%;
     max-width: 500px;
@@ -88,20 +89,29 @@
     text-align: center;
 }
 
-.event-cancellation-confirm-dialog .event-title {
+.event-cancellation-confirm-dialog .event-title,
+.event-markattendance-confirm-dialog .event-title {
     font-size: 1.5rem;
 }
 
-.event-cancellation-error {
+.event-cancellation-error,
+.event-markattendance-error {
     padding: 1rem;
     border: 1px solid rgb(220, 53, 69);
     font-size: 1rem;
     background: rgba(220, 53, 69, 0.2);
 }
 
-.event-cancellation-error .title {
+.event-cancellation-error .title,
+.event-markattendance-error .title {
     font-size: 1.1rem;
     font-weight: 600;
+}
+
+.event-markattendance-confirm-dialog button.close {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
  /* Self Serve Checksum */
