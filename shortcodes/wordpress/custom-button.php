@@ -31,6 +31,7 @@ class Civicrm_Ux_Shortcode_Custom_Button extends Abstract_Civicrm_Ux_Shortcode {
             'url' => '',
             'fallback_url' => '',
             'url_params' => '',
+            'css_classes' => '',
         ], $atts, $tag);
 
         $mod_atts['url'] = !empty($mod_atts['url']) ? $mod_atts['url'] : $mod_atts['fallback_url'];
@@ -43,6 +44,6 @@ class Civicrm_Ux_Shortcode_Custom_Button extends Abstract_Civicrm_Ux_Shortcode {
         // Append the URL parameters
         $mod_atts['url'] = trailingslashit($mod_atts['url']) . $mod_atts['url_params'];
 
-		return '<a href="' . $mod_atts['url'] . '" class="button wp-element-button">' . $mod_atts['text'] . '</a>';
+		return '<a href="' . $mod_atts['url'] . '" class="button wp-element-button ' . $mod_atts['css_classes'] . '">' . $mod_atts['text'] . '</a>';
 	}
 }
