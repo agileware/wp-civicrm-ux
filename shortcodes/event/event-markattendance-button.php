@@ -33,6 +33,8 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
             'not_attended_status' => 3, // No-show
         ], $atts, $tag);
 
+		$args = [];
+
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
 		// Make sure the current logged in user has permission to edit their registration.
@@ -81,22 +83,20 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
             return '';
         }
 
+		// Buffer the output
+
 		$confirmation_dialog = '<dialog id="event-markattendance-confirm-dialog-' . $mod_atts['eventid'] . '" class="event-markattendance-confirm-dialog">
-                                    <div class="modal-content">
-                                        <form>
-                                            <p><span class="event-title">' . $event[0]['title'] . '</span></p>
-                                            <p>Did you attend this event?</p>
+                                    <div class="modal-content">';
 
-                                            <input type="radio" id="attendance-yes" name="attendance" value="1">
-                                            <label for="attendance-yes">Yes</label><br>
+		// Buffer the output
+		ob_start();
+			
+		// Display an error message
+		civicrm_ux_load_template_part( 'shortcode', 'event-markattendance-form', array_merge( $args, $mod_atts, ['contact_id' => $cid, 'participant' => $participant, 'event' => $event] ));
 
-                                            <input type="radio" id="attendance-no" name="attendance" value="0">
-                                            <label for="attendance-no">No</label><br>
+		$confirmation_dialog .= ob_get_clean();
 
-                                            <input type="hidden" id="attended_status" name="attended_status" value="' . $mod_atts['attended_status'] . '">
-                                            <input type="hidden" id="not_attended_status" name="not_attended_status" value="' . $mod_atts['not_attended_status'] . '">
-                                            <button class="submit">Submit</button>
-                                        </form>
+		$confirmation_dialog .= '
                                         <button class="close"><span class="dashicons dashicons-no"></span></button>
                                     </div>
                                 </dialog>';
