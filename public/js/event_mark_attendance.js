@@ -68,13 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
             "/" +
             not_attended_status;
 
-          console.log(url);
           const response = await fetch(url, {
             headers: { "X-WP-Nonce": app_wp_nonce },
           });
 
           if (response.ok) {
-            console.log(response);
             // reload the page
             location.reload(true);
           } else {
