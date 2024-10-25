@@ -71,21 +71,26 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 		try {
 			$events = array();
+
+            $eventQuery =  Event::get(FALSE)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
+                ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
+                ->addWhere('event_type_id:name', 'IN', $types)
+                ->addWhere('start_date', '>=', $start_date)
+                ->addWhere('is_public', '=', TRUE)
+                ->addWhere('is_active', '=', TRUE)
+                ->addOrderBy('start_date', 'ASC');
+
 			if ($_REQUEST['image_id_field'] != "") {
 				$image_id_field = $_REQUEST['image_id_field'];
 				$image_src_field = $_REQUEST['image_src_field'];
 
-				$events = Event::get(FALSE)
-				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.id', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
-				                          ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
-				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
-				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
-				                          ->addWhere('event_type_id:label', 'IN', $types)
-				                          ->addWhere('start_date', '>=', $start_date)
-				                          ->addWhere('is_public', '=', TRUE)
-				                          ->addWhere('is_active', '=', TRUE)
-				                          ->addOrderBy('start_date', 'ASC')
-				                          ->execute();
+                $eventQuery
+                    ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
+                    ->addSelect('file.id', $image_src_field);
+
+				$events = $eventQuery-execute();
 
 				$res['result'] = array();
 
@@ -154,19 +159,9 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 				$image_src_field = $_REQUEST['image_src_field'];
 
-				$events = Event::get(FALSE)
-				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
-				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
-				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
-				                          ->addWhere('event_type_id:label', 'IN', $types)
-				                          ->addWhere('start_date', '>=', $start_date)
-				                          ->addWhere('is_public', '=', TRUE)
-				                          ->addWhere('is_active', '=', TRUE)
-				                          ->addOrderBy('start_date', 'ASC')
-				                          ->execute();
+				$events = $eventQuery->execute();
 
 				$res['result'] = array();
-
 
 				foreach ($events as $event) {
 					if ( !empty($redirect_after_login) ) {
