@@ -80,9 +80,9 @@ const domevent = function (eventName, detail) {
   document.addEventListener("DOMContentLoaded", function () {
     const calendarEl = document.getElementById("civicrm-event-fullcalendar");
   
-    // ColoUr scheme for different event type labels
-    const colors = wp_site_obj.colors;
-    const event_types = wp_site_obj.types.split(',');
+    // Colour scheme for different event type labels
+    const colors = uxFullcalendar.colors || {};
+    const event_types = uxFullcalendar.types?.split(',') || [];
 
     /* 
       This object defines the custom parameters for FullCalendar's library incl. buttons, logic, views
@@ -96,17 +96,17 @@ const domevent = function (eventName, detail) {
           jQuery.ajax({
             method: "GET",
             dataType: "json",
-            url: wp_site_obj.ajax_url + 'civicrm_ux/get_events_all',
+            url: uxFullcalendar.ajax_url + 'civicrm_ux/get_events_all',
             data: {
-              type: wp_site_obj.types,
-              upload: wp_site_obj.upload,
+              type: uxFullcalendar.types,
+              upload: uxFullcalendar.upload,
               colors: colors,
-              start_date: wp_site_obj.start,
-              image_id_field: wp_site_obj.image_id_field,
-              image_src_field: wp_site_obj.image_src_field,
-              force_login: wp_site_obj.force_login,
-              redirect_after_login: wp_site_obj.redirect_after_login,
-              extra_fields: wp_site_obj.extra_fields
+              start_date: uxFullcalendar.start,
+              image_id_field: uxFullcalendar.image_id_field,
+              image_src_field: uxFullcalendar.image_src_field,
+              force_login: uxFullcalendar.force_login,
+              redirect_after_login: uxFullcalendar.redirect_after_login,
+              extra_fields: uxFullcalendar.extra_fields
             },
             // Store events in client's browser after success to prevent further AJAX requests
             success: function (response) {

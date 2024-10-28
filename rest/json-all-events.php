@@ -44,12 +44,11 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 	protected function get_events_all() {
 		$types = array();
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
-		$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
+		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? false);
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
-		$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
+		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
 		$colors = $_REQUEST['colors'] ?? [];
-		filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
-		$upload = $_REQUEST['upload'];
+		$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
 		if (isset($_REQUEST['type'])) {
 			$types_tmp = explode(",", $_REQUEST['type']);
@@ -76,11 +75,14 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
-                ->addWhere('event_type_id:name', 'IN', $types)
                 ->addWhere('start_date', '>=', $start_date)
                 ->addWhere('is_public', '=', TRUE)
                 ->addWhere('is_active', '=', TRUE)
                 ->addOrderBy('start_date', 'ASC');
+
+            if(!empty($types)) {
+                $eventQuery->addWhere('event_type_id:name', 'IN', $types);
+            }
 
 			if ($_REQUEST['image_id_field'] != "") {
 				$image_id_field = $_REQUEST['image_id_field'];
@@ -250,7 +252,6 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		} else {
 			$image_url = $upload . '/' . $event[$image_src_field];
 		}
-
 
 		$template = '<div class="civicrm-ux-event-listing">';
 		$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $image_url . '"></div>' : '';

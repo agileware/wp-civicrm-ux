@@ -62,26 +62,15 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 		}
 
-		$types = array();
-		$types_ = Event::getFields(FALSE)
-		                          ->setLoadOptions([
-			                          'name',
-			                          'label'
-		                          ])
-		                          ->addWhere('name', '=', 'event_type_id')
-		                          ->addSelect('options')
-		                          ->execute()[0]['options'];
-		foreach ($types_ as $type) {
-			array_push($types, $type['name']);
-		}
-
 		// Shortcode parameters defaults
 		$wporg_atts = shortcode_atts(
 			array(
-				'types' => join(',', $types),
+                'types' => NULL,
+                'colors' => NULL,
 				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
-				'force_login' => true,
+				'force_login' => FALSE,
 				'start' => date('Y-m-d', strtotime('-1 year')),
+                'image_id_field' => NULL,
 				'image_src_field' => 'file.uri',
 				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag
@@ -91,21 +80,22 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 		$colors = array();
 
-		if (isset($atts['colors'])) {
-			$types_arr = explode(',', $wporg_atts['types']);
-			for ($i = 0; $i < count($colors_arr); $i++) {
-				if ($i >= count($types_arr)) {
-					break;
-				}
-				$colors[$types_arr[$i]] = $colors_arr[$i];
-			}
-		} else {
-			$types_arr = explode(',', $wporg_atts['types']);
-			for ($i = 0; $i < count($types_arr); $i++) {
-				$colors[$types_arr[$i]] = '333333';
-			}
-		}
-
+        if(!empty($wporg_atts['types'])) {
+            if (!empty($wporg_atts['colors'])) {
+                $types_arr = explode(',', $wporg_atts['types']);
+                for ($i = 0; $i < count($colors_arr); $i++) {
+                    if ($i >= count($types_arr)) {
+                        break;
+                    }
+                    $colors[$types_arr[$i]] = $colors_arr[$i];
+                }
+            } else {
+                $types_arr = explode(',', $wporg_atts['types']);
+                for ($i = 0; $i < count($types_arr); $i++) {
+                    $colors[$types_arr[$i]] = '333333';
+                }
+            }
+        }
 
 		wp_enqueue_style( 'ux-fullcalendar-styles', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/css/event-fullcalendar.css', [] );
 		wp_enqueue_style( 'fullcalendar-styles', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css', [] );
@@ -116,18 +106,18 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		wp_enqueue_script( 'tippy', 'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js', [] );
 		wp_enqueue_script( 'ux-fullcalendar', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/event-fullcalendar.js', [] );
 
+        $ux_fullcalendar = [
+            'ajax_url' => get_rest_url(),
+            'redirect_after_login' => $redirect_after_login,
+        ];
 
-		wp_localize_script( 'ux-fullcalendar', 'wp_site_obj',
-			array( 'ajax_url' => get_rest_url(),
-			       'upload' => $wporg_atts['upload'],
-			       'types' => $wporg_atts['types'],
-			       'colors' => $colors,
-			       'start' => $wporg_atts['start'],
-			       'image_id_field' => $atts['image_id_field'],
-			       'image_src_field' => $wporg_atts['image_src_field'],
-			       'force_login' => $wporg_atts['force_login'],
-				   'redirect_after_login' => $redirect_after_login,
-			       'extra_fields' => $wporg_atts['extra_fields']));
+        if(!empty($colors)) {
+            $ux_fullcalendar['colors'] = $colors;
+        }
+
+        $ux_fullcalendar = array_merge($ux_fullcalendar, array_filter($wporg_atts));
+
+		wp_localize_script( 'ux-fullcalendar', 'uxFullcalendar', $ux_fullcalendar );
 
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
 		<div class="civicrm-ux-event-popup-container">
