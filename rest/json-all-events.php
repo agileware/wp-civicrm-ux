@@ -84,7 +84,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $eventQuery->addWhere('event_type_id:name', 'IN', $types);
             }
 
-			if ($_REQUEST['image_id_field'] != "") {
+			if (!empty($_REQUEST['image_id_field'])) {
 				$image_id_field = $_REQUEST['image_id_field'];
 				$image_src_field = $_REQUEST['image_src_field'];
 
@@ -224,9 +224,6 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		echo json_encode($res);
 	}
 
-	/**
-	 * TODO: WPCIVIUX-149 Convert to a template file
-	 */
 	protected function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 		$date_start = date_create($event['start_date']);
 		$date_end = date_create($event['end_date']);
@@ -246,38 +243,30 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
 		$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
 
-		if (str_ends_with($upload, '/civicrm/custom') && $event['file.id']) {
+		if (str_ends_with($upload, '/civicrm/custom') && !empty($event['file.id'])) {
 			$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
 			$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}", true, "", false, true, false);
+		} elseif ( ! empty($event[$image_src_field]) ) {
+            $image_url = $upload . '/' . $event[$image_src_field];
 		} else {
-			$image_url = $upload . '/' . $event[$image_src_field];
-		}
+            $image_url = '';
+        }
 
-		$template = '<div class="civicrm-ux-event-listing">';
-		$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $image_url . '"></div>' : '';
+        $template_args = compact(
+            'event',
+            'image_src_field',
+            'image_url',
+            'colors',
+            'event_time',
+            'event_location',
+            'url'
+        );
 
-		$template .= '<div class="civicrm-ux-event-listing-details-summary">';
-		$template .= '<div class="civicrm-ux-event-listing-details">';
-		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: #' . ($colors[$event['event_type_id:label']] ?? '333333') . ';">' . $event['event_type_id:label'] . '</div>
-		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
-		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>';
+        ob_start();
 
-		if ( !empty($event_location) ) {
-			$template .= '<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
-		}
-		$template .= '</div>';
+        civicrm_ux_load_template_part('event-fullcalendar', 'event', $template_args);
 
-		$template .= '<div class="civicrm-ux-event-listing-buttons">';
-		$template .= $event['is_online_registration'] ? '<button class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' . $url . '\'">Click here to register</button>'  : '';
-		$template .= '</div>';
-		$template .= '</div>';
-
-		$template .= '<div class="civicrm-ux-event-listing-desc">';
-		$template .= $event['description'] ? $event['description'] . '</div>' : 'No event description provided</div>
-	<hr>
-	</div>';
-
-		return $template;
+		return ob_get_clean();
 	}
 
 	protected static function formatDay( $date ) {
