@@ -94,7 +94,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                     ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
                     ->addSelect('file.id', $image_src_field);
 
-				$events = $eventQuery-execute();
+				$events = $eventQuery->execute();
 
 				$res['result'] = array();
 
@@ -219,7 +219,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 				}
 
 			}
-		} catch (CiviCRM_API4_Exception $e) {
+		} catch (CRM_Core_Exception $e) {
 			$res['err'] = $e;
 		}
 
