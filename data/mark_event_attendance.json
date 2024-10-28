@@ -1,0 +1,137 @@
+{
+    "title": "mark_event_attendance",
+    "name": "mark_event_attendance",
+    "is_active": "1",
+    "description": "",
+    "output_handler": "OutputAllActionOutput",
+    "output_handler_configuration": [],
+    "enable_default_data": "0",
+    "default_data_output_configuration": [],
+    "calculation_output_configuration": [],
+    "permission": "register for events",
+    "inputs": [
+        {
+            "weight": "2",
+            "include_formatted_params": "1",
+            "title": "Event Id",
+            "name": "eid",
+            "type": "Integer",
+            "is_required": "1",
+            "default_value": "",
+            "configuration": [],
+            "parameter_mapping": [],
+            "default_data_parameter_mapping": [],
+            "validators": []
+        },
+        {
+            "weight": "2",
+            "include_formatted_params": "0",
+            "title": "Participant Id",
+            "name": "pid",
+            "type": "Integer",
+            "is_required": "1",
+            "default_value": "",
+            "configuration": [],
+            "parameter_mapping": [],
+            "default_data_parameter_mapping": [],
+            "validators": []
+        },
+        {
+            "weight": "3",
+            "include_formatted_params": "0",
+            "title": "Attendance",
+            "name": "attendance",
+            "type": "String",
+            "is_required": "1",
+            "default_value": "",
+            "configuration": [],
+            "parameter_mapping": [],
+            "default_data_parameter_mapping": [],
+            "validators": []
+        }
+    ],
+    "actions": [
+        {
+            "title": "Get Logged In Contact",
+            "name": "get_logged_in_contact",
+            "type": "GetLoggedInContactId",
+            "configuration": {
+                "fallback_contact_id": ""
+            },
+            "mapping": [],
+            "condition_configuration": "",
+            "delay_configuration": ""
+        },
+        {
+            "title": "Get Event",
+            "name": "get_event",
+            "type": "GetEvent",
+            "configuration": [],
+            "mapping": {
+                "event_id": "input.eid"
+            },
+            "condition_configuration": "",
+            "delay_configuration": ""
+        },
+        {
+            "title": "Get Participant",
+            "name": "get_participant",
+            "type": "GetParticipantById",
+            "configuration": [],
+            "mapping": {
+                "participant_id": "input.pid"
+            },
+            "condition_configuration": "",
+            "delay_configuration": ""
+        },
+        {
+            "title": "Update Participant Record",
+            "name": "update_participant_record",
+            "type": "UpdateParticipantById",
+            "configuration": [],
+            "mapping": {
+                "participant_id": "input.pid",
+                "status_id": "input.attendance",
+                "role_id": "",
+                "register_date": "",
+                "source": "",
+                "fee_level": "",
+                "is_test": "",
+                "is_pay_later": "",
+                "fee_amount": "",
+                "registered_by_id": "",
+                "discount_id": "",
+                "fee_currency": "",
+                "campaign_id": "",
+                "discount_amount": "",
+                "must_wait": "",
+                "transferred_to_contact_id": "",
+                "created_id": "",
+                "participant_test": "",
+                "custom_CPD_Points_Participant_CPD_Event_Category_Participant": [],
+                "custom_CPD_Points_Participant_CPD_Event_Points_Participant": "",
+                "custom_zoom_registrant_zoom_id": "",
+                "custom_zoom_registrant_registrant_id": "",
+                "custom_zoom_registrant_join_url": ""
+            },
+            "condition_configuration": {
+                "name": "ParametersMatch",
+                "configuration": [],
+                "parameter_mapping": {
+                    "parameter1": "action.get_participant.contact_id",
+                    "parameter2": "action.get_logged_in_contact.contact_id"
+                },
+                "output_mapping": {
+                    "id": ""
+                }
+            },
+            "delay_configuration": ""
+        }
+    ],
+    "default_data_inputs": [],
+    "default_data_actions": [],
+    "validate_actions": [],
+    "validate_validators": [],
+    "calculate_actions": [],
+    "calculations_configuration_url": "\/wp-admin\/admin.php?page=CiviCRM&q=civicrm%2Fadmin%2Fautomation%2Fformprocessor%2Fcalculationconfiguration&action=update&reset=1&id=8"
+}

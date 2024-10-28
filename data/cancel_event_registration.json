@@ -65,5 +65,5 @@
     "calculate_actions": [],
     "default_data_output_configuration": [],
     "calculation_output_configuration": [],
-    "calculations_configuration_url": "https:\/\/members.fcan.org.au\/wp-admin\/admin.php?page=CiviCRM&q=civicrm%2Fadmin%2Fautomation%2Fformprocessor%2Fcalculationconfiguration&action=update&reset=1&id=4"
+    "calculations_configuration_url": "\/wp-admin\/admin.php?page=CiviCRM&q=civicrm%2Fadmin%2Fautomation%2Fformprocessor%2Fcalculationconfiguration&action=update&reset=1&id=4"
 }
