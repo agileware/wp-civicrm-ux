@@ -308,6 +308,32 @@ The following shortcodes *must* be used together:
 
 You will also need to enable the Form Processor CiviCRM extension, and create a `cancel_event_registration` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
 
+## Event Mark Attendance Shortcodes
+
+These shortcodes provide a way to optionally allow users to mark their own attendance for an event. It uses a FormProcessor to handle the participant status update.
+
+The following shortcodes *must* be used together:
+
+- *`[ux_event_markattendance]`* provides a WordPress nonce for authentication
+- *`[ux_event_markattendance_button text="My Button Text" eventid={{api4:id}} attended_status={{status_id}} not_attended_status={{status_id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. You can customise which status (by ID) to set when the user has selected they have attended using `attended_status`, and which to set when they have not attended using `not_attended_status`. The button will not render for events the current logged in user does not have an active registration for, and has not passed.
+
+You will also need to enable the Form Processor CiviCRM extension, and create a `mark_event_attendance` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
+
+## Custom Button Shortcode
+
+`[ux_custom_button]` Outputs a button to a given link. Can be used to add a button that is shown conditionally, as long as the link is available, or if a fallback exists. This can be useful for directing users to a specific page, e.g. a survey form for a particular event, or a fallback page if one doesn't exist. This is useful in listings, or on specific event pages.
+
+Example usage:
+
+`[ux_custom_button text="Complete Evaluation" url={{api4:Evaluation_survey.Evaluation_link}} fallback_url="/event-evaluation-survey/" url_params="?pid={{api4:participant.id}}&eid={{api4:id}}&event_title={{api4:title}}" css_classes="my-class"]`
+
+- *`text`* Defines the button text.
+- *`url`* The target URL. You can populate this dynamically, for example by using `[ux_cv_api4_get]`.
+- *`fallback_url`* Optional. A fallback in case the URL is null. This can also be populated dynamically.
+- *`url_params`* Optionally declare parameters as a string to append to either the URL or the Fallback URL.
+- *`css_classes`* Optionally include additional css classes.
+
+
 ### Troubleshooting
 
 - Ensure the REST API link tag from `rest_output_link_wp_head()` is correctly generated. If you cannot find it in the page source code, it may be being stripped by another plugin.
