@@ -78,22 +78,13 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 
-		$colors = array();
+		$colors = [ 'default' => static::getDefaultColor() ];
 
-        if(!empty($wporg_atts['types'])) {
-            if (!empty($wporg_atts['colors'])) {
-                $types_arr = explode(',', $wporg_atts['types']);
-                for ($i = 0; $i < count($colors_arr); $i++) {
-                    if ($i >= count($types_arr)) {
-                        break;
-                    }
-                    $colors[$types_arr[$i]] = $colors_arr[$i];
-                }
-            } else {
-                $types_arr = explode(',', $wporg_atts['types']);
-                for ($i = 0; $i < count($types_arr); $i++) {
-                    $colors[$types_arr[$i]] = '333333';
-                }
+        if(!empty($wporg_atts['types']) && !empty($wporg_atts['colors'])) {
+            $types_arr = explode(',', $wporg_atts['types']);
+            $limit = min(count($types_arr), count($colors_arr));
+            for ($i = 0; $i < $limit; $i++) {
+                $colors[$types_arr[$i]] = Civicrm_Ux_Validators::validateCssColor($colors_arr[$i]);
             }
         }
 
@@ -126,4 +117,12 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			<div id="civicrm-ux-event-popup-content"></div>
 		</div></div>';
 	}
+
+    public static function getDefaultColor() {
+        return apply_filters( 'ux_event_fullcalendar/default_color', 'transparent' );
+    }
+
+    public static function getDefaultForceLogin() {
+        apply_filters( 'ux_event_fullcalendar/force_login', false );
+    }
 }

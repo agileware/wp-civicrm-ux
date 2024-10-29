@@ -2,6 +2,8 @@
 
 use Civi\Api4\Event;
 
+use Civicrm_Ux_Shortcode_Event_FullCalendar as Shortcode;
+
 class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 	/**
@@ -44,13 +46,14 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 	protected function get_events_all() {
 		$types = array();
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
-		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? apply_filters( 'ux_event_fullcalendar/force_login', false ) );
+		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
 		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
-		$colors = $_REQUEST['colors'] ?? [];
+		$colors = array_map ( [ 'Civicrm_Ux_Validators', 'validateCssColor' ], $_REQUEST['colors'] ?? [] );
 		$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
-        $colors['default'] = apply_filters( 'ux_event_fullcalendar/default_color', 'transparent' );
+        $colors = array_filter($colors);
+        $colors[ 'default' ] ??= Shortcode::getDefaultColor();
 
 		if (isset($_REQUEST['type'])) {
 			$types_tmp = explode(",", $_REQUEST['type']);
