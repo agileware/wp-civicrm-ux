@@ -16,61 +16,19 @@ const domevent = function (eventName, detail) {
     Convert ISO8601 date object to AM/PM time format
     E.g. 2021-02-02T09:30:00+0000 => 9:30AM
   */
-  function formatAMPM(date) {
+  const formatAMPM = function(date) {
     return date.toLocaleTimeString([], { timeStyle: "short" });
   }
 
-  function hidePopup() {
+  const hidePopup = function() {
     document.querySelector(".civicrm-ux-event-popup").style.display = "none";
     document.getElementById("civicrm-event-fullcalendar").style.display = "flex";
   }
 
-  function sameDay(d1, d2) {
+  const sameDay = function(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
-  }
-  
-  // Used to convert an index to a day-of-the-week/month
-  // E.g. days[Date.getDay()] => days[1] => Monday 
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  
-  /*
-    Convert ISO8601 date object to human readable format
-    E.g. 2021-02-02T09:30:00+0000 => Tuesday, 2 February 2021
-  */
-  function formatDay(date) {
-    return (
-      days[date.getDay()] +
-      ", " +
-      date.getDate() +
-      " " +
-      months[date.getMonth()] +
-      " " +
-      date.getFullYear()
-    );
   }
   
   let events_loaded = false;
