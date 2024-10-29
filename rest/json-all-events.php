@@ -198,6 +198,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 						'url' => $url,
 						'extendedProps' => array(
 							'html_render' => $this->generate_event_html($event, $upload, $colors, $image_src_field, $url),
+                            'html_entry' => $this->get_output_template([ 'event' => [ 'url' => $url ] + $event ]),
 							'summary' => $event['summary'],
 							'description' => $event['description'],
 							'event_type' => $event['event_type_id:label'],
@@ -220,10 +221,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 					array_push($res['result'], $event_obj);
 				}
-
 			}
 		} catch (CRM_Core_Exception $e) {
-			$res['err'] = $e;
+            http_response_code(500);
+			$res['err'] = $e->getMessage();
 		}
 
 		echo json_encode($res);
@@ -267,12 +268,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
             'url'
         );
 
-        ob_start();
-
-        civicrm_ux_load_template_part('event-fullcalendar', 'event', $template_args);
-
-		return ob_get_clean();
-	}
+        return civicrm_ux_get_template_part('event-fullcalendar', 'event', $template_args);
+    }
 
 	protected static function formatDay( $date ) {
 		return $date->format( 'l' ) . ', ' . $date->format( 'j' ) . ' ' . $date->format( 'F' ) . ' ' . $date->format( 'Y' );
@@ -286,4 +283,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		return ( $d1->format( 'j' ) == $d2->format( 'j' ) ) && ( $d1->format( 'f' ) == $d2->format( 'f' ) ) && ( $d1->format( 'Y' ) == $d2->format( 'Y' ) );
 	}
 
+    protected function get_output_template($args) {
+        return civicrm_ux_get_template_part('event-fullcalendar', 'event-entry', $args);
+    }
 }

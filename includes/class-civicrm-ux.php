@@ -160,7 +160,7 @@ class Civicrm_Ux {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-option-store.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-validators.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/utils/class-civicrm-ux-validators.php';
 
 		// All module mangers and instances class
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/interface/interface-civicrm-ux-managed-instance.php';

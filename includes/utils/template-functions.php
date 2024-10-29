@@ -34,3 +34,11 @@ function civicrm_ux_load_template_part( $slug, $name, $args = [] ) {
         load_template($template, false, $args);
     }
 }
+
+function civicrm_ux_get_template_part( $slug, $name, $args = [] ) {
+    ob_start();
+
+    civicrm_ux_load_template_part( $slug, $name, $args );
+
+    return ob_get_clean();
+}

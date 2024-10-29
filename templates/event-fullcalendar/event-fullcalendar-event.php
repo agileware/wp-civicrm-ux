@@ -10,6 +10,8 @@
  * @var $event_location
  * @var $url
  */
+
+extract($args);
 ?>
 <div class="civicrm-ux-event-listing">
     <?php if ( $image_url ) : ?>

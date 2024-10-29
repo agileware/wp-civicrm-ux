@@ -112,26 +112,25 @@ const domevent = function (eventName, detail) {
       
       // Content injection to change the colour of event labels (by type)
       eventContent: function (arg) {
-        let selector_val = document.querySelector("#event-selector").value;
+        const selector_val = document.querySelector("#event-selector").value;
   
         if (
           selector_val == "all" ||
           selector_val == arg.event.extendedProps.event_type
         ) {
-          let eventHolder = document.createElement("div");
+          const eventTemplate = document.createElement("template");
+          eventTemplate.innerHTML = arg.event.extendedProps.html_entry;
+
+          const eventHolder = eventTemplate.content.firstElementChild;
           eventHolder.classList.add("event-holder");
-          eventHolder.style.backgroundColor =
-            Object.keys(colors).length > 0 ? '#' + colors[arg.event.extendedProps.event_type] : '#333333';
-          eventHolder.innerHTML =
-            '<div style="line-height: 1;" class="fc-event-title"><a style="font-size: 11px; font-weight: normal; text-decoration: none; color: white;" href="' +
-            arg.event.url +
-            '">' +
-            arg.event.title +
-            "</a></div>";
-  
-          let arrayOfDomNodes = [eventHolder];
-          return { domNodes: arrayOfDomNodes };
-        } else return {};
+
+          if (colors.hasOwnProperty(arg.event.extendedProps.event_type))
+            eventHolder.style.backgroundColor = colors[arg.event.extendedProps.event_type];
+
+          return { domNodes: Array.from(eventTemplate.content.childNodes) };
+        }
+
+        return {};
       },
   
       // Executed for each event when they are added to the DOM
