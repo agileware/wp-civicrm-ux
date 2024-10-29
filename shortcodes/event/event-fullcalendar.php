@@ -108,7 +108,23 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
         $ux_fullcalendar = array_merge($ux_fullcalendar, array_filter($wporg_atts));
 
-		wp_localize_script( 'ux-fullcalendar', 'uxFullcalendar', $ux_fullcalendar );
+        if(!empty($ux_fullcalendar['types'])) {
+            $ux_fullcalendar['filterTypes'] = $ux_fullcalendar['types'];
+        } else {
+            $options = Event::getFields(FALSE)
+                ->setLoadOptions([ 'name', 'label' ])
+                ->addWhere('name', '=', 'event_type_id')
+                ->addSelect('options')
+                ->execute()
+                ->first()['options'];
+
+            $ux_fullcalendar['filterTypes'] = array_map(
+                fn($_type) => $_type['label'],
+            $options ?: []
+            );
+        }
+
+        wp_localize_script( 'ux-fullcalendar', 'uxFullcalendar', $ux_fullcalendar );
 
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
 		<div class="civicrm-ux-event-popup-container">
