@@ -70,7 +70,7 @@ const events = function (info, successCallback, failureCallback) {
 };
 
 const eventContent = function (arg) {
-    const selector_val = document.querySelector("#event-selector").value;
+    const selector_val = document.querySelector("#event-selector")?.value ?? 'all';
 
     if (
         selector_val == "all" ||
@@ -92,7 +92,7 @@ const eventContent = function (arg) {
 }
 
 const eventDidMount = function (info) {
-    let selector_val = document.querySelector("#event-selector").value;
+    let selector_val = document.querySelector("#event-selector")?.value ?? 'all';
 
     const event_start = new Date(info.event.start);
     const event_end = new Date(info.event.end);
