@@ -280,6 +280,10 @@ document.addEventListener("DOMContentLoaded", function () {
     calendar.render();
 
     const sortByTypeBtn = document.querySelector(".fc-sortByType-button");
+
+    if (!sortByTypeBtn)
+        return;
+
     const sortByTypeSelect = document.createElement("select");
     sortByTypeSelect.classList.add("fc-button");
     sortByTypeSelect.classList.add("fc-button-primary");
