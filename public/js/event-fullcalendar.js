@@ -155,24 +155,35 @@ const eventDidMount = function (info) {
         } else {
             const event_location = info.event.extendedProps.country;
 
-            const template = `
-                      <div style="background-color: ${
-                Object.keys(colors).length > 0 ? '#' + colors[info.event.extendedProps.event_type] : '#333333'
-            }" class="event-name">${info.event.title}</div>
-                      ${
-                info.event.extendedProps["file.uri"]
-                    ? '<img id="event-img" src="' + event_img + '">'
-                    : ""
+            const eventElements = {
+                eventImg: '',
+                eventLocation: '',
+                eventTimeText: `<span class="event-time-text">${formatAMPM(event_start)} to ${formatAMPM(event_end)}</span>`,
             }
-                      <div class="event-time"><i class="fa fa-clock-o"></i><span class="event-time-text">${
-                formatAMPM(event_start) + " to " + formatAMPM(event_end)
-            }</span></div>
-                      ${
-                event_location
-                    ? '<div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">' + event_location + '</span></div>'
-                    : ""
+
+            if(info.event.extendedProps["file.uri"]) {
+                eventElements.eventImg = `<img id="event-img" src="${event_img}">`;
             }
-                      `;
+
+            if(event_location) {
+                eventElements.eventLocation = `<div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">${event_location}</span></div>`
+            }
+
+            info.view.calendar.el.dispatchEvent(domevent('fullcalendar:buildTippy', eventElements));
+
+            const template = document.createElement('template');
+
+            template.innerHTML =
+                `<div class="event-name">${info.event.title}</div>
+                 ${eventElements.eventImg}
+                 <div class="event-time"><i class="fa fa-clock-o"></i>${eventElements.eventTimeText}</div>
+                 ${eventElements.eventLocation}`;
+
+            if(colors.hasOwnProperty(info.event.extendedProps.event_type)) {
+                template.content.querySelector('.event-name').style.backgroundColor = colors[info.event.extendedProps.event_type];
+            }
+
+            info.view.calendar.el.dispatchEvent(domevent('fullcalendar:alterTippy', template.content));
 
             let tooltip = new tippy(info.el, {
                 interactive: true,
@@ -180,9 +191,7 @@ const eventDidMount = function (info) {
                 maxWidth: 400,
                 allowHTML: true,
                 placement: "top",
-                content(reference) {
-                    return template;
-                },
+                content: template.content,
             });
         }
     } else {
