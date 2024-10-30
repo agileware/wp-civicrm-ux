@@ -72,20 +72,24 @@ const events = function (info, successCallback, failureCallback) {
 const eventContent = function (arg) {
     const selector_val = document.querySelector("#event-selector")?.value ?? 'all';
 
+    const {
+        extendedProps: { html_entry, event_type }
+    } = arg.event;
+
     if (
         selector_val == "all" ||
         selector_val == arg.event.extendedProps.event_type
     ) {
         const eventTemplate = document.createElement("template");
-        eventTemplate.innerHTML = arg.event.extendedProps.html_entry;
+        eventTemplate.innerHTML = html_entry;
 
         const eventHolder = eventTemplate.content.firstElementChild;
         eventHolder.classList.add("event-holder");
 
-        if (colors.hasOwnProperty(arg.event.extendedProps.event_type))
-            eventHolder.style.backgroundColor = colors[arg.event.extendedProps.event_type];
+        if (colors.hasOwnProperty(event_type))
+            eventHolder.style.backgroundColor = colors[event_type];
 
-        return { domNodes: Array.from(eventTemplate.content.childNodes) };
+        return { domNodes: eventTemplate.content.childNodes };
     }
 
     return {};
