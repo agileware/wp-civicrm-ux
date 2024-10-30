@@ -289,12 +289,17 @@ div.civicrm-event-listing-item {
 .event-time {
     margin: 5px 0px 0px 10px;
     display: inline-flex;
+    align-items: center;
 }
 
 .event-time-text {
     font-size: 14px;
     color: #000000;
     margin-left: 5px;
+}
+
+.tippy-box .event-time-text {
+    color: #ffffff;
 }
 
 .event-location {
