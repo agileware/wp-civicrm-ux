@@ -109,31 +109,27 @@ const eventDidMount = function (info) {
         const onthisdate =
             event_start.getFullYear() +
             "-" +
-            (event_start.getMonth() + 1 < 10
-                ? "0" + (event_start.getMonth() + 1)
-                : event_start.getMonth() + 1) +
+            (event_start.getMonth() + 1 + '').padStart(2, '0')
             "-" +
-            (event_start.getDate() < 10
-                ? "0" + event_start.getDate()
-                : event_start.getDate());
+            (event_start.getDate() + '').padStart(2, '0');
 
-        let date_row = document.querySelectorAll(
-            "[data-date='" + onthisdate + "']"
-        )[0];
+        let date_row = document.querySelector("[data-date='" + onthisdate + "']");
 
-        if (!prev_rendered_date_visible) {
-            date_row.style.display = "none";
-        } else {
-            date_row.style.display = "table-row";
-        }
+        if(date_row) {
+            if (!prev_rendered_date_visible) {
+                date_row.style.display = "none";
+            } else {
+                date_row.style.display = "table-row";
+            }
 
-        if (info.event.extendedProps.event_type == selector_val) {
-            prev_rendered_date_visible = true;
-            date_row.style.display = "table-row";
-        }
+            if (info.event.extendedProps.event_type == selector_val) {
+                prev_rendered_date_visible = true;
+                date_row.style.display = "table-row";
+            }
 
-        if (selector_val == "all") {
-            date_row.style.display = "table-row";
+            if (selector_val == "all") {
+                date_row.style.display = "table-row";
+            }
         }
 
         prev_rendered_date = event_start.getDate();
