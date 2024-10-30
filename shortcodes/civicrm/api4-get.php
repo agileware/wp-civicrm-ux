@@ -94,16 +94,16 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 					switch ( $k ) {
 						case 'my_events':
-							// Only get events for the current logged in user, where they have active registrations
+							// Only get events for the current logged in user
 							if ($value && $atts['entity'] == 'Event') {
-								$params['join'] = [
-									['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']],
-									['ParticipantStatusType AS participant_status_type', 'LEFT'],
-								];
-								$params['where'] = [ 
-									['participant.contact_id', '=', CRM_Core_Session::singleton()->getLoggedInContactID()],
-									['participant_status_type.class', '!=', 'Negative']
-								];
+								$params['join'][] = ['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']];
+								$params['where'][] = ['participant.contact_id', '=', CRM_Core_Session::singleton()->getLoggedInContactID()];
+							}
+							break;
+						case 'participant_status_id':
+							if ($value && $atts['entity'] == 'Event') {
+								$params['join'][] = ['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']];
+								$params['where'][] = ['participant.status_id', $op, $value];
 							}
 							break;
 						case 'event_type':
