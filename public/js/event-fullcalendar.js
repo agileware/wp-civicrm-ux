@@ -98,8 +98,19 @@ const eventContent = function (arg) {
 const eventDidMount = function (info) {
     let selector_val = document.querySelector("#event-selector")?.value ?? 'all';
 
-    const event_start = new Date(info.event.start);
-    const event_end = new Date(info.event.end);
+    const event_start = info.event.start;
+    const event_end = info.event.end;
+
+    const {
+        extendedProps: {
+            event_type,
+            timeZone,
+            'file.uri': fileUri = undefined,
+            image_url,
+            country,
+            html_render
+        }
+    } = info.event;
 
     if (info.view.type == "listMonth") {
         if (prev_rendered_date != event_start.getDate()) {
@@ -122,7 +133,7 @@ const eventDidMount = function (info) {
                 date_row.style.display = "table-row";
             }
 
-            if (info.event.extendedProps.event_type == selector_val) {
+            if (event_type == selector_val) {
                 prev_rendered_date_visible = true;
                 date_row.style.display = "table-row";
             }
@@ -135,7 +146,7 @@ const eventDidMount = function (info) {
         prev_rendered_date = event_start.getDate();
 
         if (
-            info.event.extendedProps.event_type != selector_val &&
+            event_type != selector_val &&
             !prev_rendered_date_visible
         ) {
             prev_rendered_date_visible = false;
@@ -144,16 +155,17 @@ const eventDidMount = function (info) {
 
     if (
         selector_val == "all" ||
-        selector_val == info.event.extendedProps.event_type
+        selector_val == event_type
     ) {
-        let event_img = info.event.extendedProps["file.uri"] ? info.event.extendedProps["image_url"] : "";
-
+        let event_img = (fileUri ?? false) ? image_url : "";
 
         if (info.view.type == "listMonth") {
-            const template = info.event.extendedProps.html_render;
+            const template = html_render;
             info.el.innerHTML = template;
         } else {
-            const event_location = info.event.extendedProps.country;
+            const event_location = country;
+
+            const fmt_AMPM = new Intl.DateTimeFormat([], { timeStyle: 'short', timeZone })
 
             const eventElements = {
                 eventImg: '',
@@ -179,8 +191,8 @@ const eventDidMount = function (info) {
                  <div class="event-time"><i class="fa fa-clock-o"></i>${eventElements.eventTimeText}</div>
                  ${eventElements.eventLocation}`;
 
-            if(colors.hasOwnProperty(info.event.extendedProps.event_type)) {
-                template.content.querySelector('.event-name').style.backgroundColor = colors[info.event.extendedProps.event_type];
+            if(colors.hasOwnProperty(event_type)) {
+                template.content.querySelector('.event-name').style.backgroundColor = colors[event_type];
             }
 
             info.view.calendar.el.dispatchEvent(domevent('fullcalendar:alterTippy', template.content));
