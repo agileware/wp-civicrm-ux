@@ -170,7 +170,10 @@ const eventDidMount = function (info) {
             const eventElements = {
                 eventImg: '',
                 eventLocation: '',
-                eventTimeText: `<span class="event-time-text">${formatAMPM(event_start)} to ${formatAMPM(event_end)}</span>`,
+                eventTimeText: `<span class="event-time-text">
+                                   <time datetime="${event_start.toISOString()}">${fmt_AMPM.format(event_start)}</time>
+                                    to <time datetime="${event_end.toISOString()}">${fmt_AMPM.format(event_end)}</time>
+                                </span>`,
             }
 
             if(info.event.extendedProps["file.uri"]) {
