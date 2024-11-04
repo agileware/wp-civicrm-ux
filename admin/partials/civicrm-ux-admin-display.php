@@ -141,6 +141,7 @@ function civicrm_ux_settings_page() {
                     <tr style="vertical-align: text-top;">
                         <td><label for="sitekey">Sitekey</label></td>
                         <td><input type="text"
+                                   size="50"
                                    id="sitekey"
                                    name="civicrm_ux_cf_turnstile[sitekey]"
                                    value="<?php echo $civicrm_ux_cf_turnstile['sitekey']; ?>"/>
@@ -149,6 +150,7 @@ function civicrm_ux_settings_page() {
                     <tr style="vertical-align: text-top;">
                         <td><label for="secret_key">Secret Key</label></td>
                         <td><input type="text"
+                                   size="50"
                                    id="secret_key"
                                    name="civicrm_ux_cf_turnstile[secret_key]"
                                    value="<?php echo $civicrm_ux_cf_turnstile['secret_key']; ?>"/>
