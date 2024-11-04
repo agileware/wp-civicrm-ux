@@ -66,7 +66,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		}
 
         foreach($types as $idx => $type) {
-            $colors[$type] = $colors[$idx];
+            $colors[$type] ??= $colors[$idx] ?? Shortcode::getDefaultColor();
         }
 
 		$res = array('success' => true);
