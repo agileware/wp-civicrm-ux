@@ -129,7 +129,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		return '<div id="civicrm-event-fullcalendar" class="fullcalendar-container"></div>
 		<div class="civicrm-ux-event-popup-container">
 		<div class="civicrm-ux-event-popup">
-			<button onclick="hidePopup()" id="civicrm-ux-event-popup-close">&times;</button>
+			<button onclick="hideEventsCalendarPopup()" id="civicrm-ux-event-popup-close">&times;</button>
 			<div id="civicrm-ux-event-popup-content"></div>
 		</div></div>';
 	}

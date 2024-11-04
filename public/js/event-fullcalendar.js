@@ -21,7 +21,7 @@ const formatAMPM = function (date) {
     return date.toLocaleTimeString([], {timeStyle: "short"});
 }
 
-const hidePopup = function () {
+window.hideEventsCalendarPopup = function() {
     document.querySelector(".civicrm-ux-event-popup").style.display = "none";
     document.getElementById("civicrm-event-fullcalendar").style.display = "flex";
 }
