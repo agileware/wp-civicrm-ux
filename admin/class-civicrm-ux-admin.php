@@ -170,7 +170,22 @@ class Civicrm_Ux_Admin {
 		);
 
 		// WPCIVIUX-167 settings
-		register_setting( 'civicrm-ux-settings-group', 'civicrm_ux_cf_turnstile' );
+		register_setting( 'civicrm-ux-settings-group', 'civicrm_ux_cf_turnstile', 
+			array(
+				'type' => 'array',
+				'sanitize_callback' => function($input) {
+					// Custom sanitize callback to ensure whitespace is trimmed
+					$sanitized = [];
+					foreach ($input as $field => $value) {
+						if ( $field === 'sitekey' || $field === 'secret_key' ) {
+							$sanitized[$field] = sanitize_text_field($value);
+						}
+					}
+
+					return $sanitized;
+				},
+			)
+		);
 	}
 
 	/**
