@@ -49,6 +49,9 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
 		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
+        if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
+            $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
+        }
 		$colors = array_map ( [ 'Civicrm_Ux_Validators', 'validateCssColor' ], $_REQUEST['colors'] ?? [] );
 		$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
@@ -60,16 +63,11 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 			for ($i = 0; $i < count($types_tmp); $i++) {
 				array_push($types, preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]));
 			}
-
 		}
 
-		foreach ($colors as $k => $v) {
-			$colors[$k] = sanitize_hex_color_no_hash($v);
-			if (!ctype_alnum($k)) {
-				unset($colors[$k]);
-			}
-		}
-
+        foreach($types as $idx => $type) {
+            $colors[$type] = $colors[$idx];
+        }
 
 		$res = array('success' => true);
 

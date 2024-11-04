@@ -20,7 +20,7 @@ extract($args);
 
     <div class="civicrm-ux-event-listing-details-summary">
         <div class="civicrm-ux-event-listing-details">
-            <div class="civicrm-ux-event-listing-type" style="--ux-event-color: <?= $colors[$event['event_type_id:label']] ?? $colors['default'] ?>;">
+            <div class="civicrm-ux-event-listing-type" style="background-color: <?= $colors[$event['event_type_id:label']] ?? $colors['default'] ?>;">
                 <?= $event['event_type_id:label']; ?>
             </div>
             <div class="civicrm-ux-event-listing-name"><?= $event['title']; ?></div>

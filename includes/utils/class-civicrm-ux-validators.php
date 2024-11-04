@@ -4,6 +4,8 @@ class Civicrm_Ux_Validators
 {
     public static function validateCssColor($color): ?string
     {
+        $color = preg_replace('{^ ([a-f0-9]{3,4}|[a-f0-9]{6}|[a-f0-9]{8}) $}xi', '#$0', $color);
+
         $valid = preg_match('{
             ^ \s* (
                 # Hexadecimal Colors: #RGB, #RRGGBB, #RRGGBBAA
