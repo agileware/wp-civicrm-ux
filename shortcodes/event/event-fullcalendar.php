@@ -109,7 +109,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
         $ux_fullcalendar = $ux_fullcalendar + array_filter($wporg_atts);
 
         if(!empty($ux_fullcalendar['types'])) {
-            $ux_fullcalendar['filterTypes'] = $ux_fullcalendar['types'];
+            $ux_fullcalendar['filterTypes'] = explode(',', $ux_fullcalendar['types']);
         } else {
             $options = Event::getFields(FALSE)
                 ->setLoadOptions([ 'name', 'label' ])
