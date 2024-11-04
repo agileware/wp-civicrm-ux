@@ -43,7 +43,7 @@ const event_types = uxFullcalendar.filterTypes || [];
 const events = function (info, successCallback, failureCallback) {
     if (!events_loaded) {
         // Make AJAX request (themes > functions.php) to get all events from 1 year ago until now
-        jQuery.ajax({
+        wp.apiRequest({
             method: "GET",
             dataType: "json",
             url: uxFullcalendar.ajax_url + 'civicrm_ux/get_events_all',
