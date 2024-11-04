@@ -13,7 +13,7 @@
 
 extract($args);
 ?>
-<div class="civicrm-ux-event-listing">
+<div class="civicrm-ux-event-listing" colspan="3">
     <?php if ( $image_url ) : ?>
         <div class="civicrm-ux-event-listing-image"><img src="<?= $image_url ?>" alt="Event Image"></div>
     <?php endif; ?>

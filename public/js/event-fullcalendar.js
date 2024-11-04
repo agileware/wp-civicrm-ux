@@ -108,7 +108,7 @@ const eventDidMount = function (info) {
             'file.uri': fileUri = undefined,
             image_url,
             country,
-            html_render
+            html_render = undefined
         }
     } = info.event;
 
@@ -160,8 +160,18 @@ const eventDidMount = function (info) {
         let event_img = (fileUri ?? false) ? image_url : "";
 
         if (info.view.type == "listMonth") {
-            const template = html_render;
-            info.el.innerHTML = template;
+            if(html_render) {
+                info.el.innerHTML = html_render;
+
+                for (const el of Array.from(info.el.children).filter((el) => !(el instanceof HTMLTableCellElement))) {
+                    const wrapEl = document.createElement('TD');
+                    el.replaceWith(wrapEl);
+                    wrapEl.append(el);
+                }
+
+                const colSpan = Math.max(1, 4 - info.el.children.length);
+                info.el.lastElementChild.setAttribute('colspan', colSpan);
+            }
         } else {
             const event_location = country;
 
