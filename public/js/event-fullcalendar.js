@@ -1,3 +1,4 @@
+(function() {
 const domevent = function (eventName, detail) {
     if (typeof Window.CustomEvent === "function") {
         return new CustomEvent(eventName, {
@@ -322,4 +323,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sortByTypeSelect.addEventListener("change", () => calendar.refetchEvents());
 });
-  
+})();
