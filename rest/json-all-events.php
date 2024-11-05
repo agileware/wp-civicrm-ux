@@ -90,14 +90,11 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $eventQuery->addWhere('event_type_id:name', 'IN', $types);
             }
 
-            $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field']);
-
-            if (!empty($_REQUEST['image_id_field'])) {
-                $image_id_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_id_field']);
-
-                $eventQuery
-                    ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
-                    ->addSelect('file.id', $image_src_field);
+            if(!empty($_REQUEST['image_src_field'])) {
+                $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field']);
+                $eventQuery->addSelect($image_src_field);
+            } else {
+                $image_src_field = null;
             }
 
             $events = $eventQuery->execute();
