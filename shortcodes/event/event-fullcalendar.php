@@ -39,19 +39,10 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				}
 			}
 			if (isset($atts['extra_fields'])) {
-				$extra_fields_tmp = explode(",", $atts['extra_fields']);
-				foreach ($extra_fields_tmp as $field) {
-					array_push($extra_fields_arr, preg_replace('/[^a-zA-Z0-9._]/', '', $field));
-				}
-			}
-			if (isset($atts['upload'])) {
-				$atts['upload'] = sanitize_text_field($atts['upload']);
-			}
-			if (isset($atts['image_id_field'])) {
-				$atts['image_id_field'] = preg_replace('/[^a-zA-Z0-9._]/', '', $atts['image_id_field']);
-			}
+                $extra_fields_arr = array_map([ 'Civicrm_Ux_Validators', 'validateAPIFieldName' ], explode(",", $atts['extra_fields']));
+            }
 			if (isset($atts['image_src_field'])) {
-				$atts['image_src_field'] = preg_replace('/[^a-zA-Z0-9._]/', '', $atts['image_src_field']);
+				$atts['image_src_field'] = Civicrm_Ux_Validators::validateAPIFieldName($atts['image_src_field']);
 			}
 			if (isset($atts['force_login'])) {
 				$atts['force_login'] = filter_var($atts['force_login'], FILTER_VALIDATE_BOOLEAN);
@@ -67,10 +58,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 			array(
                 'types' => NULL,
                 'colors' => NULL,
-				'upload' => wp_upload_dir()['baseurl'] . '/civicrm/custom',
 				'force_login' => FALSE,
 				'start' => date('Y-m-d', strtotime('-1 year')),
-                'image_id_field' => NULL,
 				'image_src_field' => 'file.uri',
 				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag

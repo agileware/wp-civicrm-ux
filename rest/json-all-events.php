@@ -44,16 +44,19 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 	 * with specified start date and event types
 	 */
 	protected function get_events_all() {
-		$types = array();
+        $upload = wp_get_upload_dir()['url'];
+        $types = array();
+
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
-		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
+        $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
 		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
+        $extra_fields = array_map( [ 'Civicrm_Ux_Validators', 'validateAPIFieldName' ], $extra_fields );
+
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
         }
 		$colors = array_map ( [ 'Civicrm_Ux_Validators', 'validateCssColor' ], $_REQUEST['colors'] ?? [] );
-		$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
 
         $colors = array_filter($colors);
         $colors[ 'default' ] ??= Shortcode::getDefaultColor();
@@ -153,13 +156,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                     )
                 );
 
-                if(!empty($image_src_field) && !empty($event['file.id'])) {
-                    if (str_ends_with($upload, '/civicrm/custom')) {
-                        $fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
-                        $image_url = CRM_Utils_System::url('civicrm/file/imagefile', "reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
-                    } else {
-                        $image_url = $upload . '/' . $event[$image_src_field];
-                    }
+                if(!empty($image_src_field) && !empty($event[$image_src_field])) {
+                    $image_url = $upload . '/' . $event[$image_src_field];
 
                     $event_obj['extendedProps']['file.uri'] = $event[$image_src_field];
                     $event_obj['extendedProps']['image_url'] = $image_url;
@@ -200,14 +198,9 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
 		$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
 
-		if (str_ends_with($upload, '/civicrm/custom') && !empty($event['file.id'])) {
-			$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
-			$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}", true, "", false, true, false);
-		} elseif ( ! empty($event[$image_src_field]) ) {
-            $image_url = $upload . '/' . $event[$image_src_field];
-		} else {
-            $image_url = '';
-        }
+        if ( ! empty($event[$image_src_field]) ) {
+            $image_url = trailingslashit( $upload ) . ltrim( $event[$image_src_field], '/' );
+		}
 
         $template_args = compact(
             'event',

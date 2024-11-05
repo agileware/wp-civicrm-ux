@@ -1,4 +1,4 @@
-# CiviCRM UX User Guide
+ CiviCRM UX User Guide
 
 This plugin adds many useful shortcodes, some new Caldera Forms smart tags and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
 
@@ -16,14 +16,18 @@ Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive cale
 
 You can include additional parameters in the fullcalendar shortcode to limit the scope of events shown on the calendar or to add extra visual features (colors, images) that are not included out of the box. None of these additional parameters are strictly required.
 - *`types`* is a comma-separated list that can be used to show only events of the type specified; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition"]` will show only events that are workshops, meetings or exhibitions. By default, FullCalendar will show all event types on your system.
-- *`colors`* is a comma-separated list of hex rgb codes that can be used to apply a background colour to each event type label, *without* the leading `#` character in the codes; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the colours `#52246d`, `#c45472` and `#ce8d8b` to the Workshop, Meeting and Exhibition type events respectively. Including the `types` parameter when specifying colours is highly recommended as best practice.
+- *`colors`* is a comma-separated list of hex rgb codes that can be used to apply a background colour to each event type label, *without* the leading `#` character in the codes; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the colours `#52246d`, `#c45472` and `#ce8d8b` to the Workshop, Meeting and Exhibition type events respectively. These will not be applied unless the `types` parameter is also include.
 - *`start`* is the date from which active events will be displayed. For example, `[ux_event_fullcalendar start="2021-01-01"]` will show only events from the 1st of January 2021 onwards. If this parameter is not specified, the calendar will show events starting from 1 year prior to the current date.
 - *`force_login`* - true or false; when true, the calendar forces anonymous users to log in before registering for an event.
 - *`redirect_after_login`* - optionally provide a URL to redirect to after login. Useful if you have a custom Event registration page, instead of the default CiviCRM event registration page.
-- *`image_id_field`*: if you have a custom CiviCRM events field for event images/thumbnails you can include the name of the custom options group & field to display them as a thumbnail. For example, if you have a custom events field called 'Upload' under the custom option group 'Thumbnail_upload', you would include it the shortcode like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload"]`.
-  - *`img_src_field`*: the field containing the filename and relative path with respect to upload folder (see below). The default is `file.uri` and should not be changed unless you use a different field name.
-  - *`upload`* specifies the upload directory where event images are located. By default this is set as the CiviCRM custom uploads folder (the directory where image uploads from custom fields are placed) but if your images are placed in another folder (for example, the default Wordpress uploads directory) you can specify this like so: `[ux_event_fullcalendar image_id_field="Thumbnail_upload.Upload" upload="http://example.com/wp-content/uploads"]`
+- *`img_src_field`*: the field name the path to the event image. This must be a custom text field for CiviCRM events, containing a path relative to the WordPress uploads directory, 
 
+### Removed parameters
+
+1. REMOVED: `image_id_field`.  
+   Nonfunctional parameter to use a CiviCRM custom file field as the event image.
+2. REMOVED: `upload`
+   Override to image upload location. Generally only useful in combination with `image_id_field` on CiviCRM installations with unusual data directories. 
 
 ## CiviCRM APIv4 Shortcode
 
@@ -364,28 +368,21 @@ When linking to a CiviCRM Contribution Page to renew a membership inherited by r
 *The following shortcodes are marked for deprecation in a future release in favour of the above shortcodes.*
 
 1. DEPRECATED: `[ux_membership_expiry]`  
-Return a HTML tag with the membership expiry date of the login user.
-
-1. DEPRECATED: `[ux_membership_id]`  
-Return the membership id of the login user.
-
-1. DEPRECATED: `[ux_membership_join_url]`
-Return the join form URL. The URL can be configured in the settings page.
-
-1. DEPRECATED: `[ux_membership_renewal_date]`  
-Return the renewal date of the membership for the login user
-
-1. DEPRECATED: `[ux_membership_renewal_url]`  
-Return the renewal form URL. The URL can be configured in the settings page.
-
-1. DEPRECATED: `[ux_membership_status]`  
-Return the membership status of the login user.
-
-1. DEPRECATED: `[ux_membership_summary]`  
-Return the membership summary of the login user.
-
-1. DEPRECATED: `[ux_membership_type]`  
-Return the membership type of the login user.
+   Return a HTML tag with the membership expiry date of the login user.
+2. DEPRECATED: `[ux_membership_id]`  
+   Return the membership id of the login user.
+3. DEPRECATED: `[ux_membership_join_url]`  
+   Return the join form URL. The URL can be configured in the settings page.
+4. DEPRECATED: `[ux_membership_renewal_date]`  
+   Return the renewal date of the membership for the login user
+5. DEPRECATED: `[ux_membership_renewal_url]`  
+   Return the renewal form URL. The URL can be configured in the settings page.
+6. DEPRECATED: `[ux_membership_status]`  
+   Return the membership status of the login user.
+7. DEPRECATED: `[ux_membership_summary]`  
+   Return the membership summary of the login user.
+8. DEPRECATED: `[ux_membership_type]`  
+   Return the membership type of the login user. 
 
 ## CiviCRM Data Processor Shortcode
 
