@@ -2,6 +2,8 @@
 
 use Civi\Api4\Event;
 
+use Civicrm_Ux_Shortcode_Event_FullCalendar as Shortcode;
+
 class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 	/**
@@ -44,192 +46,141 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 	protected function get_events_all() {
 		$types = array();
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
-		$force_login = rest_sanitize_boolean($_REQUEST['force_login']);
+		$force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
-		$extra_fields = $_REQUEST['extra_fields'] != '' ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : array();
-		$colors = $_REQUEST['colors'] ?? [];
-		filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
-		$upload = $_REQUEST['upload'];
+		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
+        if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
+            $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
+        }
+		$colors = array_map ( [ 'Civicrm_Ux_Validators', 'validateCssColor' ], $_REQUEST['colors'] ?? [] );
+		$upload = filter_var($_REQUEST['upload'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+
+        $colors = array_filter($colors);
+        $colors[ 'default' ] ??= Shortcode::getDefaultColor();
 
 		if (isset($_REQUEST['type'])) {
 			$types_tmp = explode(",", $_REQUEST['type']);
 			for ($i = 0; $i < count($types_tmp); $i++) {
 				array_push($types, preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]));
 			}
-
 		}
 
-		foreach ($colors as $k => $v) {
-			$colors[$k] = sanitize_hex_color_no_hash($v);
-			if (!ctype_alnum($k)) {
-				unset($colors[$k]);
-			}
-		}
-
+        foreach($types as $idx => $type) {
+            $colors[$type] ??= $colors[$idx] ?? Shortcode::getDefaultColor();
+        }
 
 		$res = array('success' => true);
 
 		try {
 			$events = array();
-			if ($_REQUEST['image_id_field'] != "") {
-				$image_id_field = $_REQUEST['image_id_field'];
-				$image_src_field = $_REQUEST['image_src_field'];
 
-				$events = Event::get(FALSE)
-				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'file.id', $image_src_field, 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
-				                          ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
-				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
-				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
-				                          ->addWhere('event_type_id:label', 'IN', $types)
-				                          ->addWhere('start_date', '>=', $start_date)
-				                          ->addWhere('is_public', '=', TRUE)
-				                          ->addWhere('is_active', '=', TRUE)
-				                          ->addOrderBy('start_date', 'ASC')
-				                          ->execute();
+            $eventQuery =  Event::get(FALSE)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
+                ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
+                ->addWhere('start_date', '>=', $start_date)
+                ->addWhere('is_public', '=', TRUE)
+                ->addWhere('is_active', '=', TRUE)
+                ->addOrderBy('start_date', 'ASC');
 
-				$res['result'] = array();
+            if(!empty($types)) {
+                $eventQuery->addWhere('event_type_id:name', 'IN', $types);
+            }
 
-				$tz = wp_timezone();
+            $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field']);
 
-				foreach ($events as $event) {
-					if ( !empty($redirect_after_login) ) {
-						// If we have specified a custom redirection after login, apply that
-						$params = array(
-							'id' => $event['id'],
-							'reset' => 1
-						);
-						$url = add_query_arg($params, $redirect_after_login);
-					} else {
-						// Otherwise redirect to the standard civicrm event registration page
-						$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
-					}
+            if (!empty($_REQUEST['image_id_field'])) {
+                $image_id_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_id_field']);
 
-					if (!is_user_logged_in() and $force_login) {
-						$url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
-					}
+                $eventQuery
+                    ->addJoin('File AS file', 'LEFT', ['file.id', '=', $image_id_field])
+                    ->addSelect('file.id', $image_src_field);
+            }
 
-					if (str_ends_with($upload, '/civicrm/custom')) {
-						$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
-						$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
-					} else {
-						$image_url = $upload . '/' . $event[$image_src_field];
-					}
+            $events = $eventQuery->execute();
 
-					$event_obj = array(
-						'id' => $event['id'],
-						'title' => $event['title'],
-						'start' => (new DateTimeImmutable($event['start_date'], $tz))->setTimezone($tz)->format(DateTime::ISO8601),
-						'end' => (new DateTimeImmutable($event['end_date'], $tz))->setTimezone($tz)->format(DateTime::ISO8601),
-						'display' => 'auto',
-						'startStr' => $event['start_date'],
-						'endStr' => $event['end_date'],
-						'url' => $url,
-						'extendedProps' => array(
-							'html_render' => $this->generate_event_html($event, $upload, $colors, $image_src_field, $url),
-							'summary' => $event['summary'],
-							'description' => $event['description'],
-							'event_type' => $event['event_type_id:label'],
-							'file.uri' => $event[$image_src_field],
-							'image_url' => $image_url,
-							'street_address' => $event['address.street_address'],
-							'street_number' => $event['address.street_number'],
-							'street_number_suffix' => $event['address.street_number_suffix'],
-							'street_name' => $event['address.street_name'],
-							'street_type' => $event['address.street_type'],
-							'country' => $event['address.country_id:label'],
-							'is_online_registration' => $event['is_online_registration'],
-							'extra_fields' => array()
-						)
-					);
+            $res['result'] = array();
 
-					for ($i = 0; $i < count($extra_fields); $i++) {
-						$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
-					}
+            $tz = wp_timezone();
 
-					$event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
+            foreach ($events as $event) {
+                if ( !empty($redirect_after_login) ) {
+                    // If we have specified a custom redirection after login, apply that
+                    $params = [ 'id' => $event['id'], 'reset' => 1, ];
 
-					array_push($res['result'], $event_obj);
-				}
-			} else {
+                    $url = add_query_arg($params, $redirect_after_login);
 
-				$image_src_field = $_REQUEST['image_src_field'];
+                } else {
+                    // Otherwise redirect to the standard civicrm event registration page
+                    $url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
+                }
 
-				$events = Event::get(FALSE)
-				                          ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
-				                          ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
-				                          ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
-				                          ->addWhere('event_type_id:label', 'IN', $types)
-				                          ->addWhere('start_date', '>=', $start_date)
-				                          ->addWhere('is_public', '=', TRUE)
-				                          ->addWhere('is_active', '=', TRUE)
-				                          ->addOrderBy('start_date', 'ASC')
-				                          ->execute();
+                if (!is_user_logged_in() and $force_login) {
+                    $url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
+                }
 
-				$res['result'] = array();
+                $event += [
+                    'url'   => $url,
+                    'start' => new DateTimeImmutable($event['start_date'],  $tz),
+                    'end'   => new DateTimeImmutable($event['end_date'], $tz),
+                ];
 
+                $event_obj = array(
+                    'id'            => $event['id'],
+                    'title'         => $event['title'],
+                    'start'         => $event['start']->format( DateTime::ATOM ),
+                    'end'           => $event[ 'end' ]->format( DateTime::ATOM ),
 
-				foreach ($events as $event) {
-					if ( !empty($redirect_after_login) ) {
-						// If we have specified a custom redirection after login, apply that
-						$params = array(
-							'id' => $event['id'],
-							'reset' => 1
-						);
-						$url = add_query_arg($params, $redirect_after_login);
-					} else {
-						// Otherwise redirect to the standard civicrm event registration page
-						$url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event['id'], 'reset' => 1]);
-					}
+                    'display'       => 'auto',
+                    'startStr'      => $event['start_date'],
+                    'endStr'        => $event['end_date'],
+                    'url'           => $url,
+                    'extendedProps' => array(
+                        'html_render'            => $this->generate_event_html($event, $upload, $colors, $image_src_field, $url),
+                        'html_entry'             => $this->get_output_template(['event' => $event]),
+                        'timeZone'               => $tz->getName(),
+                        'summary'                => $event['summary'],
+                        'description'            => $event['description'],
+                        'event_type'             => $event['event_type_id:label'],
+                        'street_address'         => $event['address.street_address'],
+                        'street_number'          => $event['address.street_number'],
+                        'street_number_suffix'   => $event['address.street_number_suffix'],
+                        'street_name'            => $event['address.street_name'],
+                        'street_type'            => $event['address.street_type'],
+                        'country'                => $event['address.country_id:label'],
+                        'is_online_registration' => $event['is_online_registration'],
+                        'extra_fields'           => []
+                    )
+                );
 
-					if (!is_user_logged_in() and $force_login) {
-						$url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
-					}
+                if(!empty($image_src_field) && !empty($event['file.id'])) {
+                    if (str_ends_with($upload, '/civicrm/custom')) {
+                        $fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
+                        $image_url = CRM_Utils_System::url('civicrm/file/imagefile', "reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}");
+                    } else {
+                        $image_url = $upload . '/' . $event[$image_src_field];
+                    }
 
-					$event_obj = array(
-						'id' => $event['id'],
-						'title' => $event['title'],
-						'start' => date(DATE_ISO8601, strtotime($event['start_date'])),
-						'end' => date(DATE_ISO8601, strtotime($event['end_date'])),
-						'display' => 'auto',
-						'startStr' => $event['start_date'],
-						'endStr' => $event['end_date'],
-						'url' => $url,
-						'extendedProps' => array(
-							'html_render' => $this->generate_event_html($event, $upload, $colors, $image_src_field, $url),
-							'summary' => $event['summary'],
-							'description' => $event['description'],
-							'event_type' => $event['event_type_id:label'],
-							'street_address' => $event['address.street_address'],
-							'street_number' => $event['address.street_number'],
-							'street_number_suffix' => $event['address.street_number_suffix'],
-							'street_name' => $event['address.street_name'],
-							'street_type' => $event['address.street_type'],
-							'country' => $event['address.country_id:label'],
-							'is_online_registration' => $event['is_online_registration'],
-							'extra_fields' => array()
-						)
-					);
+                    $event_obj['extendedProps']['file.uri'] = $event[$image_src_field];
+                    $event_obj['extendedProps']['image_url'] = $image_url;
+                }
 
-					for ($i = 0; $i < count($extra_fields); $i++) {
-						$event_obj['extra_fields'][$extra_fields[$i]] = $event[$extra_fields[$i]];
-					}
+                foreach ($extra_fields as $field) {
+                    $event_obj['extra_fields'][$field] = $event[$field];
+                }
 
-					$event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
+                $event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
 
-					array_push($res['result'], $event_obj);
-				}
-
+                $res['result'][] = $event_obj;
 			}
-		} catch (CiviCRM_API4_Exception $e) {
-			$res['err'] = $e;
+		} catch (CRM_Core_Exception $e) {
+            http_response_code(500);
+			$res['err'] = $e->getMessage();
 		}
 
 		echo json_encode($res);
 	}
 
-	/**
-	 * TODO: WPCIVIUX-149 Convert to a template file
-	 */
 	protected function generate_event_html($event, $upload, $colors, $image_src_field, $url) {
 		$date_start = date_create($event['start_date']);
 		$date_end = date_create($event['end_date']);
@@ -249,40 +200,27 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
 		$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
 
-		if (str_ends_with($upload, '/civicrm/custom') && $event['file.id']) {
+		if (str_ends_with($upload, '/civicrm/custom') && !empty($event['file.id'])) {
 			$fileHash = CRM_Core_BAO_File::generateFileHash($event['id'], $event['file.id']);
 			$image_url = CRM_Utils_System::url('civicrm/file/imagefile',"reset=1&id={$event['file.id']}&eid={$event['id']}&fcs={$fileHash}", true, "", false, true, false);
+		} elseif ( ! empty($event[$image_src_field]) ) {
+            $image_url = $upload . '/' . $event[$image_src_field];
 		} else {
-			$image_url = $upload . '/' . $event[$image_src_field];
-		}
+            $image_url = '';
+        }
 
+        $template_args = compact(
+            'event',
+            'image_src_field',
+            'image_url',
+            'colors',
+            'event_time',
+            'event_location',
+            'url'
+        );
 
-		$template = '<div class="civicrm-ux-event-listing">';
-		$template .= $event[$image_src_field] ? '<div class="civicrm-ux-event-listing-image"><img src="' . $image_url . '"></div>' : '';
-
-		$template .= '<div class="civicrm-ux-event-listing-details-summary">';
-		$template .= '<div class="civicrm-ux-event-listing-details">';
-		$template .= '<div class="civicrm-ux-event-listing-type" style="background-color: #' . ($colors[$event['event_type_id:label']] ?? '333333') . ';">' . $event['event_type_id:label'] . '</div>
-		<div class="civicrm-ux-event-listing-name">' . $event['title'] . '</div>
-		<div class="civicrm-ux-event-listing-date"><i class="fa fa-calendar-o"></i><span class="event-time-text">' . $event_time . '</span></div>';
-
-		if ( !empty($event_location) ) {
-			$template .= '<div class="civicrm-ux-event-listing-location"><i class="fa fa-map-marker"></i><span class="event-time-text">' . $event_location . '</span></div>';
-		}
-		$template .= '</div>';
-
-		$template .= '<div class="civicrm-ux-event-listing-buttons">';
-		$template .= $event['is_online_registration'] ? '<button class="civicrm-ux-event-listing-register" onclick="window.location.href=\'' . $url . '\'">Click here to register</button>'  : '';
-		$template .= '</div>';
-		$template .= '</div>';
-
-		$template .= '<div class="civicrm-ux-event-listing-desc">';
-		$template .= $event['description'] ? $event['description'] . '</div>' : 'No event description provided</div>
-	<hr>
-	</div>';
-
-		return $template;
-	}
+        return civicrm_ux_get_template_part('event-fullcalendar', 'event', $template_args);
+    }
 
 	protected static function formatDay( $date ) {
 		return $date->format( 'l' ) . ', ' . $date->format( 'j' ) . ' ' . $date->format( 'F' ) . ' ' . $date->format( 'Y' );
@@ -296,4 +234,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		return ( $d1->format( 'j' ) == $d2->format( 'j' ) ) && ( $d1->format( 'f' ) == $d2->format( 'f' ) ) && ( $d1->format( 'Y' ) == $d2->format( 'Y' ) );
 	}
 
+    protected function get_output_template($args) {
+        return civicrm_ux_get_template_part('event-fullcalendar', 'event-entry', $args);
+    }
 }

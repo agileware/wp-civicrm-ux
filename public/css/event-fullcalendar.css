@@ -1,9 +1,8 @@
-
 .civicrm-ux-event-listing-image img {
-    display:block;
+    display: block;
     margin-top: 30px;
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
     max-width: 100%;
 }
 
@@ -35,13 +34,13 @@
 }
 
 .civicrm-ux-event-listing-hr {
-    margin-bottom: 10px !important;
-    background-color: black !important;
+    margin-bottom: 10px;
+    background-color: black;
 }
 
 .civicrm-ux-event-listing-img {
-    display:block;
-    margin:auto;
+    display: block;
+    margin: auto;
     margin-bottom: 30px;
 }
 
@@ -52,15 +51,15 @@
 }
 
 .civicrm-ux-event-listing-register, #civicrm-ux-event-popup-register {
-    text-align: center !important;
+    text-align: center;
     margin: 0;
-    padding: 0.5em 1em !important;
-    vertical-align: middle !important;
+    padding: 0.5em 1em ;
+    vertical-align: middle;
     color: white;
     cursor: pointer;
     background-color: #333333;
-    border-radius: 3px!important;
-	width: auto !important;
+    border-radius: 3px;
+    width: auto;
 }
 
 .civicrm-ux-event-listing-desc {
@@ -85,7 +84,7 @@ div.civicrm-event-listing-item {
     margin: 0 0 1.8em 0;
 }
 
-.civicrm-ux-event-popup{
+.civicrm-ux-event-popup {
     background-color: #eeeeee;
     width: 100%;
     padding: 30px 40px;
@@ -93,13 +92,13 @@ div.civicrm-event-listing-item {
     top: 50%;
     border-radius: 8px;
     display: none;
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
     z-index: 1;
 }
 
 .civicrm-ux-event-popup button {
     display: block;
-    margin:  0;
+    margin: 0;
     background-color: transparent;
     color: #ffffff;
     background: #000000;
@@ -116,7 +115,7 @@ div.civicrm-event-listing-item {
     background: #444444;
 }
 
-.civicrm-ux-event-popup p{
+.civicrm-ux-event-popup p {
     font-size: 14px;
     text-align: justify;
     margin: 20px 0;
@@ -126,8 +125,8 @@ div.civicrm-event-listing-item {
 .civicrm-ux-event-popup-img {
     /*    max-width: 90%;
         height: auto;*/
-    display:block;
-    margin:auto;
+    display: block;
+    margin: auto;
     margin-bottom: 30px;
 }
 
@@ -154,22 +153,24 @@ div.civicrm-event-listing-item {
 
 
 .fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button {
-    background-color: #4f4f4f !important;
+    background-color: #4f4f4f;
 }
 
-.fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button:focus{background-color:black !important;}
+.fc-header-toolbar .fc-toolbar-chunk:first-child .fc-button-group button:focus {
+    background-color: black;
+}
 
 .fc-header-toolbar .fc-toolbar-chunk:first-child select {
-    background-color: #4f4f4f !important;
+    background-color: #4f4f4f;
 }
 
-.fc-header-toolbar .fc-toolbar-chunk:first-child select:focus{background-color:black !important;}
+.fc-header-toolbar .fc-toolbar-chunk:first-child select:focus {
+    background-color: black;
+}
 
 .fc-header-toolbar .fc-toolbar-chunk:last-child {
-    margin-top: 50px;
     display: flex;
     justify-content: space-between;
-    background-color: black;
 }
 
 
@@ -185,10 +186,10 @@ div.civicrm-event-listing-item {
 .fc-col-header-cell-cushion {
     color: black;
     font-size: 14px;
-    padding: 8px 0px 8px 0px !important;
+    padding: 8px 0px 8px 0px;
 }
 
-.fc-col-header  {
+.fc-col-header {
     margin: 0px 0px 0px 0px;
 }
 
@@ -205,63 +206,18 @@ div.civicrm-event-listing-item {
 }
 
 .fc-header-toolbar, .fc-toolbar, .fc-toolbar-ltr {
-    display: inline-block !important;
-}
-
-.fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: 0em !important;
-}
-
-.fc-toolbar-title {
-    color: #fff !important;
-    font-size: 15px !important;
-    padding-top: 5px !important;
-}
-
-.fc-button-group {
-    width: 33% !important;
+    display: inline-block;
 }
 
 .fc-button {
-    background-color: black !important;
-    border: 1px solid white !important;
-    font-size: 13px !important;
+    background-color: black;
+    border: 1px solid white;
+    font-size: 13px;
 }
 
 .fc .fc-list-sticky .fc-list-day > * {
     z-index: 1;
 }
-
-
-
-.tippy-box[data-theme~='fcvic'] {
-    background-color: #f0e8ce;
-    border-color: #f0e8ce;
-    color: black;
-}
-
-.tippy-box[data-theme~='fcvic'][data-placement^='top'] > .tippy-arrow::before {
-    border-top-color: #f0e8ce;
-}
-.tippy-box[data-theme~='fcvic'][data-placement^='bottom'] > .tippy-arrow::before {
-    border-bottom-color: #f0e8ce;
-}
-.tippy-box[data-theme~='fcvic'][data-placement^='left'] > .tippy-arrow::before {
-    border-left-color: #f0e8ce;
-}
-.tippy-box[data-theme~='fcvic'][data-placement^='right'] > .tippy-arrow::before {
-    border-right-color: #f0e8ce;
-}
-
-
-.tippy-box[data-theme~='fcvic'] img {
-    max-width: 90%;
-    max-height: 50px;
-    height: auto;
-    margin: 10px 10px 0px 10px;
-    display: block;
-}
-
 
 .event-holder {
     overflow: hidden;
@@ -289,12 +245,17 @@ div.civicrm-event-listing-item {
 .event-time {
     margin: 5px 0px 0px 10px;
     display: inline-flex;
+    align-items: center;
 }
 
 .event-time-text {
     font-size: 14px;
     color: #000000;
     margin-left: 5px;
+}
+
+.tippy-box .event-time-text {
+    color: #ffffff;
 }
 
 .event-location {
