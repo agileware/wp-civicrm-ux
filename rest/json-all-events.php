@@ -50,8 +50,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
-		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
-        $extra_fields = array_map( fn($field) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ), $extra_fields );
+		$extra_fields = !empty( $_REQUEST['extra_fields'] ) ? explode( ',', $_REQUEST['extra_fields'] ) : [];
+		$extra_fields = array_filter($extra_fields, fn($field) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ));
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
