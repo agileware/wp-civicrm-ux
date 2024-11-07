@@ -39,10 +39,10 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				}
 			}
 			if (isset($atts['extra_fields'])) {
-                $extra_fields_arr = array_map([ 'Civicrm_Ux_Validators', 'validateAPIFieldName' ], explode(",", $atts['extra_fields']));
+                $extra_fields_arr = array_map( fn( $field ) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ), explode( ",", $atts['extra_fields'] ) );
             }
 			if (isset($atts['image_src_field'])) {
-				$atts['image_src_field'] = Civicrm_Ux_Validators::validateAPIFieldName($atts['image_src_field']);
+				$atts['image_src_field'] = Civicrm_Ux_Validators::validateAPIFieldName( $atts['image_src_field'], 'image_src_field' );
 			}
 			if (isset($atts['force_login'])) {
 				$atts['force_login'] = filter_var($atts['force_login'], FILTER_VALIDATE_BOOLEAN);

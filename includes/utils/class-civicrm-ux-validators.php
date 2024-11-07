@@ -44,15 +44,25 @@ class Civicrm_Ux_Validators
         return $valid ? $matches[1] : null;
     }
 
-    public static function validateAPIFieldName($field, $key = null): ?string
-    {
-        $valid = preg_match('{ ^ (?! [.-] ) [[:alnum:]._:-]+ (?<! [._-]) $ }xi', $field, $matches);
+	public static function validateAPIFieldName($field, $key = null): ?string
+	{
+		/** API Field names:
+		 *   - must contain only alphanumeric characters, dash (-), underscore(_), dot(.) or colon (:)
+		 *   - may not start or end with a dot dash or colon
+		 */
+		$valid = preg_match('{  
+		                        ^ (?! [.:-] )    # Exclude disallowed prefix 
+		                        [[:alnum:]._:-]+ # Sequence of valid characters
+		                        (?<! [.:-]) $    # Exclude disallowed suffix
+		                         }xi', $field, $matches);
 
-        if (!$valid) {
-			error_log( $key ? __('Invalid field key given') : sprintf(__('Invalid key given for "%1$s"' )));
+		if ( ! $valid ) {
+			error_log( sprintf( 
+				( ! $key ) ? __( '%1$s: Invalid field key given' ) : __( '%1$s: Invalid key given for "%2$s"' ),
+				'ux_event_fullcalendar', $key ) );
 			return null;
-        }
+		}
 
-        return $matches[0];
-    }
+		return $matches[0];
+	}
 }

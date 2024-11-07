@@ -51,7 +51,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
 		$extra_fields = !empty($_REQUEST['extra_fields']) ? explode(',', filter_var($_REQUEST['extra_fields'], FILTER_SANITIZE_STRING)) : [];
-        $extra_fields = array_map( [ 'Civicrm_Ux_Validators', 'validateAPIFieldName' ], $extra_fields );
+        $extra_fields = array_map( fn($field) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ), $extra_fields );
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
@@ -91,7 +91,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
             }
 
             if(!empty($_REQUEST['image_src_field'])) {
-                $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field']);
+                $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field'], 'image_src_field');
                 $eventQuery->addSelect($image_src_field);
             } else {
                 $image_src_field = null;
