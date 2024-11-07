@@ -46,10 +46,11 @@ class Civicrm_Ux_Validators
 
     public static function validateAPIFieldName($field, $key = null): ?string
     {
-        $valid = preg_match('{ ^ (?! [.-] ) [[:alnum:]._-]+ (?<! [._-]) $ }xi', $field, $matches);
+        $valid = preg_match('{ ^ (?! [.-] ) [[:alnum:]._:-]+ (?<! [._-]) $ }xi', $field, $matches);
 
         if (!$valid) {
-            throw new InvalidArgumentException($key ? __('Invalid field key given') : sprintf(__('Invalid key given for "%1$s"'), $key));
+			error_log( $key ? __('Invalid field key given') : sprintf(__('Invalid key given for "%1$s"' )));
+			return null;
         }
 
         return $matches[0];
