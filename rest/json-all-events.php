@@ -44,7 +44,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 	 * with specified start date and event types
 	 */
 	protected function get_events_all() {
-        $upload = wp_get_upload_dir()['url'];
+        $upload = wp_get_upload_dir()['baseurl'];
         $types = array();
 
 		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
