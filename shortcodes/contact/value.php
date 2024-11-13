@@ -77,13 +77,13 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 		if ( $labels['is_error'] ) {
 			return $this->no_value( $result ) ? $mod_atts['default'] : $this->get_display_values( $result );
 		}
-		if ( $labels['values'][ $result ] ) {
+		if ( $labels['values'] ) {
 			if ( is_array( $result ) ) {
 				foreach ( $result as $key => $item ) {
-					$result[ $key ] = $labels['values'][ $result[ $item ] ];
+					$result[ $key ] = $labels['values'][ $item ] ?? $item;
 				}
 			} else {
-				$result = $labels['values'][ $result ];
+				$result = $labels['values'][ $result ] ?? $result;
 			}
 		}
 
