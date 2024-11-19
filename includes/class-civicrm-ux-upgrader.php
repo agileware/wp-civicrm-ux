@@ -187,10 +187,10 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 			}
 
 			// This is required to support auto-updates since WordPress 5.5.
-			$version_info->plugin = $this->name;
-			$version_info->id     = $this->name;
-			$version_info->version = $version_info->new_version;
-			$version_info->author = sprintf( '<a href="%s">%s</a>', esc_url($this->author_uri), esc_html($this->author) );
+			$version_info->plugin   = $this->name;
+			$version_info->id       = $this->name;
+			$version_info->version  = $version_info->new_version ?? $version_info->tag_name;
+			$version_info->author   = sprintf( '<a href="%s">%s</a>', esc_url($this->author_uri), esc_html($this->author) );
 
             // Cache the body after converting from Markdown to HTML
             $version_info->html_body = $this->convert_markdown_to_html( $version_info->body );
