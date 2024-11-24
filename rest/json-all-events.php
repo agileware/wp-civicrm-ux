@@ -78,7 +78,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 			$events = array();
 
             $eventQuery =  Event::get(FALSE)
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.supplemental_address_1', 'address.supplemental_address_2', 'address.supplemental_address_3', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.state_province_id:abbr', 'address.state_province_id:label', 'address.city', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
                 ->addWhere('start_date', '>=', $start_date)
