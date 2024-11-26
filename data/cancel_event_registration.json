@@ -47,12 +47,7 @@
             "mapping": {
                 "event_id": "input.eid",
                 "contact_id": "action.get_cid.contact_id",
-                "campaign_id": "",
-                "custom_CPD_Points_Participant_CPD_Event_Category_Participant": [],
-                "custom_CPD_Points_Participant_CPD_Event_Points_Participant": "",
-                "custom_zoom_registrant_zoom_id": "",
-                "custom_zoom_registrant_registrant_id": "",
-                "custom_zoom_registrant_join_url": ""
+                "campaign_id": ""
             },
             "condition_configuration": "",
             "delay_configuration": ""

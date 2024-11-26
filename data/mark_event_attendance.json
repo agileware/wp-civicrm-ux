@@ -107,12 +107,7 @@
                 "must_wait": "",
                 "transferred_to_contact_id": "",
                 "created_id": "",
-                "participant_test": "",
-                "custom_CPD_Points_Participant_CPD_Event_Category_Participant": [],
-                "custom_CPD_Points_Participant_CPD_Event_Points_Participant": "",
-                "custom_zoom_registrant_zoom_id": "",
-                "custom_zoom_registrant_registrant_id": "",
-                "custom_zoom_registrant_join_url": ""
+                "participant_test": ""
             },
             "condition_configuration": {
                 "name": "ParametersMatch",
