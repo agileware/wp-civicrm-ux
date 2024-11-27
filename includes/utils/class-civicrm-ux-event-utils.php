@@ -26,14 +26,14 @@ class Civicrm_Ux_Event_Utils {
 			'sequential' => 1,
 			'is_public'  => 1,
 			'is_active'  => 1,
-			'start_date' => [ '>' => "now" ],
+			'start_date' => [ '>' => 'now' ],
 		];
 		// Get all counted participant status
 		$counted_type = [];
 		try {
 			$result = civicrm_api3( 'ParticipantStatusType', 'get', [
 				'sequential' => 1,
-				'return'     => [ "name" ],
+				'return'     => [ 'name' ],
 				'is_counted' => 1,
 			] );
 		} catch ( CiviCRM_API3_Exception $e ) {
@@ -54,7 +54,7 @@ class Civicrm_Ux_Event_Utils {
 				'is_active'  => 1,
 			] );
 
-			$civi_param['options'] = [ 'limit' => $count, 'sort' => "start_date ASC" ];
+			$civi_param['options'] = [ 'limit' => $count, 'sort' => 'start_date ASC' ];
 
 			if ( $opts['types'] ) {
 				$civi_param['event_type_id'] = [ 'IN' => $opts['types'] ];
@@ -65,7 +65,7 @@ class Civicrm_Ux_Event_Utils {
 				'sequential'            => 1,
 				'event_id'              => "\$value.id",
 				'status_id'             => [ 'IN' => $counted_type ],
-				"options"               => [ "limit" => PHP_INT_MAX ],
+				'options'               => [ 'limit' => PHP_INT_MAX ],
 				'api.Contact.getsingle' => [
 					'sequential' => 1,
 					'id'         => "\$value.contact_id",

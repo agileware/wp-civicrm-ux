@@ -87,7 +87,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 ->addOrderBy('start_date', 'ASC');
 
             if(!empty($types)) {
-                $eventQuery->addWhere('event_type_id:name', 'IN', $types);
+                $eventQuery->addWhere('event_type_id:label', 'IN', $types);
             }
 
             if(!empty($_REQUEST['image_src_field'])) {
