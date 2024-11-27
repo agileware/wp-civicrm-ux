@@ -44,7 +44,7 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
         $results->addWhere('start_date', '<=', 'today + ' . $mod_atts['days'] . ' days');
       }
       if (!empty($mod_atts['type'])) {
-        $results->addWhere('event_type_id:name', 'IN', explode(',', $mod_atts['type']));
+        $results->addWhere('event_type_id:label', 'IN', explode(',', $mod_atts['type']));
       }
       $results = $results->execute();
     } catch (API_Exception $e) {
