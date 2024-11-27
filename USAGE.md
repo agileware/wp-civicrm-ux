@@ -15,8 +15,8 @@ Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive cale
 ### Shortcode options
 
 You can include additional parameters in the fullcalendar shortcode to limit the scope of events shown on the calendar or to add extra visual features (colors, images) that are not included out of the box. None of these additional parameters are strictly required.
-- *`types`* is a comma-separated list that can be used to show only events of the type specified; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition"]` will show only events that are workshops, meetings or exhibitions. By default, FullCalendar will show all event types on your system.
-- *`colors`* is a comma-separated list of hex rgb codes that can be used to apply a background colour to each event type label, *without* the leading `#` character in the codes; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the colours `#52246d`, `#c45472` and `#ce8d8b` to the Workshop, Meeting and Exhibition type events respectively. These will not be applied unless the `types` parameter is also include.
+- *`types`* is a comma-separated list of Event Types (using Event Type Label) that can be used to filter Events by Event Type; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition"]` will show only events that are workshops, meetings or exhibitions. By default, FullCalendar will show all event types on your system.
+- *`colors`* is a comma-separated list of hex rgb codes that can be used to apply a background colour to each Event Type, *without* the leading `#` character in the codes; e.g. `[ux_event_fullcalendar types="Workshop,Meeting,Exhibition" colors="52246d,c45472,ce8d8b"]` will apply the colours `#52246d`, `#c45472` and `#ce8d8b` to the Workshop, Meeting and Exhibition type events respectively. These will not be applied unless the `types` parameter is also include.
 - *`start`* is the date from which active events will be displayed. For example, `[ux_event_fullcalendar start="2021-01-01"]` will show only events from the 1st of January 2021 onwards. If this parameter is not specified, the calendar will show events starting from 1 year prior to the current date.
 - *`force_login`* - true or false; when true, the calendar forces anonymous users to log in before registering for an event.
 - *`redirect_after_login`* - optionally provide a URL to redirect to after login. Useful if you have a custom Event registration page, instead of the default CiviCRM event registration page.
@@ -287,19 +287,14 @@ Shortcodes return the raw string value except first 2 shortcodes.
 
 Event iCal Feed Shortcode `[ux_event_ical_feed]` generates a custom iCal Calendar and returns a URL to download the iCal file.
 
-Shortcode accepts a CiviCRM Event type as a parameter and displays the event listings. For example: `[ux_event_ical_feed type="Meeting,Exhibition"]Click here to download an iCal feed of meeting and exhibitions[/ical-feed]`
- 
-The CiviCRM Event type parameter is optional. If the type is not specified, the iCal will include all Event types.
+- *`type`* optional parameter to filter Events by Event Type (using Event Type Label). For example: `[ux_event_ical_feed type="Meeting,Exhibition"]Click here to download an iCal feed of meeting and exhibitions[/ical-feed]`. If `type` is not specified, then will include all Event Types.
 
 ## Event Listing Shortcode
 
 This shortcode will display upcoming CiviCRM events which have a start date of today or a future date. `[ux_event_listing days=5 type="Training"]`  
-
-The type of shortcode is the Event Type which you could find in **CiviCRM Dashboard >> CiviEvent >> Event Types**.   
-The event listing displays the start date, the end date, the event name, the registration link, the brief description of event and the link for more information.
-The 'days' parameter is optional. This can be used to limit the upcoming events to only those with a event start date in the next 'days'.
-The 'type' is optional. If the type is not specified, there will be an event listing of all types of events.
-This shortcode has been formatted in html with styling.
+The event listing displays the start date, the end date, the event name, the registration link, the brief description of event and the link for more information. This shortcode has been formatted in html with styling.
+- *`type`* optional parameter to filter Events by Event Type (using Event Type Label). If `type` is not specified, then will include all Event Types.
+- *`days`* optional parameter to limit the upcoming events to only those with a event start date in the X number of days.
 
 ## Event Cancel Registration Shortcodes
 
