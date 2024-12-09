@@ -154,7 +154,13 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 );
 
                 if(!empty($image_src_field) && !empty($event[$image_src_field])) {
-                    $image_url = $upload . '/' . $event[$image_src_field];
+                    // If the image source is an absolute URL, just return that.
+                    // Otherwise, append the relative path to the upload directory.
+                    if (str_starts_with($event[$image_src_field], 'http')) {
+                        $image_url = $event[$image_src_field];
+                    } else {
+                        $image_url = trailingslashit($upload) . ltrim($event[$image_src_field], '/');
+                    }
 
                     $event_obj['extendedProps']['file.uri'] = $event[$image_src_field];
                     $event_obj['extendedProps']['image_url'] = $image_url;
