@@ -203,7 +203,9 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
         if ( ! empty($event[$image_src_field]) ) {
             $image_url = trailingslashit( $upload ) . ltrim( $event[$image_src_field], '/' );
-		}
+        } else {
+            $image_url = null;
+        }
 
         $template_args = compact(
             'event',
