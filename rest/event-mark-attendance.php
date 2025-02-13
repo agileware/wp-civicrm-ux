@@ -46,7 +46,7 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
                 'pid' => $participant_id,
                 'eid' => $event_id,
                 'attendance' => $attendance,
-                'check_permissions' => true,
+                'check_permissions' => false,
             ]);
         
             $response = new WP_REST_Response();

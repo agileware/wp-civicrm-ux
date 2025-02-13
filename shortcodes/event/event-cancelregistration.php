@@ -28,6 +28,6 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration extends Abstract_Civicrm_Ux_
                                 <p>Please wait a few minutes before trying again. If the problem persists, please contact us for assistance.</p>
                             </div>';
 
-        return '<div id="app" class="two-col-app"></div><script>let app_wp_nonce = \'' . esc_js($nonce) . '\';</script>' . $error_message;
+        return '<div id="app" class="two-col-app"></div><script>var event_cancellation_wp_nonce = \'' . esc_js($nonce) . '\';</script>' . $error_message;
 	}
 }
