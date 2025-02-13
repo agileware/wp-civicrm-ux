@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Iterate over the NodeList and add an event listener to each button
   buttons.forEach((button) => {
     button.addEventListener("click", async (event) => {
-      // app_wp_nonce is required for the request to be authenticated with WordPress
-      // if app_wp_nonce is undefined just exit out
-      if (typeof app_wp_nonce === "undefined") {
+      // event_markattendance_wp_nonce is required for the request to be authenticated with WordPress
+      // if event_markattendance_wp_nonce is undefined just exit out
+      if (typeof event_markattendance_wp_nonce === "undefined") {
         return false;
       }
 
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             not_attended_status;
 
           const response = await fetch(url, {
-            headers: { "X-WP-Nonce": app_wp_nonce },
+            headers: { "X-WP-Nonce": event_markattendance_wp_nonce },
           });
 
           if (response.ok) {

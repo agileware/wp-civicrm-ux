@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Iterate over the NodeList and add an event listener to each button
   buttons.forEach((button) => {
     button.addEventListener("click", async (event) => {
-      // app_wp_nonce is required for the request to be authenticated with WordPress
-      // if app_wp_nonce is undefined just exit out
-      if (typeof app_wp_nonce === "undefined") {
+      // event_cancellation_wp_nonce is required for the request to be authenticated with WordPress
+      // if event_cancellation_wp_nonce is undefined just exit out
+      if (typeof event_cancellation_wp_nonce === "undefined") {
         return false;
       }
 
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
           let url = wp_json_url + "civicrm_ux/cancel-event-registration/" + event_id;
 
           const response = await fetch(url, {
-            headers: { "X-WP-Nonce": app_wp_nonce },
+            headers: { "X-WP-Nonce": event_cancellation_wp_nonce },
           });
 
           if (response.ok) {
