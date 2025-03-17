@@ -192,12 +192,6 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$event_start_hour = self::formatAMPM( $date_start );
 		$event_end_hour = self::formatAMPM( $date_end );
 
-		$event_time = $event_start_day . '</span><i class="fa fa-clock-o"></i><span class="event-time-text">' . $event_start_hour . ' to ' . $event_end_hour;
-
-		if (! self::sameDay( $date_start, $date_end ) ) {
-			$event_time = $event_start_day . ' ' . $event_start_hour . " to " . $event_end_day . ' ' . $event_end_hour;
-		}
-
 		$event_location = $event['address.street_address'] ? $event['address.street_address'] . ', ' : '';
 		$event_location .= $event['address.country_id:label'] ? $event['address.country_id:label'] : '';
 
@@ -212,7 +206,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
             'image_src_field',
             'image_url',
             'colors',
-            'event_time',
+            'event_start_day',
+            'event_start_hour',
+            'event_end_day',
+            'event_end_hour',
             'event_location',
             'url'
         );
