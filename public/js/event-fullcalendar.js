@@ -178,13 +178,18 @@ const eventDidMount = function (info) {
 
             const fmt_AMPM = new Intl.DateTimeFormat([], { timeStyle: 'short', timeZone })
 
+            let eventTimeText;
+
+            if(event_end instanceof Date && !isNaN(event_end)){
+                eventTimeText = `<span class="event-time-text"><time datetime="${event_start.toISOString()}">${fmt_AMPM.format(event_start)}</time> to <time datetime="${event_end.toISOString()}">${fmt_AMPM.format(event_end)}</time></span>`;
+            } else {
+                eventTimeText = `<span class="event-time-text"><time datetime="${event_start.toISOString()}">${fmt_AMPM.format(event_start)}</time></span>`;
+            }
+
             const eventElements = {
                 eventImg: '',
                 eventLocation: '',
-                eventTimeText: `<span class="event-time-text">
-                                   <time datetime="${event_start.toISOString()}">${fmt_AMPM.format(event_start)}</time>
-                                    to <time datetime="${event_end.toISOString()}">${fmt_AMPM.format(event_end)}</time>
-                                </span>`,
+                eventTimeText: eventTimeText,
             }
 
             if(info.event.extendedProps["file.uri"]) {
