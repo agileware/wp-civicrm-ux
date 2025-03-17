@@ -78,10 +78,9 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
         }
 
         wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
-        wp_enqueue_style( 'fullcalendar-styles', 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css', [] );
 		wp_enqueue_style( 'ux-fullcalendar-styles', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/css/event-fullcalendar.css', [] );
 
-		wp_enqueue_script( 'fullcalendar-base', 'https://cdn.jsdelivr.net/combine/npm/fullcalendar@5.11.5/main.js', [] );
+		wp_enqueue_script( 'fullcalendar-base', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js', [] );
 		wp_enqueue_script( 'popper', 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js', [] );
 		wp_enqueue_script( 'tippy', 'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js', [ 'popper' ] );
 		wp_enqueue_script( 'ux-fullcalendar', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/event-fullcalendar.js', [ 'fullcalendar-base', 'popper', 'tippy', 'wp-api-request' ] );
