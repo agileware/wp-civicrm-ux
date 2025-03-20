@@ -25,6 +25,14 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// normalize attribute keys, lowercase
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
+		// Override default attributes with user attributes
+        $mod_atts = shortcode_atts([
+            'text' => 'Cancel My Registration',
+            'eventid' => null,
+			'css_classes' => '',
+			'icon_classes' => 'fa fa-times',
+        ], $atts, $tag);
+
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
 		// Make sure the current logged in user has permission to cancel their registration.
@@ -51,7 +59,7 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// Ensure the button is only rendered for the current logged in user, when they have an active registration
 		$participant = \Civi\Api4\Participant::get(FALSE)
 				->addJoin('ParticipantStatusType AS participant_status_type', 'LEFT')
-				->addWhere('event_id', '=', $atts['eventid'])
+				->addWhere('event_id', '=', $mod_atts['eventid'])
 				->addWhere('contact_id', '=', $cid)
 				->addWhere('participant_status_type.class', '!=', 'Negative')
 				->execute();
@@ -63,7 +71,7 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// Only display this button for events that have not already finished.
         $today = current_time('mysql');
 		$event = \Civi\Api4\Event::get(FALSE)
-				->addWhere('id', '=', $atts['eventid'])
+				->addWhere('id', '=', $mod_atts['eventid'])
                 ->addWhere('start_date', '>', $today)
 				->execute()
                 ->first();
@@ -73,7 +81,7 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
         }
 
 		$event = \Civi\Api4\Event::get(FALSE)
-				->addWhere('id', '=', $atts['eventid'])
+				->addWhere('id', '=', $mod_atts['eventid'])
 				->execute();
 		
 		// Respect the "Allow self-service cancellation or transfer?" event setting
@@ -81,7 +89,7 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 			return '';
 		}
 
-		$confirmation_dialog = '<dialog id="event-cancellation-confirm-dialog-' . $atts['eventid'] . '" class="event-cancellation-confirm-dialog">
+		$confirmation_dialog = '<dialog id="event-cancellation-confirm-dialog-' . $mod_atts['eventid'] . '" class="event-cancellation-confirm-dialog">
                                     <div class="modal-content">
 										<p><span class="event-title">' . $event[0]['title'] . '</span></p>
                                         <p>Are you sure you want to cancel this event registration?</p>
@@ -92,6 +100,6 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
                                     </div>
                                 </dialog>';
 
-		return '<div class="event-links"><button data-eventId="' . $atts['eventid'] . '" class="event-cancel-registration">' . $atts['text'] . '</button>' . $confirmation_dialog . '</div>';
+		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" class="event-cancel-registration wp-civicrm-ux-button ' . $mod_atts['css_classes'] . '"><i class="' . $mod_atts['icon_classes'] . '"></i>' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
 	}
 }

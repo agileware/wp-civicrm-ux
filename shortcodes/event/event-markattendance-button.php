@@ -31,6 +31,8 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
             'eventid' => null,
             'attended_status' => 2, // Attended
             'not_attended_status' => 3, // No-show
+			'css_classes' => '',
+			'icon_classes' => 'fa fa-check',
         ], $atts, $tag);
 
 		$args = [];
@@ -101,6 +103,6 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
                                     </div>
                                 </dialog>';
 
-		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" data-participantId="' . $participant['id'] . '" class="event-mark-attendance">' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
+		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" data-participantId="' . $participant['id'] . '" class="event-mark-attendance wp-civicrm-ux-button ' . $mod_atts['css_classes'] . '"><i class="' . $mod_atts['icon_classes'] . '"></i>' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
 	}
 }
