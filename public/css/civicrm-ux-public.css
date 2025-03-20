@@ -79,6 +79,27 @@
      display: block;
  }
 
+ #wp-civicrm-ux-filter-form {
+    label {
+        margin-right: 8px;
+        font-weight: bold;
+    }
+
+    label:not(:first-of-type) {
+        margin-left: 16px;
+    }
+ }
+
+ .wp-civicrm-ux-button {
+    text-decoration: none !important;
+    text-transform: none;
+    padding: 8px 16px;
+
+    i {
+        margin-right: 8px;
+    }
+ }
+
  .event-cancellation-confirm-dialog,
  .event-markattendance-confirm-dialog {
 	padding: 2rem;
@@ -112,6 +133,12 @@
     position: absolute;
     right: 0;
     top: 0;
+    padding: 8px;
+}
+
+/* For elements that use the CiviCRM img_src_field to output an image */
+*[data-img-src=""] {
+    display: none;
 }
 
  /* Self Serve Checksum */
