@@ -218,6 +218,30 @@ You can define custom filters through the GET request query parameters by adding
 - If the `participant_status_id` query parameter is not present, the shortcode attribute will default to the value before the `?`.
 - If the `participant_status_id` query parameter is present, the shortcode attribute value will be replaced by the query parameter value.
 
+For now, a form can be built using a Custom HTML WordPress block. Use the HTML ID `wp-civicrm-ux-filter-form` on the form element to enable JavaScript handling from `wp-civicrm-ux-filter.js`.
+
+At this stage, only select lists are supported for filters.
+
+- Map the name of the select element to the desired query parameter.
+- Set the option values to the value to pass through to the shortcode attribute.
+
+Example usage:
+```
+<form id="wp-civicrm-ux-filter-form">
+   <label for"participant_status_id">Filter events</label>
+   <select name="participant_status_id">
+      <option value="">All Events</option>
+      <option value="1">Upcoming / Mark Attendance</option>
+      <option value="17">Incomplete Evaluations</option>
+   </select>
+   <label for"sort">Sort by</label>
+   <select name="sort">
+      <option value="start_date:DESC">Date Descending</option>
+      <option value="start_date:ASC">Date Ascending</option>
+   </select>
+</form>
+```
+
 
 ### CiviCRM API trouble-shooting
 
