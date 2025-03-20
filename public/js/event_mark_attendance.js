@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Select all buttons with the class 'event-mark-attendance'
-  console.log("hi");
   const buttons = document.querySelectorAll("button.event-mark-attendance");
   const wp_json_url = document.querySelector(
     'link[rel="https://api.w.org/"]'
