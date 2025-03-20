@@ -197,8 +197,6 @@ The following example code can be inserted into a WordPress page when using the 
 
 ### Additional usage information
 
-Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
-
 Implicit joins using Api4 are supported, e.g. `[api4:loc_block_id.address_id.street_address]`
 
 Multi-value fields are output as a comma separated list where possible.
@@ -208,6 +206,18 @@ Limited format support is available:
 * Date fields can have their format specified with the same format as [CiviCRM's date display](https://docs.civicrm.org/user/en/latest/initial-set-up/dates/), e.g. `[api4:start_date:%B %E, %Y]`
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
+
+#### Filtering
+
+Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
+
+You can define custom filters through the GET request query parameters by adding `?<parameter>` to the shortcode attribute value. For example:
+
+`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=IN:1,2,7,8,14,15,17?participant_status_id is_public=1 is_active=1 sort=start_date:DESC?sort limit=0]`
+
+- If the `participant_status_id` query parameter is not present, the shortcode attribute will default to the value before the `?`.
+- If the `participant_status_id` query parameter is present, the shortcode attribute value will be replaced by the query parameter value.
+
 
 ### CiviCRM API trouble-shooting
 
