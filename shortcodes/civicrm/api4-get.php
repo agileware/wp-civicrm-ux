@@ -52,8 +52,8 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				return $matches['value'];
 			}, $v ) );
 			// Replace ?<parameter> with the escaped value of the matching URL parameter.
-			$v = preg_replace_callback( '{\? (?<value> [[:alnum:]_-]+ )}x', function ( $matches ) {
-				return str_replace( [ '%' ], [ '\%' ], CRM_Core_DAO::escapeString( $_GET[ $matches['value'] ] ?? '' ) );
+			$v = preg_replace_callback( '{(?<default> ^ [^?]*)\? (?<value> [[:alnum:]_-]+ )}x', function ( $matches ) {
+				return str_replace( [ '%' ], [ '\%' ], CRM_Core_DAO::escapeString( empty( $_GET[ $matches['value'] ] ) ? $matches['default'] : $_GET[ $matches['value'] ] ) );
 			}, $v );
 			$k = preg_replace( '/-(\w+)/', ':$1', $k );
 

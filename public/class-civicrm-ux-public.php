@@ -102,15 +102,20 @@ class Civicrm_Ux_Public {
 		wp_enqueue_script( $this->civicrm_ux, plugin_dir_url( __FILE__ ) . 'js/civicrm-ux-public.js', [ 'jquery' ], $this->version, FALSE );
 
 		// Only enqueue this script if cancel_event_registration is present
-		if ( has_shortcode( $post->post_content, 'ux_event_cancelregistration' ) && has_shortcode( $post->post_content, 'ux_event_cancelregistration_button' ) ) {
+		if ( $post && has_shortcode( $post->post_content, 'ux_event_cancelregistration' ) && has_shortcode( $post->post_content, 'ux_event_cancelregistration_button' ) ) {
 			wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
 			wp_enqueue_script( 'event_cancel_registration', plugin_dir_url( __FILE__ ) . 'js/event_cancel_registration.js', array('jquery'), $this->version, true );
 		}
 
 		// Only enqueue this script if event_markattendance is present
-		if ( has_shortcode( $post->post_content, 'ux_event_markattendance' ) && has_shortcode( $post->post_content, 'ux_event_markattendance_button' ) ) {
+		if ( $post && has_shortcode( $post->post_content, 'ux_event_markattendance' ) && has_shortcode( $post->post_content, 'ux_event_markattendance_button' ) ) {
 			wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
 			wp_enqueue_script( 'event_mark_attendance', plugin_dir_url( __FILE__ ) . 'js/event_mark_attendance.js', array('jquery'), $this->version, true );
+		}
+
+		// Only enqueue this script if an element with the id "wp-civicrm-ux-filter" is present
+		if ( $post && strpos( $post->post_content, 'id="wp-civicrm-ux-filter-form"' ) !== false ) {
+			wp_enqueue_script( 'wp-civicrm-ux-filter', plugin_dir_url( __FILE__ ) . '/js/wp-civicrm-ux-filter.js', array('jquery'), $this->version, true );
 		}
 
     	$opt_contribution_ux = Civicrm_Ux::getInstance()
