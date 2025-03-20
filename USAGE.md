@@ -1,4 +1,4 @@
- CiviCRM UX User Guide
+# CiviCRM UX User Guide
 
 This plugin adds many useful shortcodes, some new Caldera Forms smart tags and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
 
