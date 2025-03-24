@@ -211,16 +211,20 @@ Limited format support is available:
 
 Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
 
-You can define custom filters through the GET request query parameters by adding `?<parameter>` to the shortcode attribute value. For example:
+You can define custom filters through the GET request query parameters by adding `?<parameter>` to the shortcode attribute value for replacement.
+You can further define a default value for the attribute filter by adding `??<parameter>` to the shortcode attribute value.
 
-`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=IN:1,2,7,8,14,15,17?participant_status_id is_public=1 is_active=1 sort=start_date:DESC?sort limit=0]`
+For example:
 
-- If the `participant_status_id` query parameter is not present, the shortcode attribute will default to the value before the `?`.
-- If the `participant_status_id` query parameter is present, the shortcode attribute value will be replaced by the query parameter value.
+`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=?participant_status_id??IN:1,2,7,8,14,15,17 title=LIKE:%?keyword% is_public=1 is_active=1 sort=start_date:DESC?sort limit=0]`
+
+- If the `participant_status_id` query parameter is not present in the URL, the shortcode attribute will default to the value after the `??`.
+- If the `participant_status_id` query parameter is present in the URL, the shortcode attribute value will be replaced by the query parameter value.
+- If the `keyword` query parameter is present in the URL, the value of the keyword in the shortcode attribute will be replaced by the query parameter value. e.g. `LIKE:%?my-query%`
 
 For now, a form can be built using a Custom HTML WordPress block. Use the HTML ID `wp-civicrm-ux-filter-form` on the form element to enable JavaScript handling from `wp-civicrm-ux-filter.js`.
 
-At this stage, only select lists are supported for filters.
+At this stage, only select lists and the `[urlparam]` shortcode are supported for filters.
 
 - Map the name of the select element to the desired query parameter.
 - Set the option values to the value to pass through to the shortcode attribute.
@@ -228,6 +232,8 @@ At this stage, only select lists are supported for filters.
 Example usage:
 ```
 <form id="wp-civicrm-ux-filter-form">
+   <label for="search-keyword">Keywords</label>
+   [urlparam htmltag="input" type="text" name="keyword" id="search-keyword" attr="value" param="keyword" /]
    <label for"participant_status_id">Filter events</label>
    <select name="participant_status_id">
       <option value="">All Events</option>
@@ -239,6 +245,7 @@ Example usage:
       <option value="start_date:DESC">Date Descending</option>
       <option value="start_date:ASC">Date Ascending</option>
    </select>
+   <a class="button" href="?keyword=">Reset</a>
 </form>
 ```
 
