@@ -127,8 +127,8 @@ class Civicrm_Ux_Public {
 			'is_autorenew_default' => isset($opt_contribution_ux['is_autorenew_default']) ? true : false,
 		];
 
+		// @TODO Fix this inline script, needs scope to be limited
 		wp_add_inline_script( $this->civicrm_ux, 'window.wp = window.wp || ({}); window.wp.CiviCRM_UX = (' . json_encode( $options_map ) . ')', 'before' );
-
 	}
 
 	/**
