@@ -123,12 +123,11 @@ class Civicrm_Ux_Public {
 		                 ->get_option( 'civicrm_contribution_ux' );
 
 		$options_map = [
-			'is_recur_default'     => isset($opt_contribution_ux['is_recur_default']) ? true : false,
-			'is_autorenew_default' => isset($opt_contribution_ux['is_autorenew_default']) ? true : false,
+			'is_recur_default'     => isset($opt_contribution_ux['is_recur_default']),
+			'is_autorenew_default' => isset($opt_contribution_ux['is_autorenew_default']),
 		];
 
 		wp_add_inline_script( $this->civicrm_ux, 'window.wp = window.wp || ({}); window.wp.CiviCRM_UX = (' . json_encode( $options_map ) . ')', 'before' );
-
 	}
 
 	/**
