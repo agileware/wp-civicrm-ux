@@ -112,6 +112,32 @@ class Civicrm_Ux_Admin {
 
 	}
 
+	/**
+	 * Dequeue specific stylesheets for the admin area, usually because they conflict with CiviCRM
+	 *
+	 * @since    1.31.2
+	 */
+	public function dequeue_styles()
+	{
+
+		if (isset($_GET['page'])) {
+			$page = $_GET['page'];
+			// Video User Manuals plugin, should only load on their specific pages
+			if (strpos($page, 'video-user-manuals') === false && strpos($page, 'vum-options') === false) {
+				wp_dequeue_style('vumcss');
+			}
+		}
+	}
+
+	/**
+	 * Dequeue specific scripts for the admin area, usually because they conflict with CiviCRM
+	 *
+	 * @since    1.31.2
+	 */
+	public function dequeue_scripts() {
+		// Define any scripts to dequeue here
+	}
+
 	public function create_menu() {
 		add_options_page( 'CiviCRM UX Setting', 'CiviCRM UX', 'administrator', 'civicrm-ux-setting.php', 'civicrm_ux_settings_page' );
 		add_filter('admin_footer_text', '__return_empty_string');

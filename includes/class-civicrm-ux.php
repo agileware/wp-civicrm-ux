@@ -228,6 +228,11 @@ class Civicrm_Ux {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		// Low priority to run last, hopefully
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dequeue_styles', 9999);
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dequeue_scripts', 9999);
+
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
