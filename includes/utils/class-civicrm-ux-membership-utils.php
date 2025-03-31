@@ -2,49 +2,6 @@
 
 class Civicrm_Ux_Membership_Utils {
 
-	static public function renewal_membership_check() {
-
-		if ( self::is_civi_enable() && civicrm_initialize() ) {
-
-			try {
-				// login user or checksum provided
-				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
-				$contact = $helper->current_contact_data_get();
-				// this magic tag should return false with no contact.
-				if ( ! $contact ) {
-					return 0;
-				}
-				// Get login contact id
-				$cid = $contact['id'];
-
-				$memberships = civicrm_api3( 'Membership', 'get', [
-					'contact_id' => $cid,
-					'status_id'  => [ '<>' => 'Cancelled' ],
-				] );
-
-				if ( $memberships['count'] == 0 ) {
-					return 0;
-				} else {
-					foreach ( $memberships['values'] as $membership ) {
-
-						$membership_end_date    = new DateTime( $membership['end_date'] );
-						$today_date             = new DateTime( 'now' );
-						$three_month_from_today = $today_date->modify( '+3 month' );
-						$is_renewal             = ( $three_month_from_today >= $membership_end_date );
-						if ( $is_renewal ) {
-							return $is_renewal;
-							break;
-						}
-					}
-				}
-			} catch ( CiviCRM_API3_Exception $e ) {
-				if ( isset( $cid ) ) {
-					error_log( 'Unable to obtain membership for ' . $cid );
-				}
-			}
-		}
-	}
-
 	// TODO move this to other utility class
 	static public function is_civi_enable() {
 		return function_exists( 'civicrm_initialize' );
@@ -135,79 +92,6 @@ class Civicrm_Ux_Membership_Utils {
 		$isBeforeEndDate  = ( ! $expireOn ) || ( $currentDate <  DateTime::createFromFormat( 'Y-m-d H:i:s', $expireOn ) );
 
 		return $isBeforeEndDate && $isAfterStartDate;
-	}
-
-	static public function membership_check() {
-
-		if ( civicrm_initialize() ) {
-
-			try {
-				// login user or checksum provided
-				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
-				$contact = $helper->current_contact_data_get();
-				// this magic tag should return false with no contact.
-				if ( ! $contact ) {
-					return 0;
-				}
-				// Get login contact id
-				$cid = $contact['id'];
-
-				$memberships = civicrm_api3( 'Membership', 'get', [
-					'contact_id'                  => $cid,
-					'status_id.is_current_member' => 1,
-				] );
-
-				if ( $memberships['count'] == 0 ) {
-					return 0;
-				} else {
-					foreach ( $memberships['values'] as $membership ) {
-
-						$membership_name = $membership['membership_name'];
-
-						return $membership_name;
-						break;
-					}
-				}
-			} catch ( CiviCRM_API3_Exception $e ) {
-				if ( isset( $cid ) ) {
-					error_log( 'Unable to obtain membership for ' . $cid );
-				}
-			}
-		}
-	}
-
-	static public function contact_subtype_check() {
-
-		if ( self::is_civi_enable() && civicrm_initialize() ) {
-
-			try {
-				// login user or checksum provided
-				$helper  = CiviCRM_Caldera_Forms::instance()->helper;
-				$contact = $helper->current_contact_data_get();
-				// this magic tag should return false with no contact.
-				if ( ! $contact ) {
-					return 0;
-				}
-				// Get login contact id
-				$cid      = $contact['id'];
-				$contacts = civicrm_api3( 'Contact', 'get', [ 'contact_id' => $cid ] );
-
-				if ( $contacts['count'] == 0 ) {
-					return 0;
-				} else {
-					foreach ( $contacts['values'][2]['contact_sub_type'] as $contact ) {
-						if ( $contact ) {
-							return $contact;
-							break;
-						}
-					}
-				}
-			} catch ( CiviCRM_API3_Exception $e ) {
-				if ( isset( $cid ) ) {
-					error_log( 'Unable to obtain contact subtype for ' . $cid );
-				}
-			}
-		}
 	}
 
 	/**

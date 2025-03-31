@@ -1,6 +1,6 @@
 # CiviCRM UX User Guide
 
-This plugin adds many useful shortcodes, some new Caldera Forms smart tags and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
+This plugin adds many useful shortcodes and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
 
 ## Events Calendar Shortcode
 
