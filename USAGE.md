@@ -332,25 +332,21 @@ The event listing displays the start date, the end date, the event name, the reg
 
 ## Event Cancel Registration Shortcodes
 
-These shortcodes will enable users to cancel their registration for an event. It requires a FormProcessor to handle the participant status update. This comes with the advantage of customisation for the FormProcessor, so you can do things like handle associated Contributions, trigger an email to be sent, and generate Activities.
+These shortcodes enable users to cancel their registration for an event. This requires the [Form Processor](https://lab.civicrm.org/extensions/form-processor) CiviCRM extension to handle the participant status update. You can then handle associated Contributions, trigger an email to be sent, and generate Activities using the Form Processor. It is recommended to import the one provided in the [data directory](https://github.com/agileware/wp-civicrm-ux/tree/master/data) of this plugin as a starting point.
 
 The following shortcodes *must* be used together:
 
 - *`[ux_event_cancelregistration]`* provides a WordPress nonce for authentication
 - *`[ux_event_cancelregistration_button text="My Button Text" eventid={{api4:id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. It will not render for events the current logged in user does not have an active registration for.
 
-You will also need to enable the Form Processor CiviCRM extension, and create a `cancel_event_registration` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
-
 ## Event Mark Attendance Shortcodes
 
-These shortcodes provide a way to optionally allow users to mark their own attendance for an event. It uses a FormProcessor to handle the participant status update.
+These shortcodes provide a way to optionally allow users to mark their own attendance for an event. This requires the [Form Processor](https://lab.civicrm.org/extensions/form-processor) CiviCRM extension to handle the participant status update. It is recommended to import the one provided in the [data directory](https://github.com/agileware/wp-civicrm-ux/tree/master/data) of this plugin as a starting point.
 
 The following shortcodes *must* be used together:
 
 - *`[ux_event_markattendance]`* provides a WordPress nonce for authentication
 - *`[ux_event_markattendance_button text="My Button Text" eventid={{api4:id}} attended_status={{status_id}} not_attended_status={{status_id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. You can customise which status (by ID) to set when the user has selected they have attended using `attended_status`, and which to set when they have not attended using `not_attended_status`. The button will not render for events the current logged in user does not have an active registration for, and has not passed.
-
-You will also need to enable the Form Processor CiviCRM extension, and create a `mark_event_attendance` form processor. It is recommended to import the one provided in the data directory of this extension as a starting point.
 
 ## Custom Button Shortcode
 
