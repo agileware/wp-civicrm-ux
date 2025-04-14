@@ -406,25 +406,17 @@ To override the output of the shortcode when there are no membership records to 
 
 When linking to a CiviCRM Contribution Page to renew a membership inherited by relationship, it is important to be aware that the contact must have a permissioned relationship with the related contact. This enables the contact to renew the membership on behalf of the primary member, typically an organisation. If there is no permissioned relationship then a new organisation will be entered and the unsupervised duplicate matching rules for organisations will be used. A new membership instead of a membership renewal may also be created. [See the CiviCRM documentation for more details](https://docs.civicrm.org/user/en/latest/membership/defining-memberships)
 
-### Deprecated
+### Deprecated shortcodes
 *The following shortcodes are marked for deprecation in a future release in favour of the above shortcodes.*
 
-1. DEPRECATED: `[ux_membership_expiry]`  
-   Return a HTML tag with the membership expiry date of the login user.
-2. DEPRECATED: `[ux_membership_id]`  
-   Return the membership id of the login user.
-3. DEPRECATED: `[ux_membership_join_url]`  
-   Return the join form URL. The URL can be configured in the settings page.
-4. DEPRECATED: `[ux_membership_renewal_date]`  
-   Return the renewal date of the membership for the login user
-5. DEPRECATED: `[ux_membership_renewal_url]`  
-   Return the renewal form URL. The URL can be configured in the settings page.
-6. DEPRECATED: `[ux_membership_status]`  
-   Return the membership status of the login user.
-7. DEPRECATED: `[ux_membership_summary]`  
-   Return the membership summary of the login user.
-8. DEPRECATED: `[ux_membership_type]`  
-   Return the membership type of the login user. 
+1. `[ux_membership_expiry]`  - Return a HTML tag with the membership expiry date of the login user.
+2. `[ux_membership_id]` - Return the membership id of the login user.
+3. `[ux_membership_join_url]` - Return the join form URL. The URL can be configured in the settings page.
+4. `[ux_membership_renewal_date]` - Return the renewal date of the membership for the login user
+5. `[ux_membership_renewal_url]` - Return the renewal form URL. The URL can be configured in the settings page.
+6. `[ux_membership_status]` - Return the membership status of the login user.
+7. `[ux_membership_summary]` - Return the membership summary of the login user.
+8. `[ux_membership_type]` - Return the membership type of the login user. 
 
 ## CiviCRM Data Processor Shortcode
 
