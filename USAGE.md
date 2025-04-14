@@ -389,6 +389,23 @@ Outputs a table row of membership data. Checks for the logged in contact's cid, 
 [ux_membership_row membership_type="1,5" membership_status="Current,Grace,Expired" expiration_offset="30 days" renewal_url="/civicrm/contribute/transact/?reset=1&id=1"]
 ```
 
+### Use template parts to override output
+
+Membership Shortcodes support the use of [Template Parts](https://developer.wordpress.org/themes/templates/template-parts/) to override the output, so you can customise, style and precisely control how the information is shown on your website.
+
+The following Template Parts are supported:
+
+- membership
+- membership-row
+- membership-no-results
+- membership-no-access
+
+To override the output of the shortcode when there are no membership records to display, create a Template Part file by:
+
+1. Copy the template file: ```wp-civicrm-ux/templates/shortcode/shortcode-membership-no-results.php```
+2. Create the new file: ```wp-content/themes/theme-name/template-parts/shortcode/shortcode-membership-no-results.php```
+3. Customise as required
+
 ### Renewing a membership inherited by relationship
 
 When linking to a CiviCRM Contribution Page to renew a membership inherited by relationship, it is important to be aware that the contact must have a permissioned relationship with the related contact. This enables the contact to renew the membership on behalf of the primary member, typically an organisation. If there is no permissioned relationship then a new organisation will be entered and the unsupervised duplicate matching rules for organisations will be used. A new membership instead of a membership renewal may also be created. [See the CiviCRM documentation for more details](https://docs.civicrm.org/user/en/latest/membership/defining-memberships)
