@@ -22,13 +22,6 @@ You can include additional parameters in the fullcalendar shortcode to limit the
 - *`redirect_after_login`* - optionally provide a URL to redirect to after login. Useful if you have a custom Event registration page, instead of the default CiviCRM event registration page.
 - *`img_src_field`*: the field name the path to the event image. This must be a custom text field for CiviCRM events, containing a path relative to the WordPress uploads directory, 
 
-### Removed parameters
-
-1. REMOVED: `image_id_field`.  
-   Nonfunctional parameter to use a CiviCRM custom file field as the event image.
-2. REMOVED: `upload`
-   Override to image upload location. Generally only useful in combination with `image_id_field` on CiviCRM installations with unusual data directories. 
-
 ## CiviCRM APIv4 Shortcode
 
 The CiviCRM APIv4 is directly accessible using the `[ux_cv_api4_get]` WordPress shortcode. You can use the CiviCRM APIv4 Explorer to understand how to query CiviCRM using the APIv4.
