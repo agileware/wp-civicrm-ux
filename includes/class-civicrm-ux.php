@@ -150,6 +150,11 @@ class Civicrm_Ux {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-loader.php';
 
 		/**
+		 * Admin - Settings
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/civicrm-ux-settings.php';
+
+		/**
 		 * The helper class.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
