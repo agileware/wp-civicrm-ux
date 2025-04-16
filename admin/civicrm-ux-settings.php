@@ -46,7 +46,11 @@ function register_settings() {
  */
 function render__settings_page() {
     $tabs = SettingsTabs::get_all();
-    $current_tab = $_GET['tab'] ?? 'general';
+    $current_tab = $_GET['tab'] ?? SettingsTabs::get_default();
+
+    if ( ! array_key_exists( $current_tab, SettingsTabs::get_all() ) ) {
+        $current_tab = SettingsTabs::get_default();
+    }
 
     ?>
     <div class="wrap">

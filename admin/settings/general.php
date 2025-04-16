@@ -20,6 +20,7 @@ const PAGE   = 'civicrm-ux-settings-general'; // A tab on the page
 const OPTION_NAME = 'civicrm_ux_general';
 
 SettingsTabs::register( SLUG, LABEL, 0 );
+SettingsTabs::set_default( SLUG );
 
 /**
  * 
