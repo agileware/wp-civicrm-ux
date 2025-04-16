@@ -2,6 +2,10 @@
 
 namespace CiviCRM_UX\PluginActivationBlocks;
 
+// WPCIVIUX-148 Implement plugin activation block
+add_action( 'admin_init', __NAMESPACE__ . '\deactivate_blacklisted_plugins' );
+add_action( 'activate_plugin', __NAMESPACE__ . '\prevent_blacklisted_plugin_activation', 10, 2 );
+
 /**
  * A list of plugins blacklisted from activation.
  * 
