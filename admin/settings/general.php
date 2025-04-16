@@ -3,10 +3,10 @@
 namespace CiviCRM_UX\Settings\General;
 
 $group  = 'civicrm_ux_options_group_general';
-$page   = 'civicrm-ux-settings-new-general'; // A tab on the page
+$page   = 'civicrm-ux-settings-general'; // A tab on the page
 
 function get_option_name() {
-    return 'civicrm_ux_cf_turnstile';
+    return 'civicrm_ux_general';
 }
 
 /**
@@ -18,14 +18,14 @@ add_settings_section(
     'civicrm_ux_settings_section_usage_docs',
     'Usage Documentation',
     __NAMESPACE__ . '\usage_docs_cb',
-    'civicrm-ux-settings-new-general' // menu slug
+    $page
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_thankyou',
     'How To Say Thank You!',
     __NAMESPACE__ . '\thankyou_cb',
-    'civicrm-ux-settings-new-general' // menu slug
+    $page
 );
 
 

@@ -5,7 +5,7 @@ namespace CiviCRM_UX\Settings\iCal;
 use Civicrm_Ux_Shortcode_Event_ICal_Feed;
 
 $group  = 'civicrm_ux_options_group_ical';
-$page   = 'civicrm-ux-settings-new-ical'; // A tab on the page
+$page   = 'civicrm-ux-settings-ical'; // A tab on the page
 
 function get_option_name() {
     return Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION;

@@ -3,7 +3,7 @@
 namespace CiviCRM_UX\Settings\CloudflareTurnstile;
 
 $group  = 'civicrm_ux_options_group_cf-turnstile';
-$page   = 'civicrm-ux-settings-new-cf-turnstile'; // A tab on the page
+$page   = 'civicrm-ux-settings-cf-turnstile'; // A tab on the page
 
 function get_option_name() {
     return 'civicrm_ux_cf_turnstile';

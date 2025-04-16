@@ -3,7 +3,7 @@
 namespace CiviCRM_UX\Settings\SSC;
 
 $group  = 'civicrm_ux_options_group_ssc';
-$page   = 'civicrm-ux-settings-new-ssc'; // A tab on the page
+$page   = 'civicrm-ux-settings-ssc'; // A tab on the page
 
 function get_option_name() {
     return 'self_serve_checksum';
