@@ -40,20 +40,22 @@ add_settings_section(
 // Build the array of settings fields
 $fields = [
     'is_recur_default' => [ 
-        'title' => 'Recur payments By Default', 
-        'section' => 'civicrm_ux_settings_section_contribution_page_tweaks', 
-        'render_callback' => __NAMESPACE__ . '\checkbox_cb',
-        'help_text_callback' => null,
-        'field_options' => [
+        'title'                 => 'Recur payments By Default', 
+        'section'               => 'civicrm_ux_settings_section_contribution_page_tweaks', 
+        'default_value'         => 0,
+        'render_callback'       => __NAMESPACE__ . '\checkbox_cb',
+        'help_text_callback'    => null,
+        'field_options'         => [
             'label' => 'For all Contribution Pages, set the payment to recurring by default.'
         ],
     ],
     'is_autorenew_default' => [ 
-        'title' => 'Auto-renew Memberships By Default', 
-        'section' => 'civicrm_ux_settings_section_contribution_page_tweaks', 
-        'render_callback' => __NAMESPACE__ . '\checkbox_cb',
-        'help_text_callback' => null,
-        'field_options' => [
+        'title'                 => 'Auto-renew Memberships By Default', 
+        'section'               => 'civicrm_ux_settings_section_contribution_page_tweaks', 
+        'default_value'         => 0,
+        'render_callback'       => __NAMESPACE__ . '\checkbox_cb',
+        'help_text_callback'    => null,
+        'field_options'         => [
             'label' => 'For all Membership Contribution Pages, set the membership to auto-renew by default.'
         ],
     ],
@@ -69,9 +71,10 @@ foreach ($fields as $key => $field) {
         $page,
         $field['section'],
         [ 
-            'key' => $key, 
-            'help' => $field['help_text_callback'], 
-            'label' => isset($field['field_options']['label']) ? $field['field_options']['label'] : '',
+            'key'           => $key, 
+            'default_value' => $field['default_value'],
+            'help'          => $field['help_text_callback'], 
+            'label'         => isset($field['field_options']['label']) ? $field['field_options']['label'] : '',
         ]
     );
 }

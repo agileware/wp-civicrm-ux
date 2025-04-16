@@ -30,10 +30,10 @@ add_settings_section(
 // Build the array of settings fields
 $fields = [
     'event_tickets' => [ 
-        'title' => 'Event Tickets', 
-        'section' => 'civicrm_ux_settings_section_plugin_activation_blocks', 
-        'render_callback' => __NAMESPACE__ . '\checkbox_cb',
-        'help_text_callback' => null,
+        'title'                 => 'Event Tickets', 
+        'section'               => 'civicrm_ux_settings_section_plugin_activation_blocks', 
+        'render_callback'       => __NAMESPACE__ . '\checkbox_cb',
+        'help_text_callback'    => null,
     ],
 ];
 

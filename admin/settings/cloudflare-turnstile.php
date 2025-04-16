@@ -37,29 +37,32 @@ add_settings_section(
 // Build the array of settings fields
 $fields = [
     'sitekey' => [ 
-        'title' => 'Sitekey', 
-        'section' => 'civicrm_ux_settings_section_cloudflare_turnstile', 
-        'render_callback' => __NAMESPACE__ . '\text_cb',
-        'help_text_callback' => null,
-        'field_options' => [ ],
+        'title'                 => 'Sitekey', 
+        'section'               => 'civicrm_ux_settings_section_cloudflare_turnstile', 
+        'default_value'         => '',
+        'render_callback'       => __NAMESPACE__ . '\text_cb',
+        'help_text_callback'    => null,
+        'field_options'         => [ ],
     ],
     'secret_key' => [ 
-        'title' => 'Secret Key', 
-        'section' => 'civicrm_ux_settings_section_cloudflare_turnstile', 
-        'render_callback' => __NAMESPACE__ . '\text_cb',
-        'help_text_callback' => null,
-        'field_options' => [ ],
+        'title'                 => 'Secret Key', 
+        'section'               => 'civicrm_ux_settings_section_cloudflare_turnstile', 
+        'default_value'         => '',
+        'render_callback'       => __NAMESPACE__ . '\text_cb',
+        'help_text_callback'    => null,
+        'field_options'         => [ ],
     ],
     'theme' => [ 
-        'title' => 'Theme', 
-        'section' => 'civicrm_ux_settings_section_cloudflare_turnstile', 
-        'render_callback' => __NAMESPACE__ . '\select_cb', 
-        'help_text_callback' => null,
-        'field_options' => [
+        'title'                 => 'Theme', 
+        'section'               => 'civicrm_ux_settings_section_cloudflare_turnstile', 
+        'default_value'         => 'auto',
+        'render_callback'       => __NAMESPACE__ . '\select_cb', 
+        'help_text_callback'    => null,
+        'field_options'         => [
             'choices' => [
-                'auto' => 'Auto',
+                'auto'  => 'Auto',
                 'light' => 'Light',
-                'dark' => 'Dark',
+                'dark'  => 'Dark',
             ]
         ],
     ],
@@ -74,7 +77,12 @@ foreach ( $fields as $key => $field ) {
         $field['render_callback'],
         $page,
         $field['section'],
-        [ 'key' => $key, 'help' => $field['help_text_callback'], 'field_options' => $field['field_options'] ]
+        [ 
+            'key'           => $key, 
+            'default_value' => $field['default_value'],
+            'help'          => $field['help_text_callback'], 
+            'field_options' => $field['field_options'] 
+        ],
     );
 }
 
@@ -99,7 +107,8 @@ function text_cb( $args ) {
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
-    $value = isset( $options[ $key ] ) ? $options[ $key ] : '';
+    $default_value = $args['default_value'] ?? '';
+    $value = $options[ $key ] ?? $default_value;
 
     printf( '<input 
                 type="text"
@@ -130,11 +139,12 @@ function select_cb( $args ) {
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
+    $default_value = $args['default_value'] ?? 0;
+    $value = $options[ $key ] ?? $default_value;
 
     $choices_html = '';
     foreach ( $choices as $choice_key => $label ) {
-        $raw_value = $options[ $key ] ?? 0;
-        $selected = selected( $raw_value, $choice_key, false );
+        $selected = selected( $value, $choice_key, false );
 
         $choices_html .= sprintf( '<option value="%1$s" %2$s>%3$s</option>',
                 $choice_key,
@@ -179,7 +189,7 @@ function sanitize_cf_turnstile( $input ) {
                 if (strpos($value, '{checksum_url}') === false) {
                     // Add a settings error if the token is missing
                     add_settings_error(
-                        'self_serve_checksum', // Slug title of the setting
+                        $option_name, // Slug title of the setting
                         'missing_checksum_token', // Error code
                         'The Self Serve Checksum email message must include the {checksum_url} token to be valid.', // Error message
                         'error' // Type of the message

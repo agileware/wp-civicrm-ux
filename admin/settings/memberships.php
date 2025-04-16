@@ -33,22 +33,25 @@ add_settings_section(
 // Build the array of settings fields
 $fields = [
     'civicrm_summary_show_renewal_date' => [ 
-        'title' => 'Renewal Date', 
-        'section' => 'civicrm_ux_settings_section_memberships', 
-        'render_callback' => __NAMESPACE__ . '\show_renewal_date_cb',
-        'help_text_callback' => null,
+        'title'                 => 'Renewal Date', 
+        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'default_value'         => '30',
+        'render_callback'       => __NAMESPACE__ . '\show_renewal_date_cb',
+        'help_text_callback'    => null,
     ],
     'civicrm_summary_membership_join_URL' => [ 
-        'title' => 'Membership Join Page', 
-        'section' => 'civicrm_ux_settings_section_memberships', 
-        'render_callback' => __NAMESPACE__ . '\text_cb',
-        'help_text_callback' => __NAMESPACE__ . '\membership_join_url_help_text_cb',
+        'title'                 => 'Membership Join Page', 
+        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'default_value'         => '/join/',
+        'render_callback'       => __NAMESPACE__ . '\text_cb',
+        'help_text_callback'    => __NAMESPACE__ . '\membership_join_url_help_text_cb',
     ],
     'civicrm_summary_membership_renew_URL' => [ 
-        'title' => 'Membership Renewal Page', 
-        'section' => 'civicrm_ux_settings_section_memberships', 
-        'render_callback' => __NAMESPACE__ . '\text_cb',
-        'help_text_callback' => __NAMESPACE__ . '\membership_renew_url_help_text_cb',
+        'title'                 => 'Membership Renewal Page', 
+        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'default_value'         => '/renew/',
+        'render_callback'       => __NAMESPACE__ . '\text_cb',
+        'help_text_callback'    => __NAMESPACE__ . '\membership_renew_url_help_text_cb',
     ],
 ];
 
@@ -61,7 +64,7 @@ foreach ($fields as $key => $field) {
         $field['render_callback'],
         $page,
         $field['section'],
-        [ 'key' => $key, 'help' => $field['help_text_callback'] ]
+        [ 'key' => $key, 'default_value' => $field['default_value'], 'help' => $field['help_text_callback'] ],
     );
 }
 
@@ -81,7 +84,8 @@ function show_renewal_date_cb( $args ) {
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
-    $value = isset( $options[ $key ] ) ? $options[ $key ] : '';
+    $default_value = $args['default_value'] ?? '';
+    $value = $options[ $key ] ?? $default_value;
 
     printf( '<input 
                 type="number" min="0" step="1"
@@ -100,7 +104,8 @@ function text_cb( $args ) {
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
-    $value = isset( $options[ $key ] ) ? $options[ $key ] : '';
+    $default_value = $args['default_value'] ?? '';
+    $value = $options[ $key ] ?? $default_value;
 
     printf( '<input 
                 type="text"

@@ -45,38 +45,84 @@ add_settings_section(
 
 /**
  * 
+ * TEMPLATE PARTS
+ * 
+ */
+// Retrieve template parts for these fields if they exist
+function get_default_template_parts( $key ) {
+    $default_templates = [
+        'form_text'                 => 'ss-cs-form-text.html',
+        'form_confirmation_text'    => 'ss-cs-form-confirmation-text.html',
+        'form_invalid_contact_text' => 'ss-cs-form-invalid-contact-text.html',
+        'email_message'             => 'ss-cs-email-message.html',
+    ];
+
+    return $default_templates[ $key ];
+}
+
+function load_template_part( $filename ) {
+    // Define the path to the template files
+    $template_dir_plugin = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/self-serve-checksum/';
+    $template_dir_theme  = get_stylesheet_directory() . '/civicrm-ux/templates/self-serve-checksum/'; // Child theme
+    $template_dir_parent = get_template_directory()   . '/civicrm-ux/templates/self-serve-checksum/'; // Fallback to parent
+
+    $content = false;
+
+    // Check child theme override
+    if ( file_exists( $template_dir_theme . $filename ) ) {
+        $content = file_get_contents( $template_dir_theme . $filename );
+    }
+    // Check parent theme override
+    elseif ( file_exists( $template_dir_parent . $filename ) ) {
+        $content = file_get_contents( $template_dir_parent . $filename );
+    }
+    // Fall back to plugin default
+    elseif ( file_exists( $template_dir_plugin . $filename ) ) {
+        $content = file_get_contents( $template_dir_plugin . $filename );
+    }
+
+    return $content;
+}
+
+
+/**
+ * 
  * ADD FIELDS
  * 
  */
 // Build the array of settings fields
 $fields = [
     'form_text' => [ 
-        'title' => 'Form Text', 
-        'section' => 'civicrm_ux_settings_section_ssc_protection_form', 
-        'render_callback' => __NAMESPACE__ . '\ssc__textarea_cb',
-        'help_text_callback' => __NAMESPACE__ . '\ssc__form_text_help_text_cb',
-        'editor_options' => [ ], 
+        'title'                 => 'Form Text', 
+        'section'               => 'civicrm_ux_settings_section_ssc_protection_form', 
+        'default_value'         => get_default_template_parts( 'form_text' ),
+        'render_callback'       => __NAMESPACE__ . '\ssc__textarea_cb',
+        'help_text_callback'    => __NAMESPACE__ . '\ssc__form_text_help_text_cb',
+        'editor_options'        => [ ], 
     ],
     'form_confirmation_text' => [ 
-        'title' => 'Confirmation Text', 
-        'section' => 'civicrm_ux_settings_section_ssc_protection_form', 
-        'render_callback' => __NAMESPACE__ . '\ssc__textarea_cb',
-        'help_text_callback' => __NAMESPACE__ . '\ssc__form_confirmation_text_help_text_cb',
-        'editor_options' => [ ],
+        'title'                 => 'Confirmation Text', 
+        'section'               => 'civicrm_ux_settings_section_ssc_protection_form', 
+        'default_value'         => get_default_template_parts( 'form_confirmation_text' ),
+        'render_callback'       => __NAMESPACE__ . '\ssc__textarea_cb',
+        'help_text_callback'    => __NAMESPACE__ . '\ssc__form_confirmation_text_help_text_cb',
+        'editor_options'        => [ ],
     ],
     'form_invalid_contact_text' => [ 
-        'title' => 'Invalid Contact Text', 
-        'section' => 'civicrm_ux_settings_section_ssc_protection_form', 
-        'render_callback' => __NAMESPACE__ . '\ssc__textarea_cb',
-        'help_text_callback' => __NAMESPACE__ . '\ssc__form_invalid_contact_text_help_text_cb',
-        'editor_options' => [ ], 
+        'title'                 => 'Invalid Contact Text', 
+        'section'               => 'civicrm_ux_settings_section_ssc_protection_form', 
+        'default_value'         => get_default_template_parts( 'form_invalid_contact_text' ),
+        'render_callback'       => __NAMESPACE__ . '\ssc__textarea_cb',
+        'help_text_callback'    => __NAMESPACE__ . '\ssc__form_invalid_contact_text_help_text_cb',
+        'editor_options'        => [ ], 
     ],
     'email_message' => [ 
-        'title' => 'Email Message', 
-        'section' => 'civicrm_ux_settings_section_ssc_email', 
-        'render_callback' => __NAMESPACE__ . '\ssc__textarea_cb', 
-        'help_text_callback' => __NAMESPACE__ . '\ssc__email_message_help_text_cb',
-        'editor_options' => [ 
+        'title'                 => 'Email Message', 
+        'section'               => 'civicrm_ux_settings_section_ssc_email', 
+        'default_value'         => get_default_template_parts( 'email_message' ),
+        'render_callback'       => __NAMESPACE__ . '\ssc__textarea_cb', 
+        'help_text_callback'    => __NAMESPACE__ . '\ssc__email_message_help_text_cb',
+        'editor_options'        => [ 
             'media_buttons' => true,   // Show media upload buttons
             'textarea_rows' => 10,
         ], 
@@ -92,7 +138,12 @@ foreach ( $fields as $key => $field ) {
         $field['render_callback'],
         $page,
         $field['section'],
-        [ 'key' => $key, 'options' => $field['editor_options'], 'help' => $field['help_text_callback'] ]
+        [ 
+            'key'           => $key, 
+            'default_value' => $field['default_value'], 
+            'options'       => $field['editor_options'], 
+            'help'          => $field['help_text_callback'] 
+        ],
     );
 }
 
@@ -123,13 +174,20 @@ function ssc__textarea_cb( $args ) {
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
-    $value = isset( $options[ $key ] ) ? $options[ $key ] : '';
+    
+    $value = $options[ $key ] ?? '';
+
+    // Only attempt to load a template part for a default value if the option doesn't already have a value.
+    if ( !$value || empty( $value )) {
+        $filename = $args['default_value'] ?? '';
+        $value = load_template_part( $filename );
+    }
 
     $default_editor_options = [
         'media_buttons' => false,
         'textarea_rows' => 5,
-        'teeny' => false,
-        'quicktags' => true
+        'teeny'         => false,
+        'quicktags'     => true
     ];
     $override_editor_options = $args['options'] ?? [];
 
