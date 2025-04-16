@@ -2,7 +2,7 @@
 
 namespace CiviCRM_UX\Settings\SSC;
 
-$group  = 'civicrm_ux_options_group';
+$group  = 'civicrm_ux_options_group_ssc';
 $page   = 'civicrm-ux-settings-new-ssc'; // A tab on the page
 
 function get_option_name() {
@@ -10,7 +10,7 @@ function get_option_name() {
 }
 
 // WPCIVIUX-162 settings
-register_setting( 'civicrm_ux_options_group', get_option_name(), array(
+register_setting( $group, get_option_name(), array(
     'type' => 'array',
     'sanitize_callback' => __NAMESPACE__ . '\sanitize_self_serve_checksum',
 ) );

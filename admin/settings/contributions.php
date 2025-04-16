@@ -2,7 +2,7 @@
 
 namespace CiviCRM_UX\Settings\Contributions;
 
-$group  = 'civicrm_ux_options_group';
+$group  = 'civicrm_ux_options_group_contributions';
 $page   = 'civicrm-ux-settings-new-contributions'; // A tab on the page
 
 function get_option_name() {

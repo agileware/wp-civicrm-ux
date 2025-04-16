@@ -10,7 +10,7 @@ add_action( 'admin_init', 'CiviCRM_UX\register_settings' );
 function add_settings_page() {
     add_options_page(
         'CiviCRM UX Settings',       // Page title
-        'NEW CiviCRM UX Settings',                // Menu title
+        'CiviCRM UX Settings',                // Menu title
         'administrator',           // Capability
         'civicrm-ux-settings-new',        // Menu slug
         __NAMESPACE__ . '\render__settings_page' // Callback to render the page
@@ -65,7 +65,10 @@ function render__settings_page() {
             <?php
                 settings_fields( "civicrm_ux_options_group_$current_tab" );
                 do_settings_sections( "civicrm-ux-settings-new-$current_tab" );
-                submit_button();
+
+                if ( $current_tab !== 'general') {
+                    submit_button();
+                }
             ?>
         </form>
     </div>

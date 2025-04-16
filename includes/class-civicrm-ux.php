@@ -230,8 +230,8 @@ class Civicrm_Ux {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dequeue_styles', 9999);
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dequeue_scripts', 9999);
 
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_menu' );
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
+		//$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_menu' );
+		//$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
 		// WPCIVIUX-148 Implement plugin activation block
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'deactivate_blacklisted_plugins' );

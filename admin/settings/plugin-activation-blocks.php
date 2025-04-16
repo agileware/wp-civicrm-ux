@@ -2,11 +2,11 @@
 
 namespace CiviCRM_UX\Settings\PluginActivationBlocks;
 
-$group  = 'civicrm_ux_options_group';
+$group  = 'civicrm_ux_options_group_plugin-activation-blocks';
 $page   = 'civicrm-ux-settings-new-plugin-activation-blocks'; // A tab on the page
 
 // WPCIVIUX-148 settings
-register_setting( 'civicrm_ux_options_group', 'civicrm_plugin_activation_blocks' );
+register_setting( $group, 'civicrm_plugin_activation_blocks' );
 
 /**
  * 

@@ -2,9 +2,12 @@
 
 namespace CiviCRM_UX\Settings\General;
 
-$group  = 'civicrm_ux_options_group';
+$group  = 'civicrm_ux_options_group_general';
 $page   = 'civicrm-ux-settings-new-general'; // A tab on the page
-$setting_key = '';
+
+function get_option_name() {
+    return 'civicrm_ux_cf_turnstile';
+}
 
 /**
  * 

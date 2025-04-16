@@ -2,7 +2,7 @@
 
 namespace CiviCRM_UX\Settings\Memberships;
 
-$group  = 'civicrm_ux_options_group';
+$group  = 'civicrm_ux_options_group_memberships';
 $page   = 'civicrm-ux-settings-new-memberships'; // A tab on the page
 
 function get_option_name() {
