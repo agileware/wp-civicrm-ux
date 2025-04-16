@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 
+ * Defines hooks for Plugin Activation Blocks.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX\PluginActivationBlocks;
 
 // WPCIVIUX-148 Implement plugin activation block
@@ -10,7 +17,6 @@ add_action( 'activate_plugin', __NAMESPACE__ . '\prevent_blacklisted_plugin_acti
  * A list of plugins blacklisted from activation.
  * 
  * Define plugin paths here.
- * Define the corresponding defaults for civicrm_plugin_activation_blocks setting in Civicrm_Ux_Option_Store.
  */
 function get_blocked_plugins() {
     return [

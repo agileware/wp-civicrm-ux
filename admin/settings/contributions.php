@@ -1,15 +1,27 @@
 <?php
 
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX\Settings\Contributions;
 
-$group  = 'civicrm_ux_options_group_contributions';
-$page   = 'civicrm-ux-settings-contributions'; // A tab on the page
+use CiviCRM_UX\SettingsTabs;
 
-function get_option_name() {
-    return 'civicrm_contribution_ux';
-}
+const SLUG = 'contributions';
+const LABEL = 'Contributions';
+const GROUP  = 'civicrm_ux_options_group_contributions';
+const PAGE   = 'civicrm-ux-settings-contributions'; // A tab on the page
+const OPTION_NAME = 'civicrm_contribution_ux';
 
-register_setting( $group, get_option_name() );
+SettingsTabs::register( SLUG, LABEL, 20 );
+
+register_setting( GROUP, OPTION_NAME );
 
 /**
  * 
@@ -20,14 +32,14 @@ add_settings_section(
     'civicrm_ux_settings_section_contributions',
     'Contributions',
     __NAMESPACE__ . '\info_cb',
-    $page
+    PAGE
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_contribution_page_tweaks',
     'Contribution Page Tweaks',
     __NAMESPACE__ . '\contribution_page_tweaks_cb',
-    $page
+    PAGE
 );
 
 
@@ -62,13 +74,13 @@ $fields = [
 ];
 
 // Add the fields
-$option_name = get_option_name();
+$option_name = OPTION_NAME;
 foreach ($fields as $key => $field) {
     add_settings_field(
         "{$option_name}_{$key}",
         $field['title'],
         $field['render_callback'],
-        $page,
+        PAGE,
         $field['section'],
         [ 
             'key'           => $key, 
@@ -92,7 +104,7 @@ function info_cb() {
 function contribution_page_tweaks_cb() { }
 
 function checkbox_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );

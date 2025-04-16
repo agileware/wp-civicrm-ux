@@ -1,6 +1,17 @@
 <?php
 
+/**
+ * 
+ * Settings file.
+ * 
+ * Builds and renders the plugin settings page.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX;
+
+require_once plugin_dir_path( __FILE__ ) . 'class-civicrm-ux-settings-tabs.php';
 
 // Hook to add admin menu
 add_action( 'admin_menu', 'CiviCRM_UX\add_settings_page' );
@@ -11,28 +22,18 @@ const MENU_SLUG = 'civicrm-ux-settings';
 
 function add_settings_page() {
     add_options_page(
-        'CiviCRM UX Settings',       // Page title
-        'CiviCRM UX Settings',                // Menu title
-        'administrator',           // Capability
-        MENU_SLUG,        // Menu slug
-        __NAMESPACE__ . '\render__settings_page' // Callback to render the page
+        'CiviCRM UX Settings',
+        'CiviCRM UX Settings',
+        'administrator',
+        MENU_SLUG,
+        __NAMESPACE__ . '\render__settings_page'
     );
 }
 
-function get_settings_tabs() {
-    return [
-        'general' => 'General',
-        'memberships' => 'Memberships',
-        'contributions' => 'Contributions',
-        'ssc'  => 'Self Serve Checksum',
-        'cf-turnstile'  => 'Cloudflare Turnstile',
-        'ical' => 'iCal Feed',
-        'plugin-activation-blocks' => 'Plugin Activation Blocks',
-    ];
-}
-
+/**
+ * Register settings from settings files.
+ */
 function register_settings() {
-    // Register the settings
     $settings_dir = plugin_dir_path( __FILE__ ) . 'settings/';
 
     foreach ( glob( $settings_dir . '*.php' ) as $file ) {
@@ -44,7 +45,7 @@ function register_settings() {
  * Render the settings page.
  */
 function render__settings_page() {
-    $tabs = get_settings_tabs();
+    $tabs = SettingsTabs::get_all();
     $current_tab = $_GET['tab'] ?? 'general';
 
     ?>

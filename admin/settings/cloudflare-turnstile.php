@@ -1,16 +1,30 @@
 <?php
 
-namespace CiviCRM_UX\Settings\CloudflareTurnstile;
-
-$group  = 'civicrm_ux_options_group_cf-turnstile';
-$page   = 'civicrm-ux-settings-cf-turnstile'; // A tab on the page
-
-function get_option_name() {
-    return 'civicrm_ux_cf_turnstile';
-}
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
 
 // WPCIVIUX-167 settings
-register_setting( $group, get_option_name(), array(
+
+namespace CiviCRM_UX\Settings\CloudflareTurnstile;
+
+use CiviCRM_UX\SettingsTabs;
+
+const SLUG = 'cf-turnstile';
+const LABEL = 'Cloudflare Turnstile';
+const GROUP  = 'civicrm_ux_options_group_cf-turnstile';
+const PAGE   = 'civicrm-ux-settings-cf-turnstile'; // A tab on the page
+const OPTION_NAME = 'civicrm_ux_cf_turnstile';
+
+SettingsTabs::register( SLUG, LABEL, 40 );
+
+// WPCIVIUX-167 settings
+register_setting( GROUP, OPTION_NAME, array(
     'type' => 'array',
     'sanitize_callback' => __NAMESPACE__ . '\sanitize_cf_turnstile',
 ) );
@@ -24,7 +38,7 @@ add_settings_section(
     'civicrm_ux_settings_section_cloudflare_turnstile',
     'Cloudflare Turnstile',
     __NAMESPACE__ . '\info_cb',
-    $page
+    PAGE
 );
 
 
@@ -69,13 +83,13 @@ $fields = [
 ];
 
 // Add the fields
-$option_name = get_option_name();
+$option_name = OPTION_NAME;
 foreach ( $fields as $key => $field ) {
     add_settings_field(
         "{$option_name}_{$key}",
         $field['title'],
         $field['render_callback'],
-        $page,
+        PAGE,
         $field['section'],
         [ 
             'key'           => $key, 
@@ -103,7 +117,7 @@ function info_cb() {
 }
 
 function text_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
@@ -130,7 +144,7 @@ function text_cb( $args ) {
 }
 
 function select_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $choices = isset( $args['field_options']['choices'] ) ? $args['field_options']['choices'] : false;
     if ( !$choices ) {
@@ -174,7 +188,7 @@ function select_cb( $args ) {
  */
 function sanitize_cf_turnstile( $input ) {
     // Custom sanitize callback to handle HTML content
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
     $sanitized = [];
     foreach ($input as $field => $value) {
         switch ($field) {

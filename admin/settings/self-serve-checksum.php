@@ -1,16 +1,30 @@
 <?php
 
-namespace CiviCRM_UX\Settings\SSC;
-
-$group  = 'civicrm_ux_options_group_ssc';
-$page   = 'civicrm-ux-settings-ssc'; // A tab on the page
-
-function get_option_name() {
-    return 'self_serve_checksum';
-}
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
 
 // WPCIVIUX-162 settings
-register_setting( $group, get_option_name(), array(
+
+namespace CiviCRM_UX\Settings\SSC;
+
+use CiviCRM_UX\SettingsTabs;
+
+const SLUG = 'ssc';
+const LABEL = 'Self Serve Checksum';
+const GROUP  = 'civicrm_ux_options_group_ssc';
+const PAGE   = 'civicrm-ux-settings-ssc'; // A tab on the page
+const OPTION_NAME = 'self_serve_checksum';
+
+SettingsTabs::register( SLUG, LABEL, 30 );
+
+// WPCIVIUX-162 settings
+register_setting( GROUP, OPTION_NAME, array(
     'type' => 'array',
     'sanitize_callback' => __NAMESPACE__ . '\sanitize_self_serve_checksum',
 ) );
@@ -24,21 +38,21 @@ add_settings_section(
     'civicrm_ux_settings_section_self_serve_checksum',
     'Self Serve Checksum',
     __NAMESPACE__ . '\info_cb',
-    $page
+    PAGE
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_ssc_protection_form',
     'Self Serve Checksum',
     __NAMESPACE__ . '\ssc_protection_form_cb',
-    $page
+    PAGE
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_ssc_email',
     'Self Serve Checksum Email',
     __NAMESPACE__ . '\ssc_email_cb',
-    $page
+    PAGE
 );
 
 
@@ -130,13 +144,13 @@ $fields = [
 ];
 
 // Add the fields
-$option_name = get_option_name();
+$option_name = OPTION_NAME;
 foreach ( $fields as $key => $field ) {
     add_settings_field(
         "{$option_name}_{$key}",
         $field['title'],
         $field['render_callback'],
-        $page,
+        PAGE,
         $field['section'],
         [ 
             'key'           => $key, 
@@ -170,7 +184,7 @@ function ssc_email_cb() {
 }
 
 function ssc__textarea_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
@@ -251,7 +265,7 @@ function ssc__email_message_help_text_cb() {
  */
 function sanitize_self_serve_checksum( $input ) {
     // Custom sanitize callback to handle HTML content
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
     $sanitized = [];
     foreach ($input as $field => $value) {
         switch ($field) {

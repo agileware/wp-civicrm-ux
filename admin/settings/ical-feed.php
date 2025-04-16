@@ -1,17 +1,28 @@
 <?php
 
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX\Settings\iCal;
 
 use Civicrm_Ux_Shortcode_Event_ICal_Feed;
+use CiviCRM_UX\SettingsTabs;
 
-$group  = 'civicrm_ux_options_group_ical';
-$page   = 'civicrm-ux-settings-ical'; // A tab on the page
+const SLUG = 'ical';
+const LABEL = 'iCal Feed';
+const GROUP  = 'civicrm_ux_options_group_ical';
+const PAGE   = 'civicrm-ux-settings-ical'; // A tab on the page
+const OPTION_NAME = Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION;
 
-function get_option_name() {
-    return Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION;
-}
+SettingsTabs::register( SLUG, LABEL, 40 );
 
-register_setting( $group, get_option_name() );
+register_setting( GROUP, OPTION_NAME );
 
 /**
  * 
@@ -22,7 +33,7 @@ add_settings_section(
     'civicrm_ux_settings_section_ical_feed',
     'iCal Feed',
     __NAMESPACE__ . '\ical_feed_cb',
-    $page
+    PAGE
 );
 
 
@@ -36,7 +47,7 @@ add_settings_field(
     'ical-hash-field', // compatibility with old implementation
     'Random Hash',
     __NAMESPACE__ . '\ical_feed__hash_cb',
-    $page,
+    PAGE,
     'civicrm_ux_settings_section_ical_feed'
 );
 
@@ -52,7 +63,7 @@ function ical_feed_cb() {
 }
 
 function ical_feed__hash_cb() {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     // Build the URL
     $url_param = [ 'hash' => get_option(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION) ];

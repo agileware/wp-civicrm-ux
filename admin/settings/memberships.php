@@ -1,15 +1,27 @@
 <?php
 
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX\Settings\Memberships;
 
-$group  = 'civicrm_ux_options_group_memberships';
-$page   = 'civicrm-ux-settings-memberships'; // A tab on the page
+use CiviCRM_UX\SettingsTabs;
 
-function get_option_name() {
-    return 'civicrm_summary_options'; // Backwards compatibility
-}
+const SLUG = 'memberships';
+const LABEL = 'Memberships';
+const GROUP  = 'civicrm_ux_options_group_memberships';
+const PAGE   = 'civicrm-ux-settings-memberships'; // A tab on the page
+const OPTION_NAME = 'civicrm_summary_options'; // Backwards compatibility
 
-register_setting( $group, get_option_name() );
+SettingsTabs::register( SLUG, LABEL, 10 );
+
+register_setting( GROUP, OPTION_NAME );
 
 /**
  * 
@@ -20,7 +32,14 @@ add_settings_section(
     'civicrm_ux_settings_section_memberships',
     'Memberships',
     __NAMESPACE__ . '\info_cb',
-    $page
+    PAGE
+);
+
+add_settings_section(
+    'civicrm_ux_settings_section_membership_summary',
+    'Membership Summary',
+    __NAMESPACE__ . '\membership_summary_cb',
+    PAGE
 );
 
 
@@ -34,21 +53,21 @@ add_settings_section(
 $fields = [
     'civicrm_summary_show_renewal_date' => [ 
         'title'                 => 'Renewal Date', 
-        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'section'               => 'civicrm_ux_settings_section_membership_summary', 
         'default_value'         => '30',
         'render_callback'       => __NAMESPACE__ . '\show_renewal_date_cb',
         'help_text_callback'    => null,
     ],
     'civicrm_summary_membership_join_URL' => [ 
         'title'                 => 'Membership Join Page', 
-        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'section'               => 'civicrm_ux_settings_section_membership_summary', 
         'default_value'         => '/join/',
         'render_callback'       => __NAMESPACE__ . '\text_cb',
         'help_text_callback'    => __NAMESPACE__ . '\membership_join_url_help_text_cb',
     ],
     'civicrm_summary_membership_renew_URL' => [ 
         'title'                 => 'Membership Renewal Page', 
-        'section'               => 'civicrm_ux_settings_section_memberships', 
+        'section'               => 'civicrm_ux_settings_section_membership_summary', 
         'default_value'         => '/renew/',
         'render_callback'       => __NAMESPACE__ . '\text_cb',
         'help_text_callback'    => __NAMESPACE__ . '\membership_renew_url_help_text_cb',
@@ -56,13 +75,13 @@ $fields = [
 ];
 
 // Add the fields
-$option_name = get_option_name();
+$option_name = OPTION_NAME;
 foreach ($fields as $key => $field) {
     add_settings_field(
         "{$option_name}_{$key}",
         $field['title'],
         $field['render_callback'],
-        $page,
+        PAGE,
         $field['section'],
         [ 'key' => $key, 'default_value' => $field['default_value'], 'help' => $field['help_text_callback'] ],
     );
@@ -79,8 +98,10 @@ function info_cb() {
     printf( '<p><strong>TODO:</strong> Add documentation for what this is for and what it does.</p>' );
 }
 
+function membership_summary_cb() { }
+
 function show_renewal_date_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );
@@ -100,7 +121,7 @@ function show_renewal_date_cb( $args ) {
 }
 
 function text_cb( $args ) {
-    $option_name = get_option_name();
+    $option_name = OPTION_NAME;
 
     $key = $args['key'];
     $options = get_option( $option_name, [] );

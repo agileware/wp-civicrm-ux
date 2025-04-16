@@ -1,13 +1,25 @@
 <?php
 
+/**
+ * 
+ * Defines settings.
+ * 
+ * Auto-loaded from civicrm-ux-settings.php.
+ * 
+ * @author     Agileware <support@agileware.com.au>
+ */
+
 namespace CiviCRM_UX\Settings\General;
 
-$group  = 'civicrm_ux_options_group_general';
-$page   = 'civicrm-ux-settings-general'; // A tab on the page
+use CiviCRM_UX\SettingsTabs;
 
-function get_option_name() {
-    return 'civicrm_ux_general';
-}
+const SLUG = 'general';
+const LABEL = 'General';
+const GROUP  = 'civicrm_ux_options_group_general';
+const PAGE   = 'civicrm-ux-settings-general'; // A tab on the page
+const OPTION_NAME = 'civicrm_ux_general';
+
+SettingsTabs::register( SLUG, LABEL, 0 );
 
 /**
  * 
@@ -18,14 +30,14 @@ add_settings_section(
     'civicrm_ux_settings_section_usage_docs',
     'Usage Documentation',
     __NAMESPACE__ . '\usage_docs_cb',
-    $page
+    PAGE
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_thankyou',
     'How To Say Thank You!',
     __NAMESPACE__ . '\thankyou_cb',
-    $page
+    PAGE
 );
 
 
