@@ -20,7 +20,7 @@ const GROUP  = 'civicrm_ux_options_group_ical';
 const PAGE   = 'civicrm-ux-settings-ical'; // A tab on the page
 const OPTION_NAME = Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION;
 
-SettingsTabs::register( SLUG, LABEL, 40 );
+SettingsTabs::register( SLUG, LABEL, 50 );
 
 register_setting( GROUP, OPTION_NAME );
 

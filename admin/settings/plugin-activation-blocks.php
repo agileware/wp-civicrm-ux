@@ -21,7 +21,7 @@ const GROUP  = 'civicrm_ux_options_group_plugin-activation-blocks';
 const PAGE   = 'civicrm-ux-settings-plugin-activation-blocks'; // A tab on the page
 const OPTION_NAME = 'civicrm_plugin_activation_blocks';
 
-SettingsTabs::register( SLUG, LABEL, 40 );
+SettingsTabs::register( SLUG, LABEL, 60 );
 
 register_setting( GROUP, 'civicrm_plugin_activation_blocks' );
 
