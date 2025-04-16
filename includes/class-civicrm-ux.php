@@ -73,11 +73,6 @@ class Civicrm_Ux {
 	 */
 	protected $version;
 
-	/**
-	 * @var Civicrm_Ux_Option_Store
-	 */
-	protected $store;
-
 	static public function getInstance( $plugin_file = '../civicrm-ux.php' ) {
 		if ( self::$singleton == NULL ) {
 			self::$singleton = new Civicrm_Ux($plugin_file);
@@ -120,9 +115,6 @@ class Civicrm_Ux {
 		$this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
 
 		$this->loader->add_action( 'civicrm_basepage_parsed', $this, 'civicrm_basepage_actions' );
-
-		$this->register_options();
-
 	}
 
 	/**
@@ -158,7 +150,6 @@ class Civicrm_Ux {
 		 * The helper class.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-helper.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-civicrm-ux-option-store.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/utils/class-civicrm-ux-validators.php';
 
 		// All module mangers and instances class
@@ -189,7 +180,6 @@ class Civicrm_Ux {
 
 		$this->loader = new Civicrm_Ux_Loader();
 		$this->helper = new Civicrm_Ux_Helper( $this );
-		$this->store  = new Civicrm_Ux_Option_Store();
 
 		// Add utility classes
 		$this->loader->load( 'includes/utils' );
@@ -276,10 +266,6 @@ class Civicrm_Ux {
 		$manager = new Civicrm_Ux_REST_Manager( $this );
 
 		$this->loader->add_action( 'rest_api_init', $manager, 'register_rest_routes' );
-	}
-
-	private function register_options() {
-		// TODO move plugin options here
 	}
 
 	/**
@@ -394,10 +380,6 @@ class Civicrm_Ux {
 	 */
 	public function get_loader() {
 		return $this->loader;
-	}
-
-	public function get_store() {
-		return $this->store;
 	}
 
 	/**
