@@ -118,9 +118,7 @@ class Civicrm_Ux_Public {
 			wp_enqueue_script( 'wp-civicrm-ux-filter', plugin_dir_url( __FILE__ ) . '/js/wp-civicrm-ux-filter.js', array('jquery'), $this->version, true );
 		}
 
-    	$opt_contribution_ux = Civicrm_Ux::getInstance()
-		                 ->get_store()
-		                 ->get_option( 'civicrm_contribution_ux' );
+		$opt_contribution_ux = get_option( 'civicrm_contribution_ux', [] );
 
 		$options_map = [
 			'is_recur_default'     => isset($opt_contribution_ux['is_recur_default']),

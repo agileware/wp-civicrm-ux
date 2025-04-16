@@ -64,9 +64,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$url = $this->get_protected_page_url();
 
 		// Get the Self Serve Checksum settings
-		$self_serve_checksum = Civicrm_Ux::getInstance()
-			->get_store()
-			->get_option('self_serve_checksum');
+		$self_serve_checksum = get_option( 'self_serve_checksum', [] );
 		
 		$formText = wpautop( $self_serve_checksum['form_text'] );
 
@@ -111,9 +109,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 	private function getTurnstile() {
 		// Check if Cloudflare Turnstile Sitekey and Secret Key are provided.
-		$civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
-                        ->get_store()
-                        ->get_option('civicrm_ux_cf_turnstile');
+		$civicrm_ux_cf_turnstile = get_option( 'civicrm_ux_cf_turnstile', [] );
 
 		return !empty($civicrm_ux_cf_turnstile['sitekey']) && !empty($civicrm_ux_cf_turnstile['secret_key']) 
 			? '<div class="cf-turnstile" data-sitekey="' . $civicrm_ux_cf_turnstile['sitekey'] . 
@@ -126,9 +122,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	 * Verify the Cloudflare Turnstile response.
 	 */
 	private function verify_turnstile($turnstileResponse) {
-		$civicrm_ux_cf_turnstile = Civicrm_Ux::getInstance()
-                        ->get_store()
-                        ->get_option('civicrm_ux_cf_turnstile');
+		$civicrm_ux_cf_turnstile = get_option( 'civicrm_ux_cf_turnstile', [] );
 		
 		$secret = !empty($civicrm_ux_cf_turnstile['secret_key']) ? $civicrm_ux_cf_turnstile['secret_key'] : false;
 		if ( !$secret ) {
@@ -240,9 +234,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			$url = esc_url( $this->get_base_url( $_POST['ss-cs-url'] ) );
 
 			// Get the Self Serve Checksum settings
-			$self_serve_checksum_setting = Civicrm_Ux::getInstance()
-				->get_store()
-				->get_option( 'self_serve_checksum' );
+			$self_serve_checksum_setting = get_option( 'self_serve_checksum', [] );
 
 			/**
 			 * WARNING 

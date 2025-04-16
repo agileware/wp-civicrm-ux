@@ -107,12 +107,10 @@ class Civicrm_Ux_Membership_Utils {
 		$membership_summary_status  = '';
 		$renewal_date_format        = '';
 
-		$opt                       = Civicrm_Ux::getInstance()
-		                                       ->get_store()
-		                                       ->get_option( 'civicrm_summary_options' );
-		$summary_show_join_URL     = $opt['civicrm_summary_membership_join_URL'];
-		$summary_show_renewal_URL  = $opt['civicrm_summary_membership_renew_URL'];
-		$summary_show_renewal_date = $opt['civicrm_summary_show_renewal_date'];
+		$opt 						= get_option( 'civicrm_summary_options', [] );
+		$summary_show_join_URL     	= $opt['civicrm_summary_membership_join_URL'];
+		$summary_show_renewal_URL  	= $opt['civicrm_summary_membership_renew_URL'];
+		$summary_show_renewal_date 	= $opt['civicrm_summary_show_renewal_date'];
 
 		if ( civicrm_initialize() ) {
 
