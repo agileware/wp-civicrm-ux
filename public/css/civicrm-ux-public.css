@@ -3,6 +3,18 @@
  * included in this file.
  */
 
+.screen-reader-text {
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
  .civicrm-event-listing h2, .civicrm-event-listing h3,
  .civicrm-event-listing p {
      margin: 0;
@@ -141,7 +153,28 @@
     display: none;
 }
 
- /* Self Serve Checksum */
- .ss-cs-status-message {
+/* Self Serve Checksum */
+.ss-cs-status-message {
     font-size: 1.2em;
- }
+}
+
+.ss-cs-form-text {
+    margin: 1rem 0;
+}
+
+.ss-cs-form {
+    fieldset {
+        padding: 0;
+        border: 0;
+        margin: 0;
+    }
+
+    label.ss-cs-email {
+        font-weight: 500;
+        margin-right: 1em;
+    }
+    
+    .cf-turnstile {
+        margin: 2rem 0 1rem;
+    }
+}
