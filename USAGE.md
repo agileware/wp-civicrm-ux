@@ -530,6 +530,8 @@ add_filter('ux_self_serve_checksum_email_subject', function($subject, $pageTitle
 }, 10, 2);
 ```
 
+You can also override the Protection Form template in your theme. Copy `wp-civicrm-ux/templates/shortcode/shortcode-self-serve-checksum.php` into your theme folder at `templates/shortcode/`.
+
 ### Cloudflare Turnstile
 You can protect your Self Serve Checksum Form against spam using the free service [Cloudflare Turnstile](https://www.cloudflare.com/en-gb/products/turnstile/). Once you have a sitekey and secret key, simply add them to the settings.
 
