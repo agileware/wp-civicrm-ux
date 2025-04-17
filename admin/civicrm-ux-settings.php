@@ -21,9 +21,10 @@ add_action( 'admin_init', 'CiviCRM_UX\register_settings' );
 const MENU_SLUG = 'civicrm-ux-settings';
 
 function add_settings_page() {
-    add_options_page(
-        'CiviCRM UX Settings',
-        'CiviCRM UX Settings',
+    add_submenu_page(
+        'CiviCRM',                    // Parent slug: CiviCRM menu
+        __( 'CiviCRM UX Settings', 'civicrm-ux' ),
+        __( 'CiviCRM UX Settings', 'civicrm-ux' ),
         'administrator',
         MENU_SLUG,
         __NAMESPACE__ . '\render__settings_page'
@@ -60,7 +61,7 @@ function render__settings_page() {
             // Render tab navigation
             foreach ( $tabs as $slug => $title ) {
                 $active = ( $current_tab === $slug ) ? 'nav-tab-active' : '';
-                $url = admin_url( 'options-general.php?page=' . MENU_SLUG . '&tab=' . $slug );
+                $url = admin_url( 'admin.php?page=' . MENU_SLUG . '&tab=' . $slug );
                 echo "<a class='nav-tab $active' href='$url'>$title</a>";
             }
         ?>
