@@ -108,7 +108,7 @@ foreach ( $fields as $key => $field ) {
  * 
  */
 function info_cb() {
-    printf ( '<p>Protect your Self Serve Checksum Form against spam using Cloudflare Turnstile.</p>' );
+    echo '<p>Protect your Self Serve Checksum Form against spam using Cloudflare Turnstile.</p>';
     printf ( '<p><a href="%s" target="_blank">Learn more about this free service.</a></p>',
              esc_url('https://www.cloudflare.com/en-gb/products/turnstile/') );
     printf ( '<p>Create a widget and get your sitekey and secret key from <a href="%1$s" target="_blank">%1$s</a></p>',

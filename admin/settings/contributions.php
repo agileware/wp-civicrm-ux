@@ -37,7 +37,7 @@ add_settings_section(
 
 add_settings_section(
     'civicrm_ux_settings_section_contribution_page_tweaks',
-    'Contribution Page Tweaks',
+    '', // Leave title blank to suppress <h2>
     __NAMESPACE__ . '\contribution_page_tweaks_cb',
     PAGE
 );
@@ -98,10 +98,12 @@ foreach ($fields as $key => $field) {
  * 
  */
 function info_cb() {
-    printf( '<p><strong>TODO:</strong> Add documentation for what this is for and what it does.</p>' );
+    echo '<p><strong>TODO:</strong> Add documentation for what this is for and what it does.</p>';
 }
 
-function contribution_page_tweaks_cb() { }
+function contribution_page_tweaks_cb() { 
+    echo '<h3>Contribution Page Tweaks</h3>';
+}
 
 function checkbox_cb( $args ) {
     $option_name = OPTION_NAME;

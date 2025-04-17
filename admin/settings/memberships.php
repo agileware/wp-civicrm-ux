@@ -37,7 +37,7 @@ add_settings_section(
 
 add_settings_section(
     'civicrm_ux_settings_section_membership_summary',
-    'Membership Summary',
+    '', // Leave title blank to suppress <h2>
     __NAMESPACE__ . '\membership_summary_cb',
     PAGE
 );
@@ -95,10 +95,12 @@ foreach ($fields as $key => $field) {
  * 
  */
 function info_cb() {
-    printf( '<p><strong>TODO:</strong> Add documentation for what this is for and what it does.</p>' );
+    echo '<p><strong>TODO:</strong> Add documentation for what this is for and what it does.</p>';
 }
 
-function membership_summary_cb() { }
+function membership_summary_cb() { 
+    echo '<h3>Membership Summary</h3>';
+}
 
 function show_renewal_date_cb( $args ) {
     $option_name = OPTION_NAME;
@@ -117,7 +119,7 @@ function show_renewal_date_cb( $args ) {
             "{$option_name}[$key]",
             $value
     );
-    printf( '<p class="description">The number of days to show the renewal notice and URL.</p>' );
+    echo '<p class="description">The number of days to show the renewal notice and URL.</p>';
 }
 
 function text_cb( $args ) {
@@ -147,9 +149,9 @@ function text_cb( $args ) {
 }
 
 function membership_join_url_help_text_cb() {
-    printf( '<p class="description">URL for the Membership Join page.</p>' );
+    echo '<p class="description">URL for the Membership Join page.</p>';
 }
 
 function membership_renew_url_help_text_cb() {
-    printf( '<p class="description">URL for the Membership Join page.</p>' );
+    echo '<p class="description">URL for the Membership Join page.</p>';
 }

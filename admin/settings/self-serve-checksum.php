@@ -43,14 +43,14 @@ add_settings_section(
 
 add_settings_section(
     'civicrm_ux_settings_section_ssc_protection_form',
-    'Self Serve Checksum',
+    '', // Leave title blank to suppress <h2>
     __NAMESPACE__ . '\ssc_protection_form_cb',
     PAGE
 );
 
 add_settings_section(
     'civicrm_ux_settings_section_ssc_email',
-    'Self Serve Checksum Email',
+    '', // Leave title blank to suppress <h2>
     __NAMESPACE__ . '\ssc_email_cb',
     PAGE
 );
@@ -169,18 +169,20 @@ foreach ( $fields as $key => $field ) {
  * 
  */
 function info_cb() {
-    printf ( '<p>The <code>[ux_self_serve_checksum]</code> shortcode can be used to protect your forms and force a valid checksum before form submission.</p>' );
+    echo '<p>The <code>[ux_self_serve_checksum]</code> shortcode can be used to protect your forms and force a valid checksum before form submission.</p>';
     printf ( '<p>Read more on how to use the shortcode in the <a href="%s" target="_blank">CiviCRM UX User Guide.</a></p>',
              esc_url('https://github.com/agileware/wp-civicrm-ux/blob/GFCV-107/USAGE.md#self-serve-checksum-shortcode') );
-    printf ( '<p>Configure the contents of the Self Serve Checksum request form and the email to be sent to the user below.</p>' );
+    echo '<p>Configure the contents of the Self Serve Checksum request form and the email to be sent to the user below.</p>';
 }
 
 function ssc_protection_form_cb() {
-    printf ( '<p>Configure the messings around the Self Serve Checksum Protection form on the front end.</p>' );
+    echo '<h3>Protection Form</h3>';
+    echo '<p>Configure the messings around the Self Serve Checksum Protection Form on the front end.</p>';
 }
 
 function ssc_email_cb() {
-    printf ( '<p>This email will be sent to users to complete their authentication via the Self Serve Checksum Protection Form, and grant them access to the protected page.</p>' );
+    echo '<h3>Self Serve Checksum Email</h3>';
+    echo '<p>This email will be sent to users to complete their authentication via the Self Serve Checksum Protection Form, and grant them access to the protected page.</p>';
 }
 
 function ssc__textarea_cb( $args ) {
@@ -227,33 +229,33 @@ function ssc__textarea_cb( $args ) {
 }
 
 function ssc__form_text_help_text_cb() {
-    printf( '<p>Appears above the Self Serve Checksum protection form.</p>' );
+    echo '<p>Appears above the Self Serve Checksum protection form.</p>';
 }
 
 function ssc__form_confirmation_text_help_text_cb() {
-    printf( '<p>Informs the user that their request to view the protected form has been confirmed. An email will be sent to them with the link.</p>
+    echo '<p>Informs the user that their request to view the protected form has been confirmed. An email will be sent to them with the link.</p>
             <p>The following tokens are available to help you build your content:</p>
             <ul>
                 <li><code>{email_address}</code> - Outputs the email address the user provided.</li>
                 <li><code>{page_title}</code> - Outputs the title of the form page the email was requested from.</li>
-            </ul>' );
+            </ul>';
 }
 
 function ssc__form_invalid_contact_text_help_text_cb() {
-    printf( '<p>Informs the user that their email address is not currently in your CiviCRM records. No email will be sent to them.</p>
+    echo '<p>Informs the user that their email address is not currently in your CiviCRM records. No email will be sent to them.</p>
             <p>The following tokens are available to help you build your content:</p>
             <ul>
                 <li><code>{email_address}</code> - Outputs the email address the user provided.</li>
                 <li><code>{page_title}</code> - Outputs the title of the form page the email was requested from.</li>
-            </ul>' );
+            </ul>';
 }
 
 function ssc__email_message_help_text_cb() {
-    printf( '<p>Use the following tokens to build your email message to the user:</p>
+    echo '<p>Use the following tokens to build your email message to the user:</p>
             <ul>
                 <li><code>{checksum_url}</code> - <strong>Required.</strong> Outputs the unique URL for the contact to complete the form.</li>
                 <li><code>{page_title}</code> - Outputs the title of the form page the email was requested from.</li>
-            </ul>' );
+            </ul>';
 }
 
 
