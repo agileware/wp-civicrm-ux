@@ -190,8 +190,15 @@ function sanitize_cf_turnstile( $input ) {
     // Custom sanitize callback to ensure whitespace is trimmed
     $sanitized = [];
     foreach ($input as $field => $value) {
-        if ( $field === 'sitekey' || $field === 'secret_key' ) {
-            $sanitized[$field] = sanitize_text_field($value);
+        switch ( $field ) {
+            case 'sitekey':
+            case 'secret_key':
+                $sanitized[$field] = sanitize_text_field($value);
+                break;
+            case 'theme':
+                $allowed = [ 'auto', 'light', 'dark' ]; // Should match choices defined in $fields
+                $sanitized[$field] = in_array( $value, $allowed, true ) ? $value : '';
+                break;
         }
     }
 
