@@ -16,24 +16,48 @@
 function civicrm_ux_load_template_part( $slug, $name, $args = [] ) {
     do_action( "get_template_part_{$slug}", $slug, $name, $args );
 
-    $templates = [
-        ...array_merge(...array_map(function ($prefix) use ($slug, $name) {
-            return [
-                "{$prefix}/{$slug}/{$slug}-{$name}.php",
-                "{$prefix}/{$slug}/{$name}.php",
-                "{$prefix}/{$slug}-{$name}.php",
-            ];
-        }, ['templates', 'template-parts'])),
-        "{$slug}-{$name}.php" ];
+    $extensions = [ 'php', 'html' ];
+    $locations  = [ 'templates', 'template-parts' ];
+
+    // Build all possible template file paths
+    $templates = [];
+
+    foreach ( $locations as $prefix ) {
+        foreach ( $extensions as $ext ) {
+            $templates[] = "{$prefix}/{$slug}/{$slug}-{$name}.{$ext}";
+            $templates[] = "{$prefix}/{$slug}/{$name}.{$ext}";
+            $templates[] = "{$prefix}/{$slug}-{$name}.{$ext}";
+        }
+    }
+
+    // One final fallback (unscoped) option
+    foreach ( $extensions as $ext ) {
+        $templates[] = "{$slug}-{$name}.{$ext}";
+    }
 
 	do_action( 'get_template_part', $slug, $name, $templates, $args );
 
     // Allow themes to override the plugin's template part
     $template = locate_template( $templates );
 
-    // If not found in the theme, load from the plugin's template directory
+    // If not found in the theme, try loading from the plugin's template directory
     if ( ! $template ) {
-        $template = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/' . $slug . '/' . $slug . '-' . $name . '.php';
+        $base_path = trailingslashit( WP_CIVICRM_UX_PLUGIN_PATH ) . "templates/{$slug}/";
+    
+        foreach ( $extensions as $ext ) {
+            foreach ( [ "{$slug}-{$name}.{$ext}", "{$name}.{$ext}" ] as $filename ) {
+                $full_path = $base_path . $filename;
+    
+                if ( file_exists( $full_path ) ) {
+                    $template = $full_path;
+                    break 2; // exit both loops
+                }
+            }
+        }
+    }
+
+    if ( ! $template || ! file_exists( $template ) ) {
+        return; // Bail silently if nothing found
     }
 
     // Extract arguments to be used in the template
@@ -41,12 +65,7 @@ function civicrm_ux_load_template_part( $slug, $name, $args = [] ) {
         extract( $args );
     }
 
-    /**
-     * Load the template file
-     */
-    if ( file_exists( $template ) ) {
-        load_template($template, false, $args);
-    }
+    load_template($template, false, $args);
 }
 
 function civicrm_ux_get_template_part( $slug, $name, $args = [] ) {
