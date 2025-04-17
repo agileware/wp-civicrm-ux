@@ -65,37 +65,24 @@ add_settings_section(
 // Retrieve template parts for these fields if they exist
 function get_default_template_parts( $key ) {
     $default_templates = [
-        'form_text'                 => 'ss-cs-form-text.html',
-        'form_confirmation_text'    => 'ss-cs-form-confirmation-text.html',
-        'form_invalid_contact_text' => 'ss-cs-form-invalid-contact-text.html',
-        'email_message'             => 'ss-cs-email-message.html',
+        'form_text'                 => 'self-serve-checksum-form-text.html',
+        'form_confirmation_text'    => 'self-serve-checksum-form-confirmation-text.html',
+        'form_invalid_contact_text' => 'self-serve-checksum-form-invalid-contact-text.html',
+        'email_message'             => 'self-serve-checksum-email-message.html',
     ];
 
     return $default_templates[ $key ];
 }
 
 function load_template_part( $filename ) {
-    // Define the path to the template files
-    $template_dir_plugin = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/self-serve-checksum/';
-    $template_dir_theme  = get_stylesheet_directory() . '/civicrm-ux/templates/self-serve-checksum/'; // Child theme
-    $template_dir_parent = get_template_directory()   . '/civicrm-ux/templates/self-serve-checksum/'; // Fallback to parent
+    // Derive slug and name from the filename
+    $name = basename( $filename, '.php' ); // remove .php if present
+    $name = basename( $filename, '.html' ); // also support .html if needed
 
-    $content = false;
+    // Use the slug based on plugin template directory structure
+    $slug = 'self-serve-checksum';
 
-    // Check child theme override
-    if ( file_exists( $template_dir_theme . $filename ) ) {
-        $content = file_get_contents( $template_dir_theme . $filename );
-    }
-    // Check parent theme override
-    elseif ( file_exists( $template_dir_parent . $filename ) ) {
-        $content = file_get_contents( $template_dir_parent . $filename );
-    }
-    // Fall back to plugin default
-    elseif ( file_exists( $template_dir_plugin . $filename ) ) {
-        $content = file_get_contents( $template_dir_plugin . $filename );
-    }
-
-    return $content;
+    return civicrm_ux_get_template_part( $slug, $name );
 }
 
 
