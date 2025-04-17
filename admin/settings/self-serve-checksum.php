@@ -64,25 +64,22 @@ add_settings_section(
  */
 // Retrieve template parts for these fields if they exist
 function get_default_template_parts( $key ) {
+    // Do not include the file extension. Will check for both .php and .html files.
     $default_templates = [
-        'form_text'                 => 'self-serve-checksum-form-text.html',
-        'form_confirmation_text'    => 'self-serve-checksum-form-confirmation-text.html',
-        'form_invalid_contact_text' => 'self-serve-checksum-form-invalid-contact-text.html',
-        'email_message'             => 'self-serve-checksum-email-message.html',
+        'form_text'                 => 'form-text',
+        'form_confirmation_text'    => 'form-confirmation-text',
+        'form_invalid_contact_text' => 'form-invalid-contact-text',
+        'email_message'             => 'email-message',
     ];
 
     return $default_templates[ $key ];
 }
 
 function load_template_part( $filename ) {
-    // Derive slug and name from the filename
-    $name = basename( $filename, '.php' ); // remove .php if present
-    $name = basename( $filename, '.html' ); // also support .html if needed
-
     // Use the slug based on plugin template directory structure
     $slug = 'self-serve-checksum';
 
-    return civicrm_ux_get_template_part( $slug, $name );
+    return civicrm_ux_get_template_part( $slug, $filename );
 }
 
 
