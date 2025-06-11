@@ -174,18 +174,22 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					if ( array_key_exists( 'data_type', $field ) && ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) ) {
 						$output = isset( $match['format'] ) ? Civicrm_Ux::getInstance()->strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
 					} elseif ( ( $field['fk_entity'] ?? NULL ) == 'File' ) {
-						$output = Civicrm_Ux::in_basepage( function () use ( $output ) {
-							return htmlentities( civicrm_api3( 'Attachment', 'getvalue', [
-								'id'     => (int) $output,
-								'return' => 'url',
-							] ) );
-						} );
+						try {
+							$output = Civicrm_Ux::in_basepage(function () use ($output) {
+								return htmlentities(civicrm_api3('Attachment', 'getvalue', [
+									'id'     => (int) $output,
+									'return' => 'url',
+								]));
+							});
 
-						if ( preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m ) ) {
-							$output = '<img src="' . $output . '"'
-							          . ( $m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '' ) .
-							          ' alt="' . ( $m['alt'] ? htmlentities( $m['alt'] ) : '" role="presentation' ) .
-							          '">';
+							if (preg_match('/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m)) {
+								$output = '<img src="' . $output . '"'
+									. ($m['w'] ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '') .
+									' alt="' . ($m['alt'] ? htmlentities($m['alt']) : '" role="presentation') .
+									'">';
+							}
+						} catch (\Exception $e) {
+							$output = '';
 						}
 					} else {
 						if ( is_array( $output ) ) {
