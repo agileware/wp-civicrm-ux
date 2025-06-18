@@ -371,6 +371,7 @@ class Civicrm_Ux {
 	 * @param Closure $callback
 	 *
 	 * @return any
+	 * @throws Throwable
 	 */
 	public static function in_basepage( Closure $callback ) {
 		global $post;
@@ -378,9 +379,17 @@ class Civicrm_Ux {
 
 		$post = get_page_by_path( strtolower( CRM_Core_Config::singleton()->wpBasePage ?? 'civicrm' ) ) ?? $post;
 
-		$return = $callback();
+		try {
+			$return = $callback();
+		} catch(Throwable $e) {
+			$return = $e;
+		}
 
 		$post = $actual_post;
+
+		if($return instanceof Throwable) {
+			throw $return;
+		}
 
 		return $return;
 	}
