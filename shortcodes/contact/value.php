@@ -111,6 +111,10 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			return $values;
 		}
 
-		return implode( ', ', $values );
+		$content = implode( ', ', $values );
+
+		$filtered = apply_filters('ux_contact_value/output', $content, $values, $this->mod_atts);
+
+		return $filtered;
 	}
 }
