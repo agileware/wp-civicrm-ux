@@ -387,7 +387,7 @@ class Civicrm_Ux {
 		}
 
 		if ( !empty( $message ) ) {
-			return civicrm_ux_get_template_part( 'shortcode', 'civicrm-custom-event-register', array_merge( $attr, ['message' => $message] ));
+			return civicrm_ux_get_template_part( 'shortcode', 'civicrm-custom-event-register', array_merge( $attr, ['message' => $message, 'event' => $event] ));
 		}
 
 		// Let the shortcode render normally

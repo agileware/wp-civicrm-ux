@@ -9,7 +9,8 @@
  * To customise, copy this file into your theme and make changes as needed.
  */
 
-$message = $args['message'] ?? "";
+$message    = isset($args['message']) ? $args['message'] : "";
+$event      = isset($args['event']) ? $args['event'] : [];
 ?>
 
 
