@@ -117,6 +117,8 @@ class Civicrm_Ux {
 
 		$this->loader->add_action( 'civicrm_config', $this, 'civicrm_config' );
 
+		$this->loader->add_action( 'pre_do_shortcode_tag', $this, 'civicrm_pre_shortcode_filter', 10, 3 );
+
 		$this->loader->add_action( 'do_shortcode_tag', $this, 'civicrm_shortcode_filter', 10, 3 );
 
 		$this->loader->add_action( 'civicrm_basepage_parsed', $this, 'civicrm_basepage_actions' );
@@ -312,6 +314,84 @@ class Civicrm_Ux {
 		if ( ( strpos( $_GET['q'] ?? '', 'civicrm/ajax' ) === 0 ) && ! defined( 'DOING_AJAX' ) ) {
 			define( 'DOING_AJAX', TRUE );
 		}
+	}
+
+	public function get_event_status_message($event) {
+		$now = new \DateTime();
+	
+		// Check if registration has not opened yet
+		if (!empty($event['registration_start_date']) && $now < new \DateTime($event['registration_start_date'])) {
+			$formattedDate = \CRM_Utils_Date::customFormat($event['registration_start_date']);
+			return sprintf('Registration for this event opens on %s', $formattedDate);
+		}
+	
+		// Check if registration has already ended
+		if (!empty($event['registration_end_date']) && $now > new \DateTime($event['registration_end_date'])) {
+			$formattedDate = \CRM_Utils_Date::customFormat($event['registration_end_date']);
+			return sprintf('Registration for this event ended on %s', $formattedDate);
+		}
+	
+		// Check if the event is full (and waitlist is not enabled)
+		$maxParticipants = !empty($event['max_participants']) ? (int) $event['max_participants'] : 0;
+		if ($maxParticipants > 0 && $event['participant_count'] >= $maxParticipants && empty($event['has_waitlist'])) {
+			return 'This event is currently full.';
+		}
+	
+		// If none of the above, registration is open
+		return '';
+	}
+
+	public function civicrm_pre_shortcode_filter( $return, $tag, $attr ) {
+		// Prevent the [civicrm component="event" action="register"] shortcode from
+		// rendering when the registrations are full and waitlist is not enabled.
+		if ( 'civicrm' !== $tag || empty( $attr['component'] ) || $attr['component'] !== 'event' || empty( $attr['action'] ) || $attr['action'] !== 'register' ) {
+			return false;
+		}
+
+		// Get the Event ID from the URL query string
+		if (empty($_REQUEST['id']) || !is_numeric($_REQUEST['id'])) {
+			return false; // No ID found, let CiviCRM handle the error
+		}
+		$eventId = (int) $_REQUEST['id'];
+
+		$message = '';
+
+		try {
+			// Get the current status of the event
+			$event = \Civi\Api4\Event::get(FALSE)
+									->addWhere('id', '=', $eventId)
+									->addSelect(
+										'registration_start_date',
+										'registration_end_date',
+										'max_participants',
+										'has_waitlist',
+										'is_online_registration',
+										'COUNT(participant.id) AS participant_count' // Fetches the current number of participants
+									)
+									->addJoin('Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id'], ['participant.status_id.is_counted', '=', TRUE])
+									->execute()
+									->single();
+
+			if ( !$event) {
+				$message = 'Could not retrieve event information.';
+			}
+
+			// Do not output anything if online registration is not open
+			if ( !$event['is_online_registration'] ) {
+				return '';
+			}
+
+			$message = $this->get_event_status_message( $event );			
+		} catch (\Exception $e) {
+			$message = 'Could not retrieve event information.';
+		}
+
+		if ( !empty( $message ) ) {
+			return civicrm_ux_get_template_part( 'shortcode', 'civicrm-custom-event-register', array_merge( $attr, ['message' => $message] ));
+		}
+
+		// Let the shortcode render normally
+		return false;
 	}
 
 	public function civicrm_shortcode_filter( $output, $tag, $attr ) {
