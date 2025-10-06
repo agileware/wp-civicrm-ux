@@ -334,7 +334,7 @@ class Civicrm_Ux {
 		// Check if the event is full (and waitlist is not enabled)
 		$maxParticipants = !empty($event['max_participants']) ? (int) $event['max_participants'] : 0;
 		if ($maxParticipants > 0 && $event['participant_count'] >= $maxParticipants && empty($event['has_waitlist'])) {
-			return 'This event is currently full.';
+			return $event['event_full_text'] ?? 'This event is currently full.';
 		}
 	
 		// If none of the above, registration is open
@@ -366,7 +366,8 @@ class Civicrm_Ux {
 										'max_participants',
 										'has_waitlist',
 										'is_online_registration',
-										'COUNT(participant.id) AS participant_count' // Fetches the current number of participants
+										'COUNT(participant.id) AS participant_count', // Fetches the current number of participants
+										'event_full_text'
 									)
 									->addJoin('Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id'], ['participant.status_id.is_counted', '=', TRUE])
 									->execute()
