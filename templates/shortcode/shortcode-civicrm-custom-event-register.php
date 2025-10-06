@@ -11,6 +11,11 @@
 
 $message    = isset($args['message']) ? $args['message'] : "";
 $event      = isset($args['event']) ? $args['event'] : [];
+
+if ( empty($message) ) {
+    // Return nothing if the message is somehow empty
+    return '';
+}
 ?>
 
 

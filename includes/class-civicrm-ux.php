@@ -337,7 +337,7 @@ class Civicrm_Ux {
 			return $event['event_full_text'] ?? 'This event is currently full.';
 		}
 	
-		// If none of the above, registration is open
+		// If none of the above, registration is open or not enabled
 		return '';
 	}
 
@@ -361,6 +361,7 @@ class Civicrm_Ux {
 			$event = \Civi\Api4\Event::get(FALSE)
 									->addWhere('id', '=', $eventId)
 									->addSelect(
+										'id',
 										'registration_start_date',
 										'registration_end_date',
 										'max_participants',
@@ -372,22 +373,19 @@ class Civicrm_Ux {
 									->addJoin('Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id'], ['participant.status_id.is_counted', '=', TRUE])
 									->execute()
 									->single();
-
-			if ( !$event) {
-				$message = 'Could not retrieve event information.';
-			}
-
-			// Do not output anything if online registration is not open
-			if ( !$event['is_online_registration'] ) {
-				return '';
+			
+			if ( !$event || !$event['id'] ) {
+				return false;
 			}
 
 			$message = $this->get_event_status_message( $event );			
 		} catch (\Exception $e) {
-			$message = 'Could not retrieve event information.';
+			return false;
 		}
 
-		if ( !empty( $message ) ) {
+		// Render the custom message. 
+		// Support customisation of the message when online registration is not enabled (by default returns nothing).
+		if ( !$event['is_online_registration'] || !empty( $message ) ) {
 			return civicrm_ux_get_template_part( 'shortcode', 'civicrm-custom-event-register', array_merge( $attr, ['message' => $message, 'event' => $event] ));
 		}
 
