@@ -44,8 +44,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
 		if ( !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
-			$cid = $urlParamsKeys['cid'];
-			$cs = $urlParamsKeys['cs'];
+			$cid = absint($urlParamsKeys['cid']);
+			$cs = sanitize_text_field($urlParamsKeys['cs']);
 
 			// Test if checksum is valid
 			$isValid = Civicrm_Ux_Contact_Utils::validate_checksum( $cid, $cs );
@@ -72,7 +72,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		// Get the Cloudflare Turnstile
 		$turnstile = $this->getTurnstile();
-		$turnstile_passed = !empty($_POST['cf-turnstile-response']) && $this->verify_turnstile($_POST['cf-turnstile-response']);
+		$turnstile_passed = !empty($_POST['cf-turnstile-response']) && $this->verify_turnstile(sanitize_text_field($_POST['cf-turnstile-response']));
 
 		// Load scripts
 		if ( !empty($turnstile) ) {
@@ -236,8 +236,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			}
 
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
-			$parsedUrl = wp_parse_url( $_POST['ss-cs-url'] ); // To get additional info from the URL parameters if provided
-			$url = esc_url( $this->get_base_url( $_POST['ss-cs-url'] ) );
+			$parsedUrl = wp_parse_url( sanitize_url($_POST['ss-cs-url']) ); // To get additional info from the URL parameters if provided
+			$url = esc_url( $this->get_base_url( sanitize_url($_POST['ss-cs-url']) ) );
 
 			// Get the Self Serve Checksum settings
 			$self_serve_checksum_setting = Civicrm_Ux::getInstance()

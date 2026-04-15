@@ -38,7 +38,7 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
 		civicrm_initialize();
 
         try {
-            $event_id = $data['eid'];
+            $event_id = absint($data['eid']);
             
             $result = civicrm_api3('FormProcessor', 'cancel_event_registration', [
                 'eid' => $event_id,

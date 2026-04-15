@@ -73,7 +73,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		foreach ( $_REQUEST as $key => $query ) {
 			$key = sanitize_key( $key );
 			if ( in_array( $key, array_keys( $header ) ) && $header[ $key ]['api.filter'] ) {
-				$params[ $key ] = $query;
+				$params[ $key ] = sanitize_text_field($query);
 			}
 		}
 

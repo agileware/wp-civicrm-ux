@@ -35,7 +35,7 @@ class Civicrm_Ux_REST_ICal_Feed_External extends Abstract_Civicrm_Ux_REST {
 		header( 'Content-Type: text/calendar' );
 		$opts = [];
 		if ( $data->get_param( 'type' ) ) {
-			$types         = $data->get_param( 'type' );
+			$types         = sanitize_text_field($data->get_param( 'type' ));
 			$types         = explode( ',', $types );
 			$opts['types'] = $types;
 		}

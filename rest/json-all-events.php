@@ -47,10 +47,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
         $upload = wp_get_upload_dir()['baseurl'];
         $types = array();
 
-		$start_date = preg_replace("([^0-9-])", "", $_REQUEST['start_date']);
+		$start_date = preg_replace("([^0-9-])", "", sanitize_text_field($_REQUEST['start_date'] ?? ''));
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
-		$redirect_after_login = esc_url($_REQUEST['redirect_after_login']);
-		$extra_fields = !empty( $_REQUEST['extra_fields'] ) ? explode( ',', $_REQUEST['extra_fields'] ) : [];
+		$redirect_after_login = esc_url($_REQUEST['redirect_after_login'] ?? '');
+		$extra_fields = !empty( $_REQUEST['extra_fields'] ) ? explode( ',', sanitize_text_field($_REQUEST['extra_fields']) ) : [];
 		$extra_fields = array_filter($extra_fields, fn($field) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ));
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
@@ -62,7 +62,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
         $colors[ 'default' ] ??= Shortcode::getDefaultColor();
 
 		if (isset($_REQUEST['type'])) {
-			$types_tmp = explode(",", $_REQUEST['type']);
+			$types_tmp = explode(",", sanitize_text_field($_REQUEST['type']));
 			for ($i = 0; $i < count($types_tmp); $i++) {
 				array_push($types, preg_replace('/[^a-zA-Z0-9 ]/', '', $types_tmp[$i]));
 			}

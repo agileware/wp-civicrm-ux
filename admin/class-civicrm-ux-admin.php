@@ -121,7 +121,7 @@ class Civicrm_Ux_Admin {
 	{
 
 		if (isset($_GET['page'])) {
-			$page = $_GET['page'];
+			$page = sanitize_text_field($_GET['page']);
 			// Video User Manuals plugin, should only load on their specific pages
 			if (strpos($page, 'video-user-manuals') === false && strpos($page, 'vum-options') === false) {
 				wp_dequeue_style('vumcss');

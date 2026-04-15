@@ -34,8 +34,8 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			'default'     => ''
 		], $atts, $tag );
 		$id       = $mod_atts['id'];
-		if ( $mod_atts['id_from_url'] && $_GET[ $mod_atts['id_from_url'] ] ) {
-			$id = $_GET[ $mod_atts['id_from_url'] ];
+		if ( $mod_atts['id_from_url'] && isset($_GET[ $mod_atts['id_from_url'] ]) ) {
+			$id = absint($_GET[ $mod_atts['id_from_url'] ]);
 		}
 		if ( empty( $id ) || empty( $mod_atts['field'] ) ) {
 			return '(Not enough attributes)';

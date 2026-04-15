@@ -275,7 +275,7 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 	}
 
 	private function allowCached() : bool {
-		return empty($_GET['force-check']);
+		return empty(sanitize_text_field($_GET['force-check'] ?? ''));
 	}
 
     /**

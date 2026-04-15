@@ -38,9 +38,9 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
 		civicrm_initialize();
 
         try {
-            $participant_id = $data['pid'];
-            $event_id = $data['eid'];
-            $attendance = $data['attendance'] == 1 ? $data['a_stat'] : $data['na_stat'];
+            $participant_id = absint($data['pid']);
+            $event_id = absint($data['eid']);
+            $attendance = absint($data['attendance']) == 1 ? absint($data['a_stat']) : absint($data['na_stat']);
             
             $result = civicrm_api3('FormProcessor', 'mark_event_attendance', [
                 'pid' => $participant_id,
