@@ -22,11 +22,11 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		if ( !empty($atts['membership_type']) ) {
-			$atts['membership_type'] = explode(',', $atts['membership_type']);
+			$atts['membership_type'] = explode(',', sanitize_text_field($atts['membership_type']));
 		}
 
 		if ( !empty($atts['membership_status']) ) {
-			$atts['membership_status'] = explode(',', $atts['membership_status']);
+			$atts['membership_status'] = explode(',', sanitize_text_field($atts['membership_status']));
 		}
 
         // override default attributes with user attributes
@@ -36,6 +36,10 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 			'expiration_offset' => '',
 			'renewal_url' => ''
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$atts['expiration_offset'] = sanitize_text_field($atts['expiration_offset']);
+		$atts['renewal_url'] = sanitize_url($atts['renewal_url']);
 
         $args = [
             'content' => $content,

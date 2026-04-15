@@ -33,6 +33,15 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 			'check_url'   => 0,
 			'default'     => ''
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['id'] = absint($mod_atts['id']);
+		$mod_atts['permission'] = sanitize_text_field($mod_atts['permission']);
+		$mod_atts['id_from_url'] = sanitize_text_field($mod_atts['id_from_url']);
+		$mod_atts['field'] = sanitize_text_field($mod_atts['field']);
+		$mod_atts['check_url'] = absint($mod_atts['check_url']);
+		$mod_atts['default'] = sanitize_text_field($mod_atts['default']);
+
 		$id       = $mod_atts['id'];
 		if ( $mod_atts['id_from_url'] && isset($_GET[ $mod_atts['id_from_url'] ]) ) {
 			$id = absint($_GET[ $mod_atts['id_from_url'] ]);

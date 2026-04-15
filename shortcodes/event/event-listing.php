@@ -31,6 +31,10 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
       'days' => '',
     ], $atts, $tag);
 
+    // Sanitize inputs
+    $mod_atts['type'] = sanitize_text_field($mod_atts['type']);
+    $mod_atts['days'] = absint($mod_atts['days']);
+
     try {
       $results = Event::get(FALSE)
         ->addSelect('id', 'title', 'start_date', 'end_date', 'event_tz', 'event_type_id', 'is_online_registration', 'summary', 'registration_link_text')

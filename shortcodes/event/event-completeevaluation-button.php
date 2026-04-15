@@ -36,6 +36,15 @@ class Civicrm_Ux_Shortcode_Event_CompleteEvaluation_Button extends Abstract_Civi
             'icon_classes' => 'fa fa-pencil-square-o',
         ], $atts, $tag);
 
+		// Sanitize inputs
+		$mod_atts['text'] = sanitize_text_field($mod_atts['text']);
+		$mod_atts['event_id'] = absint($mod_atts['event_id']);
+		$mod_atts['participant_status'] = sanitize_text_field($mod_atts['participant_status']);
+		$mod_atts['url'] = sanitize_url($mod_atts['url']);
+		$mod_atts['fallback_url'] = sanitize_url($mod_atts['fallback_url']);
+		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
+		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
+
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
         // Only display this button for events that have already passed.

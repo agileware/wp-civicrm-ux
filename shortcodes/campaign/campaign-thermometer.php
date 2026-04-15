@@ -29,10 +29,13 @@ class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shor
 		$mod_atts = shortcode_atts( [
 			'id' => '',
 		], $atts, $tag );
-		if ( empty( $mod_atts['id'] ) ) {
+
+		// Sanitize inputs
+		$id = absint($mod_atts['id'] ?? '');
+
+		if ( empty( $id ) ) {
 			return 'Please provide the campaign id.';
 		}
-		$id = $mod_atts['id'];
 
 		$civi_param = [
 			'sequential'           => 1,

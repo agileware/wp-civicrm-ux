@@ -33,6 +33,12 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 			'icon_classes' => 'fa fa-times',
         ], $atts, $tag);
 
+		// Sanitize inputs
+		$mod_atts['text'] = sanitize_text_field($mod_atts['text']);
+		$mod_atts['eventid'] = absint($mod_atts['eventid']);
+		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
+		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
+
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
 		// Make sure the current logged in user has permission to cancel their registration.

@@ -29,13 +29,13 @@ class Civicrm_Ux_Shortcode_Campaign_Honour_Listing extends Abstract_Civicrm_Ux_S
 			'id'             => '',
 			'display-amount' => false,
 		], $atts, $tag );
-		if ( empty( $mod_atts['id'] ) ) {
-			return 'Please provide the campaign id.';
-		}
-		$id = $mod_atts['id'];
 
-		if ( $mod_atts['display-amount'] === 'false' ) {
-			$mod_atts['display-amount'] = false;
+		// Sanitize inputs
+		$id = absint($mod_atts['id'] ?? '');
+		$mod_atts['display-amount'] = rest_sanitize_boolean($mod_atts['display-amount'] ?? 'false');
+
+		if ( empty( $id ) ) {
+			return 'Please provide the campaign id.';
 		}
 
 		$civi_param = [

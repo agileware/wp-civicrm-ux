@@ -26,6 +26,9 @@ class Civicrm_Ux_Shortcode_Membership extends Abstract_Civicrm_Ux_Shortcode {
 			'type' => '',
 		], $atts, $tag );
 
+		// Sanitize inputs
+		$atts['type'] = sanitize_text_field($atts['type']);
+
         $args = [];
 
 		$contactAuth = Civicrm_Ux_Contact_Utils::validate_cid_and_checksum_from_url_params();

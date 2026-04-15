@@ -31,6 +31,14 @@ class Civicrm_Ux_Shortcode_Wordpress_CF_Value extends Abstract_Civicrm_Ux_Shortc
 			'single'  => true,
 			'default' => ''
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['type'] = sanitize_text_field($mod_atts['type']);
+		$mod_atts['id'] = absint($mod_atts['id']);
+		$mod_atts['field'] = sanitize_text_field($mod_atts['field']);
+		$mod_atts['single'] = rest_sanitize_boolean($mod_atts['single']);
+		$mod_atts['default'] = sanitize_text_field($mod_atts['default']);
+
 		if ( empty( $mod_atts['id'] ) || empty( $mod_atts['field'] ) ) {
 			return '(Not enough attributes)';
 		}
