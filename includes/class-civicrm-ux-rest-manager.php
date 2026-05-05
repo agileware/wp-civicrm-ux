@@ -35,7 +35,7 @@ class Civicrm_Ux_REST_Manager extends Abstract_Civicrm_Ux_Module_Manager {
 					$instance,
 					'rest_api_callback'
 				],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $instance, 'check_permissions' ],
 			] );
 		}
 	}

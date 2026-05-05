@@ -232,4 +232,14 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
     protected function get_output_template($args) {
         return civicrm_ux_get_template_part('event-fullcalendar', 'event-entry', $args);
     }
+
+	/**
+	 * Check permissions to view events
+	 * This is a public feed - allow all users to view event listings
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		return true;
+	}
 }

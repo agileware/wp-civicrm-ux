@@ -42,4 +42,14 @@ class Civicrm_Ux_REST_ICal_Feed_External extends Abstract_Civicrm_Ux_REST {
 		print Civicrm_Ux_Event_Utils::createICalObject( $opts );
 		exit();
 	}
+
+	/**
+	 * Check permissions for external iCal feed
+	 * External feeds should be publicly accessible (read-only)
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		return true;
+	}
 }

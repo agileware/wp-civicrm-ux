@@ -31,4 +31,15 @@ abstract class Abstract_Civicrm_Ux_REST implements iCivicrm_Ux_Managed_Instance 
 	 * @return mixed
 	 */
 	abstract public function rest_api_callback( $data );
+
+	/**
+	 * Check permissions for REST endpoint
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		// By default, allow access if user is logged in
+		// Child classes can override for more specific permission checks
+		return is_user_logged_in();
+	}
 }

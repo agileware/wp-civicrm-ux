@@ -49,4 +49,14 @@ class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {
 		print Civicrm_Ux_Event_Utils::createICalObject( $opts, true );
 		exit();
 	}
+
+	/**
+	 * Check permissions for internal iCal feed
+	 * Hash-based authentication is used for this endpoint
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		return true;
+	}
 }
