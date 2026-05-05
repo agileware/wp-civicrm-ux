@@ -24,6 +24,16 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		// Check if the form was just submitted, so we can hide the form if it has
 		$form_submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
+		$invalidMessage = '';
+		$nonce_valid = true;
+
+		if ( $form_submitted ) {
+			$nonce_valid = ! empty( $_POST['ux_self_serve_checksum_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ux_self_serve_checksum_nonce'] ) ), 'ux_self_serve_checksum' );
+			if ( ! $nonce_valid ) {
+				$invalidMessage = '<p>Security check failed. Please reload the page and try again.</p>';
+				$form_submitted = false;
+			}
+		}
 
 		// We still want to show the form if the previous submission was an invalid contact
 		if ( $form_submitted && !empty($_POST['ss-cs-email']) ) {
@@ -84,7 +94,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			'form_submitted' => $form_submitted,
 			'form_text' => $formText,
 			'url' => $url,
-			'invalidMessage' => $invalidMessage,
+			'invalid_message' => $invalidMessage,
+			'nonce' => wp_create_nonce( 'ux_self_serve_checksum' ),
 		];
 
 		if ( !empty( $turnstile ) ) {
@@ -100,7 +111,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			<?php
 			echo wp_kses_post($args['invalid_message']);
 			// Pass along whether or not the turnstile check was passed at this point, so we won't have to check again.
-			$this->self_serve_checksum_handle_form_submission($turnstile_passed);
+			$this->self_serve_checksum_handle_form_submission($turnstile_passed, $nonce_valid);
 			?>
 		</div>
 		<?php
@@ -206,7 +217,11 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	}
 
     // Handle form submission and send an email with the URL
-	private function self_serve_checksum_handle_form_submission($turnstile_passed = false) {
+	private function self_serve_checksum_handle_form_submission($turnstile_passed = false, $nonce_valid = true) {
+
+		if ( ! $nonce_valid ) {
+			return;
+		}
 		// First verify the turnstile
 		// $turnstile_passed argument is the result when the turnstile was verified on page load, since
 		// the shortcode_callback occurs before handling form submission.

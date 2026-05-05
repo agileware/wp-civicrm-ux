@@ -15,6 +15,7 @@ if ( !$args['form_submitted'] ||
         <input type="email" id="ss-cs-email" name="ss-cs-email" required>
         <input type="hidden" name="ss-cs-title" value="<?= esc_attr(get_the_title()); ?>">
         <input type="hidden" name="ss-cs-url" value="<?= esc_attr($args['url']); ?>">
+        <?= wp_nonce_field( 'ux_self_serve_checksum', 'ux_self_serve_checksum_nonce', true, false ); ?>
         <?= wp_kses_post($args['turnstile']); ?>
         <button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
     </form>
