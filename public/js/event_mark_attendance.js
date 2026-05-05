@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ).value;
 
           // Proceed with the request
-          // Call CiviCRM Form Processor, cancel_event_registration
+          // Call CiviCRM Form Processor, mark_event_attendance
           let url =
             wp_json_url +
             "civicrm_ux/mark-event-attendance/" +
