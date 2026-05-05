@@ -307,7 +307,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const calendar = new FullCalendar.Calendar(calendarEl, calendarParams);
 
-    calendarEl.dispatchEvent(domevent("fullcalendar:prerender"));
+    calendarEl.dispatchEvent(domevent("fullcalendar:prerender", calendar));
+
     calendar.render();
 
     const sortByTypeBtn = document.querySelector(".fc-sortByType-button");
