@@ -23,7 +23,7 @@ if ( empty($message) ) {
     <div id="crm-main-content-wrapper">
         <div class="messages status no-popup alert" data-options="null">
             <i aria-hidden="true" class="crm-i fa-info-circle"></i><span class="msg-title"></span>
-            <span class="msg-text"><?php echo $message; ?></span>
+            <span class="msg-text"><?= esc_html($message); ?></span>
         </div>
     </div>
 </div>

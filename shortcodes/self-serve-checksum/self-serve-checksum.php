@@ -98,7 +98,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		?>
 		<div class='ss-cs-status-message status'>
 			<?php
-			echo $args['invalid_message'];
+			echo wp_kses_post($args['invalid_message']);
 			// Pass along whether or not the turnstile check was passed at this point, so we won't have to check again.
 			$this->self_serve_checksum_handle_form_submission($turnstile_passed);
 			?>
@@ -298,7 +298,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					'page_title' => $pageTitle,
 					'email_address' => $email,
 				];
-				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+				echo wp_kses_post($this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData));
 				return;
 			}
 
@@ -340,7 +340,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					'page_title' => $pageTitle,
 					'email_address' => $email,
 				];
-				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+				echo wp_kses_post($this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData));
 			}
 		}
 	}

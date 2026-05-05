@@ -14,5 +14,5 @@
         <th>Expiry Date</th>
         <th>Renewal Link</th>
     </tr>
-    <?php echo $args['content']; ?>
+    <?= wp_kses_post($args['content']); ?>
 </table>

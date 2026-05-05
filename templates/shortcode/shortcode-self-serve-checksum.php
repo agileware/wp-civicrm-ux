@@ -8,14 +8,14 @@
 
 if ( !$args['form_submitted'] || 
         ( $args['form_submitted'] && isset( $args['turnstile_passed'] ) && !$args['turnstile_passed'] ) ) {
-    
-    echo $args['form_text']; ?>
-    <form id="ss-cs-form" method="post" data-turnstilepassed="<?php echo $args['turnstile_passed'] ? 'true' : 'false'; ?>">
+    ?>
+    <?= wp_kses_post($args['form_text']); ?>
+    <form id="ss-cs-form" method="post" data-turnstilepassed="<?= $args['turnstile_passed'] ? 'true' : 'false'; ?>">
         <label for="ss-cs-email">Your email:</label>
         <input type="email" id="ss-cs-email" name="ss-cs-email" required>
-        <input type="hidden" name="ss-cs-title" value="<?php echo get_the_title(); ?>">
-        <input type="hidden" name="ss-cs-url" value="<?php echo $args['url']; ?>">
-        <?php echo $args['turnstile']; ?>
+        <input type="hidden" name="ss-cs-title" value="<?= esc_attr(get_the_title()); ?>">
+        <input type="hidden" name="ss-cs-url" value="<?= esc_attr($args['url']); ?>">
+        <?= wp_kses_post($args['turnstile']); ?>
         <button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
     </form>
     <?php

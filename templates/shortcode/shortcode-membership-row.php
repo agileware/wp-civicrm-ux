@@ -45,13 +45,13 @@ foreach ($args['memberships'] as $membership) {
 ?>
 
     <tr>
-        <td><?php echo $membership['contact_owner.display_name'] ?? $membership['contact.display_name']; ?></td>
-        <td><?php echo $membership['membership_type_id:label']; ?></td>
-        <td><?php echo $membership['status_id:label']; ?></td>
-        <td><?php echo $formattedEndDate; ?></td>
+        <td><?= esc_html($membership['contact_owner.display_name'] ?? $membership['contact.display_name']); ?></td>
+        <td><?= esc_html($membership['membership_type_id:label']); ?></td>
+        <td><?= esc_html($membership['status_id:label']); ?></td>
+        <td><?= esc_html($formattedEndDate); ?></td>
         <td>
             <?php if ($renewalUrl && (($expiration_offset_date && $endDate->getTimestamp() <= $expiration_offset_date) || $endDate->getTimestamp() <= time())) { ?>
-                <a href="<?php echo esc_url($renewalUrl); ?>" target="_blank">Renew this membership</a>
+                <a href="<?= esc_url($renewalUrl); ?>" target="_blank">Renew this membership</a>
         </td>
     <?php } else { ?>
         No renewal required</td>
