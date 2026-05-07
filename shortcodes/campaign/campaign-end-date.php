@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_End_date
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_End_date extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

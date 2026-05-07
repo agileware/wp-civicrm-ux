@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 abstract class Abstract_Civicrm_Ux_Module_Manager {
 	/**
 	 * @var \Civicrm_Ux $plugin the plugin instance

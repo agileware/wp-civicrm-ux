@@ -4,6 +4,12 @@
  * 
  * To customise, copy this file into your theme and make changes as needed.
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 
 <form>

@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Wordpress_CF_Value
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Wordpress_CF_Value extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

@@ -11,6 +11,12 @@
  * @package    Civicrm_Ux
  * @subpackage Civicrm_Ux/public/partials
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->

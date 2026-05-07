@@ -5,6 +5,11 @@
  * @var $args
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $event = $args['event'];
 ?>
 

@@ -5,6 +5,11 @@
  * 
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Loads a template part.
  * 

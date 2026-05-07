@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Contact_value
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 	protected $mod_atts = [];
 

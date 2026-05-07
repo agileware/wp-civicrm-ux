@@ -12,6 +12,11 @@
  * @subpackage Civicrm_Ux/admin/partials
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function civicrm_ux_settings_page() {
   $url_param = [
     'hash' => get_option(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION),

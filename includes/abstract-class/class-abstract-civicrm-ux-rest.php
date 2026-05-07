@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 abstract class Abstract_Civicrm_Ux_REST implements iCivicrm_Ux_Managed_Instance {
 	protected $manager;
 

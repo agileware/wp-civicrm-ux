@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Number_Contributions
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_Number_Contributions extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

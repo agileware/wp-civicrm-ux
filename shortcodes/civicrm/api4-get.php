@@ -2,6 +2,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

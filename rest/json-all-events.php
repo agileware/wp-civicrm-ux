@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Civi\Api4\Event;
 
 use Civicrm_Ux_Shortcode_Event_FullCalendar as Shortcode;

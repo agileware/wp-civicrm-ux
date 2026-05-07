@@ -4,6 +4,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Thermometer
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_Thermometer extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

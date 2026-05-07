@@ -5,6 +5,10 @@
  * To customise, copy this file into your theme and make changes as needed.
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( !$args['form_submitted'] || 
         ( $args['form_submitted'] && isset( $args['turnstile_passed'] ) && !$args['turnstile_passed'] ) ) {

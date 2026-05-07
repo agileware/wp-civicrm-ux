@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use \Sabre\VObject;
 
 class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {

@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 interface iCivicrm_Ux_Managed_Instance {
 	/**
 	 * iCivicrm_Ux_Managed_Instance constructor.

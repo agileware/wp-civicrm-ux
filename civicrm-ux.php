@@ -22,9 +22,9 @@
  * GitHub Plugin URI: agileware/wp-civicrm-ux
  */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 define( 'WP_CIVICRM_UX_PLUGIN_NAME', basename(plugin_dir_path(__FILE__ )) );

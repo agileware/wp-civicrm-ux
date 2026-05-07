@@ -8,6 +8,11 @@ Author: Jeremy B. Shapiro
 Author URI: http://www.asandia.com/
 */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
 URL Params (Wordpress Plugin)
 Copyright (C) 2011-2019 Jeremy Shapiro

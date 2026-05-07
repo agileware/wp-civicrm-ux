@@ -13,6 +13,12 @@
  *
  * Class Civicrm_Ux_Shortcode_Activity_Listing
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Activity_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**

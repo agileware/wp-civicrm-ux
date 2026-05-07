@@ -6,6 +6,11 @@
  * To customise, copy this file into your theme and make changes as needed.
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Get the default date format from WordPress settings
 $dateFormat = get_option('date_format');
 

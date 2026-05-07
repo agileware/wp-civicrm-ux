@@ -10,6 +10,11 @@
  * @subpackage Civicrm_Ux/admin
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The admin-specific functionality of the plugin.
  *

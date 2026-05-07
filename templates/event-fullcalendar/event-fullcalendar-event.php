@@ -14,6 +14,11 @@
  * @var $url
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 extract($args);
 ?>
 <div class="civicrm-ux-event-listing" colspan="3">
