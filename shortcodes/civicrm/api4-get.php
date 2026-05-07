@@ -122,7 +122,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$output_regex = '/ (?: ( \[ ) | ( {{ ) ) api4: (?<field> [^][[:space:]:{}]+ (?::(?:label|value|name|id))?) (?: : (?<format> [^][{}]+ ) )? (?(1) \] | }} ) /sx';
 
-		if ( preg_match_all( $output_regex, $content, $match ) ) {
+		if ( !is_null($content) && preg_match_all( $output_regex, $content, $match ) ) {
 			$params['select'] = array_values( $match['field'] );
 		}
 
@@ -171,7 +171,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			}
 
 			foreach ( $results as $result ) {
-				$output = preg_replace_callback( $output_regex, function ( $match ) use ( $result, $fields ) {
+				$output = preg_replace_callback( $output_regex, function ( $match ) use ( $result, $fields, $params ) {
 					$output = $result[ $match['field'] ] ?? '';
 
 					if ( ! $output ) {
@@ -249,7 +249,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$fileHash = \CRM_Core_BAO_File::generateFileHash(NULL, $file['id']);
 
-		$url = Civicrm_Ux::in_basepage(
+		$url = (string) Civicrm_Ux::in_basepage(
 			fn() => CRM_Utils_System::url( 'civicrm/file', [ 'reset' => 1, 'id' => $file['id'], 'fcs' => $fileHash ] )
 		);
 
