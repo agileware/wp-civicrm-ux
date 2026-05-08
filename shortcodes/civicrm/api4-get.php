@@ -187,7 +187,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 							if ( $output && preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m ) ) {
 								$output = '<img src="' . $output . '"'
-								          . ( !empty($m['w']) ? " width=\"${m['w']}\" height=\"${m['h']}\"" : '' ) .
+								          . ( !empty($m['w']) ? " width=\"{$m['w']}\" height=\"{$m['h']}\"" : '' ) .
 								          ' alt="' . ( !empty($m['alt']) ? htmlentities( $m['alt'] ) : '" role="presentation' ) .
 								          '">';
 							}
