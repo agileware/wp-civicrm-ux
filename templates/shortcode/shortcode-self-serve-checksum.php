@@ -15,13 +15,17 @@ if ( !$args['form_submitted'] ||
     ?>
     <?= wp_kses_post($args['form_text']); ?>
     <form id="ss-cs-form" method="post" data-turnstilepassed="<?= $args['turnstile_passed'] ? 'true' : 'false'; ?>">
-        <label for="ss-cs-email">Your email:</label>
-        <input type="email" id="ss-cs-email" name="ss-cs-email" required>
+        <p class="form-row">
+            <label for="ss-cs-email">Your email:</label>
+            <input type="email" id="ss-cs-email" name="ss-cs-email" required>
+        </p>
         <input type="hidden" name="ss-cs-title" value="<?= esc_attr(get_the_title()); ?>">
         <input type="hidden" name="ss-cs-url" value="<?= esc_attr($args['url']); ?>">
         <?= wp_nonce_field( 'ux_self_serve_checksum', 'ux_self_serve_checksum_nonce', true, false ); ?>
         <?= wp_kses_post($args['turnstile']); ?>
-        <button type="submit" name="ss-cs-submit" id="ss-cs-submit">Submit</button>
+        <div class="wp-block-button ss-cs-submit-wrapper">
+            <button type="submit" name="ss-cs-submit" id="ss-cs-submit" class="wp-block-button__link wp-element-button button">Submit</button>
+        </div>
     </form>
     <?php
     if ( !empty($args['turnstile']) ) { ?>
