@@ -56,13 +56,14 @@ foreach ($args['memberships'] as $membership) {
         <td><?= esc_html($formattedEndDate); ?></td>
         <td>
             <?php if ($renewalUrl && (($expiration_offset_date && $endDate->getTimestamp() <= $expiration_offset_date) || $endDate->getTimestamp() <= time())) { ?>
-                <a href="<?= esc_url($renewalUrl); ?>" target="_blank">Renew this membership</a>
-        </td>
-    <?php } else { ?>
-        No renewal required</td>
-    <?php } ?>
+                <div class="wp-block-button is-style-outline">
+                    <a href="<?= esc_url($renewalUrl); ?>" target="_blank" class="wp-block-button__link wp-element-button">Renew this membership</a>
+                </div>
+            </td>
+            <?php } else { ?>
+            <p>No renewal required<p></td>
+            <?php } ?>
     </tr>
-
 <?php
 }
 ?>

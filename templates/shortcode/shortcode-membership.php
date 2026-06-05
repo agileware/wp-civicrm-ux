@@ -12,13 +12,19 @@ if ( !defined( 'ABSPATH' ) ) {
 
 ?>
 
-<table class="civicrm-ux-membership">
-    <tr>
-        <th>Member</th>
-        <th>Membership Type</th>
-        <th>Membership Status</th>
-        <th>Expiry Date</th>
-        <th>Renewal Link</th>
-    </tr>
-    <?= wp_kses_post($args['content']); ?>
-</table>
+<figure class="wp-block-table">
+    <table class="civicrm-ux-membership wp-block-table__table">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Membership Type</th>
+                <th>Membership Status</th>
+                <th>Expiry Date</th>
+                <th>Renewal Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?= wp_kses_post($args['content']); ?>
+        </tbody>
+    </table>
+</figure>
