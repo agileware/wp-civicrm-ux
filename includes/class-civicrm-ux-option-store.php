@@ -7,6 +7,12 @@
  * 
  * NOTE: Register the setting in class-civicrm-ux-admin.php.
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Option_Store {
 
 	/**

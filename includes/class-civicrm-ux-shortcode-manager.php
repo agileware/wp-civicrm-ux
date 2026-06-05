@@ -10,6 +10,11 @@
  * @subpackage Civicrm_Ux/includes
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Register all shortcodes
  *

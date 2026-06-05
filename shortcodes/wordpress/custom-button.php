@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Civi\Api4\Event;
 
 /**
@@ -33,6 +38,13 @@ class Civicrm_Ux_Shortcode_Custom_Button extends Abstract_Civicrm_Ux_Shortcode {
             'url_params' => '',
             'css_classes' => '',
         ], $atts, $tag);
+
+		// Sanitize inputs
+		$mod_atts['text'] = sanitize_text_field($mod_atts['text']);
+		$mod_atts['url'] = sanitize_url($mod_atts['url']);
+		$mod_atts['fallback_url'] = sanitize_url($mod_atts['fallback_url']);
+		$mod_atts['url_params'] = sanitize_text_field($mod_atts['url_params']);
+		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
 
         $mod_atts['url'] = !empty($mod_atts['url']) ? $mod_atts['url'] : $mod_atts['fallback_url'];
 

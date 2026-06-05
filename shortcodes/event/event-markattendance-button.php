@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Civi\Api4\Event;
 
 /**
@@ -34,6 +39,14 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 			'css_classes' => '',
 			'icon_classes' => 'fa fa-check',
         ], $atts, $tag);
+
+		// Sanitize inputs
+		$mod_atts['text'] = sanitize_text_field($mod_atts['text']);
+		$mod_atts['eventid'] = absint($mod_atts['eventid']);
+		$mod_atts['attended_status'] = absint($mod_atts['attended_status']);
+		$mod_atts['not_attended_status'] = absint($mod_atts['not_attended_status']);
+		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
+		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
 
 		$args = [];
 

@@ -10,6 +10,11 @@
   use InvalidArgumentException;
   use Locale;
 
+  // Disallow direct access
+  if ( !defined( 'ABSPATH' ) ) {
+    exit;
+  }
+
   /**
    * Locale-formatted strftime using IntlDateFormatter (PHP 8.1 compatible)
    * This provides a cross-platform alternative to strftime() for when it will be removed from PHP.

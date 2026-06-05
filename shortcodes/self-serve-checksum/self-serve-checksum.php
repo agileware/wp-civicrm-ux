@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -24,6 +29,16 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		// Check if the form was just submitted, so we can hide the form if it has
 		$form_submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
+		$invalidMessage = '';
+		$nonce_valid = true;
+
+		if ( $form_submitted ) {
+			$nonce_valid = ! empty( $_POST['ux_self_serve_checksum_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ux_self_serve_checksum_nonce'] ) ), 'ux_self_serve_checksum' );
+			if ( ! $nonce_valid ) {
+				$invalidMessage = '<p>Security check failed. Please reload the page and try again.</p>';
+				$form_submitted = false;
+			}
+		}
 
 		// We still want to show the form if the previous submission was an invalid contact
 		if ( $form_submitted && !empty($_POST['ss-cs-email']) ) {
@@ -44,8 +59,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		$displayInvalidMessage = false;
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
 		if ( !empty( $urlParamsKeys['cid'] ) && !empty( $urlParamsKeys['cs'] ) ) {
-			$cid = $urlParamsKeys['cid'];
-			$cs = $urlParamsKeys['cs'];
+			$cid = absint($urlParamsKeys['cid']);
+			$cs = sanitize_text_field($urlParamsKeys['cs']);
 
 			// Test if checksum is valid
 			$isValid = Civicrm_Ux_Contact_Utils::validate_checksum( $cid, $cs );
@@ -72,7 +87,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 
 		// Get the Cloudflare Turnstile
 		$turnstile = $this->getTurnstile();
-		$turnstile_passed = !empty($_POST['cf-turnstile-response']) && $this->verify_turnstile($_POST['cf-turnstile-response']);
+		$turnstile_passed = !empty($_POST['cf-turnstile-response']) && $this->verify_turnstile(sanitize_text_field($_POST['cf-turnstile-response']));
 
 		// Load scripts
 		if ( !empty($turnstile) ) {
@@ -84,7 +99,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			'form_submitted' => $form_submitted,
 			'form_text' => $formText,
 			'url' => $url,
-			'invalidMessage' => $invalidMessage,
+			'invalid_message' => $invalidMessage,
+			'nonce' => wp_create_nonce( 'ux_self_serve_checksum' ),
 		];
 
 		if ( !empty( $turnstile ) ) {
@@ -98,9 +114,9 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 		?>
 		<div class='ss-cs-status-message status'>
 			<?php
-			echo $args['invalid_message'];
+			echo wp_kses_post($args['invalid_message']);
 			// Pass along whether or not the turnstile check was passed at this point, so we won't have to check again.
-			$this->self_serve_checksum_handle_form_submission($turnstile_passed);
+			$this->self_serve_checksum_handle_form_submission($turnstile_passed, $nonce_valid);
 			?>
 		</div>
 		<?php
@@ -206,7 +222,11 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 	}
 
     // Handle form submission and send an email with the URL
-	private function self_serve_checksum_handle_form_submission($turnstile_passed = false) {
+	private function self_serve_checksum_handle_form_submission($turnstile_passed = false, $nonce_valid = true) {
+
+		if ( ! $nonce_valid ) {
+			return;
+		}
 		// First verify the turnstile
 		// $turnstile_passed argument is the result when the turnstile was verified on page load, since
 		// the shortcode_callback occurs before handling form submission.
@@ -236,8 +256,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 			}
 
 			$pageTitle = sanitize_text_field( $_POST['ss-cs-title'] );
-			$parsedUrl = wp_parse_url( $_POST['ss-cs-url'] ); // To get additional info from the URL parameters if provided
-			$url = esc_url( $this->get_base_url( $_POST['ss-cs-url'] ) );
+			$parsedUrl = wp_parse_url( sanitize_url($_POST['ss-cs-url']) ); // To get additional info from the URL parameters if provided
+			$url = esc_url( $this->get_base_url( sanitize_url($_POST['ss-cs-url']) ) );
 
 			// Get the Self Serve Checksum settings
 			$self_serve_checksum_setting = Civicrm_Ux::getInstance()
@@ -298,7 +318,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					'page_title' => $pageTitle,
 					'email_address' => $email,
 				];
-				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+				echo wp_kses_post($this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData));
 				return;
 			}
 
@@ -340,7 +360,7 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
 					'page_title' => $pageTitle,
 					'email_address' => $email,
 				];
-				echo $this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData);
+				echo wp_kses_post($this->ss_cs_replace_custom_tokens($submissionMessage, $tokenData));
 			}
 		}
 	}

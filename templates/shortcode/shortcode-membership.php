@@ -4,6 +4,12 @@
  * 
  * To customise, copy this file into your theme and make changes as needed.
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 
 <table class="civicrm-ux-membership">
@@ -14,5 +20,5 @@
         <th>Expiry Date</th>
         <th>Renewal Link</th>
     </tr>
-    <?php echo $args['content']; ?>
+    <?= wp_kses_post($args['content']); ?>
 </table>

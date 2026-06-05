@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_End_date
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_End_date extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -27,6 +33,10 @@ class Civicrm_Ux_Shortcode_Campaign_End_date extends Abstract_Civicrm_Ux_Shortco
 		$mod_atts = shortcode_atts( [
 			'id' => '',
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['id'] = absint($mod_atts['id']);
+
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
 		}

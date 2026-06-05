@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Validators
 {
     public static function validateCssColor($color): ?string

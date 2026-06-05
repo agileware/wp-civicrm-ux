@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Days_Remaining
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -29,10 +35,15 @@ class Civicrm_Ux_Shortcode_Campaign_Days_Remaining extends Abstract_Civicrm_Ux_S
 			'id' => '',
 			'end-text' => 'on-going'
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['id'] = sanitize_text_field($mod_atts['id']);
+		$mod_atts['end-text'] = sanitize_text_field($mod_atts['end-text']);
+
 		if ( empty( $mod_atts['id'] ) ) {
 			return 'Please provide the campaign id.';
 		}
-		$id = $mod_atts['id'];
+		$id = absint($mod_atts['id']);
 
 		$civi_param = [
 			'sequential'           => 1,

@@ -13,6 +13,11 @@
  * @subpackage Civicrm_Ux/includes
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The core plugin class.
  *
@@ -311,7 +316,7 @@ class Civicrm_Ux {
 	 * Actions to take during CiviCRM config hook.
 	 */
 	public function civicrm_config() {
-		if ( ( strpos( $_GET['q'] ?? '', 'civicrm/ajax' ) === 0 ) && ! defined( 'DOING_AJAX' ) ) {
+		if ( ( strpos( sanitize_text_field($_GET['q'] ?? ''), 'civicrm/ajax' ) === 0 ) && ! defined( 'DOING_AJAX' ) ) {
 			define( 'DOING_AJAX', TRUE );
 		}
 	}
@@ -376,7 +381,7 @@ class Civicrm_Ux {
 		if (empty($_REQUEST['id']) || !is_numeric($_REQUEST['id'])) {
 			return false; // No ID found, let CiviCRM handle the error
 		}
-		$eventId = (int) $_REQUEST['id'];
+		$eventId = absint($_REQUEST['id']);
 
 		$message = '';
 

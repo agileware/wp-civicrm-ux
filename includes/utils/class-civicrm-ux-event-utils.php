@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use \Sabre\VObject;
 
 class Civicrm_Ux_Event_Utils {
@@ -80,12 +85,16 @@ class Civicrm_Ux_Event_Utils {
 			$errorCode    = $e->getErrorCode();
 			$errorData    = $e->getExtraParams();
 
-			var_dump( [
-				'is_error'      => 1,
-				'error_message' => $errorMessage,
-				'error_code'    => $errorCode,
-				'error_data'    => $errorData,
-			] );
+			if ( defined( 'WP_DEBUG' ) && ( true === WP_DEBUG ) ){
+				ob_start();
+				var_dump([
+					'is_error'      => 1,
+					'error_message' => $errorMessage,
+					'error_code'    => $errorCode,
+					'error_data'    => $errorData,
+				]);
+				error_log(ob_get_clean());
+			}
 		}
 
 		// Exit if error

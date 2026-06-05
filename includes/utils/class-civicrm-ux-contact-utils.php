@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Contact_Utils {
 
 	/**
@@ -19,8 +24,8 @@ class Civicrm_Ux_Contact_Utils {
 		}
 
 		$urlParamsKeys = array_change_key_case($_GET, CASE_LOWER);
-		$cid = $urlParamsKeys['cid'] ?? null;
-		$cs = $urlParamsKeys['cs'] ?? null;
+		$cid = isset($urlParamsKeys['cid']) ? absint($urlParamsKeys['cid']) : null;
+		$cs = isset($urlParamsKeys['cs']) ? sanitize_text_field($urlParamsKeys['cs']) : null;
 
 		if ( !empty( $cid ) && !empty( $cs ) ) {
 			// Test if checksum is valid

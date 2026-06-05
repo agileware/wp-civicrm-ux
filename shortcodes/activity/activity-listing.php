@@ -13,6 +13,12 @@
  *
  * Class Civicrm_Ux_Shortcode_Activity_Listing
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Activity_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -57,6 +63,14 @@ class Civicrm_Ux_Shortcode_Activity_Listing extends Abstract_Civicrm_Ux_Shortcod
 			'format'          => 'default',
 			'sort'            => 'activity_date_time DESC',
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['type'] = sanitize_text_field($mod_atts['type']);
+		$mod_atts['limit'] = absint($mod_atts['limit']);
+		$mod_atts['relationship-id'] = absint($mod_atts['relationship-id']);
+		$mod_atts['field'] = sanitize_text_field($mod_atts['field']);
+		$mod_atts['format'] = sanitize_text_field($mod_atts['format']);
+		$mod_atts['sort'] = sanitize_text_field($mod_atts['sort']);
 
 		$cid = [ CRM_Core_Session::singleton()->getLoggedInContactID() ];
 		if ( ! empty( $mod_atts['relationship-id'] ) ) {

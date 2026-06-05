@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Membership_Id extends Abstract_Civicrm_Ux_Shortcode{
 
 	/**
@@ -23,6 +28,12 @@ class Civicrm_Ux_Shortcode_Membership_Id extends Abstract_Civicrm_Ux_Shortcode{
 			'status' => '',
 			'contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID(),
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['type'] = sanitize_text_field($mod_atts['type']);
+		$mod_atts['status'] = sanitize_text_field($mod_atts['status']);
+		$mod_atts['contact_id'] = absint($mod_atts['contact_id']);
+
 		$params = array_filter( $mod_atts, function ( $value ) {
 			return !empty($value) || $value === 0;
 		});

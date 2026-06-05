@@ -1,1 +1,8 @@
-<?php // Silence is golden
+<?php
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// Silence is golden

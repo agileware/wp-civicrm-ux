@@ -3,6 +3,12 @@
 /**
  * Class Civicrm_Ux_Shortcode_Campaign_Total_Raised
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Campaign_Total_Raised extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -28,10 +34,11 @@ class Civicrm_Ux_Shortcode_Campaign_Total_Raised extends Abstract_Civicrm_Ux_Sho
 		$mod_atts = shortcode_atts( [
 			'id' => '',
 		], $atts, $tag );
-		if ( empty( $mod_atts['id'] ) ) {
+
+		$id = absint($mod_atts['id'] ?? '');
+		if ( empty( $id ) ) {
 			return 'Please provide the campaign id.';
 		}
-		$id = $mod_atts['id'];
 
 		$civi_param = [
 			'sequential'           => 1,

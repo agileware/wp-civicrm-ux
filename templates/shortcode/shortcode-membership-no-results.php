@@ -4,6 +4,12 @@
  * 
  * To customise, copy this file into your theme and make changes as needed.
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 
 <p>Your contact either has no memberships or none that meet the criteria.</p>

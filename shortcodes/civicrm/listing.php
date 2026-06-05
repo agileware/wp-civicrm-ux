@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode {
 
 	/**
@@ -30,6 +35,20 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'css_id' => '',
 			'autopop_user_id' => false
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['dpid'] = absint($mod_atts['dpid']);
+		$mod_atts['limit'] = absint($mod_atts['limit']);
+		$mod_atts['format'] = sanitize_text_field($mod_atts['format']);
+		$mod_atts['sort'] = sanitize_text_field($mod_atts['sort']);
+		$mod_atts['hide_fields'] = sanitize_text_field($mod_atts['hide_fields']);
+		$mod_atts['css_id'] = sanitize_text_field($mod_atts['css_id']);
+		$mod_atts['autopop_user_id'] = rest_sanitize_boolean($mod_atts['autopop_user_id']);
+
+		// Validate required attributes
+		if ( empty( $mod_atts['dpid'] ) ) {
+			return 'Data processor ID not provided';
+		}
 
 		$hide_fields = explode(',', $mod_atts['hide_fields']);
 
@@ -73,7 +92,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		foreach ( $_REQUEST as $key => $query ) {
 			$key = sanitize_key( $key );
 			if ( in_array( $key, array_keys( $header ) ) && $header[ $key ]['api.filter'] ) {
-				$params[ $key ] = $query;
+				$params[ $key ] = sanitize_text_field($query);
 			}
 		}
 

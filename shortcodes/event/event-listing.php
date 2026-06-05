@@ -1,5 +1,9 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 use Civi\Api4\Event;
 
@@ -30,6 +34,10 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
       'type' => '',
       'days' => '',
     ], $atts, $tag);
+
+    // Sanitize inputs
+    $mod_atts['type'] = sanitize_text_field($mod_atts['type']);
+    $mod_atts['days'] = absint($mod_atts['days']);
 
     try {
       $results = Event::get(FALSE)

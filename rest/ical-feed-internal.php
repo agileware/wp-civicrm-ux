@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use \Sabre\VObject;
 
 class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {
@@ -34,7 +39,7 @@ class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {
 	 */
 	public function rest_api_callback( $data ) {
 		header( 'Content-Type: text/calendar' );
-		$hash = $data->get_param( 'hash' );
+		$hash = sanitize_text_field($data->get_param( 'hash' ));
 		//		var_dump( get_option(self::HASH_OPTION) );
 		if ( ! $this->manager->get_plugin()->helper->check_hash_in_option( $hash, self::HASH_OPTION ) ) {
 			header( 'HTTP/1.1 404 Not Found' );
@@ -42,11 +47,21 @@ class Civicrm_Ux_REST_ICal_Feed_Internal extends Abstract_Civicrm_Ux_REST {
 		}
 		$opts = [];
 		if ( $data->get_param( 'type' ) ) {
-			$types         = $data->get_param( 'type' );
+			$types         = sanitize_text_field($data->get_param( 'type' ));
 			$types         = explode( ',', $types );
 			$opts['types'] = $types;
 		}
 		print Civicrm_Ux_Event_Utils::createICalObject( $opts, true );
 		exit();
+	}
+
+	/**
+	 * Check permissions for internal iCal feed
+	 * Hash-based authentication is used for this endpoint
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		return true;
 	}
 }

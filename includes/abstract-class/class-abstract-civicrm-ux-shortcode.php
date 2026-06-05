@@ -3,6 +3,12 @@
 /**
  * Interface iCivicrm_Ux_Shortcode
  */
+
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 abstract class Abstract_Civicrm_Ux_Shortcode implements iCivicrm_Ux_Managed_Instance {
 	protected $manager;
 

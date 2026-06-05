@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode {
 	/**
 	 * @return string The name of shortcode
@@ -24,6 +29,12 @@ class Civicrm_Ux_Shortcode_Timezone extends Abstract_Civicrm_Ux_Shortcode {
 			'timezone'        => '',
 			'return_format'   => 'd/m/Y g:ia'
 		], $atts, $tag );
+
+		// Sanitize inputs
+		$mod_atts['return_timezone'] = sanitize_text_field($mod_atts['return_timezone']);
+		$mod_atts['timezone'] = sanitize_text_field($mod_atts['timezone']);
+		$mod_atts['return_format'] = sanitize_text_field($mod_atts['return_format']);
+
 		try {
 			$inputTimezone  = new DateTimeZone( $mod_atts['timezone'] );
 			$outputTimezone = new DateTimeZone( $mod_atts['return_timezone'] );

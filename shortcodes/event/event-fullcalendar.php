@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Civi\Api4\Event;
 
 class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortcode {
@@ -64,6 +69,14 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'extra_fields' => join(",", $extra_fields_arr)
 			), $atts, $tag
 		);
+
+		// Sanitize all $wporg_atts parameters
+		$wporg_atts['types'] = sanitize_text_field($wporg_atts['types']);
+		$wporg_atts['colors'] = sanitize_text_field($wporg_atts['colors']);
+		$wporg_atts['force_login'] = rest_sanitize_boolean($wporg_atts['force_login']);
+		$wporg_atts['start'] = sanitize_text_field($wporg_atts['start']);
+		$wporg_atts['image_src_field'] = sanitize_text_field($wporg_atts['image_src_field']);
+		$wporg_atts['extra_fields'] = sanitize_text_field($wporg_atts['extra_fields']);
 
 		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 

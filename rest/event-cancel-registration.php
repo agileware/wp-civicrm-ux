@@ -1,5 +1,10 @@
 <?php
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use \Sabre\VObject;
 
 /**
@@ -37,8 +42,14 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
 	public function rest_api_callback( $data ) {
 		civicrm_initialize();
 
+		// Verify nonce for state-changing operation
+		$nonce = $data->get_param( 'nonce' );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'civicrm_ux_cancel_registration' ) ) {
+			return new WP_Error( 'invalid_nonce', 'Invalid security token.', ['status' => 403] );
+		}
+
         try {
-            $event_id = $data['eid'];
+            $event_id = absint($data['eid']);
             
             $result = civicrm_api3('FormProcessor', 'cancel_event_registration', [
                 'eid' => $event_id,
@@ -55,5 +66,21 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
         }
 
         return $response;
+	}
+
+	/**
+	 * Check permissions to cancel event registration
+	 * Verifies user is logged in and has permission to register for events
+	 *
+	 * @return bool
+	 */
+	public function check_permissions() {
+		if ( ! is_user_logged_in() || ! current_user_can( 'read' ) ) {
+			return false;
+		}
+
+		// Verify user has CiviCRM permission to register for events
+		civicrm_initialize();
+		return CRM_Core_Permission::check( 'register for events' );
 	}
 }

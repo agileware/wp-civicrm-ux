@@ -12,6 +12,11 @@
  * @subpackage Civicrm_Ux/admin/partials
  */
 
+// Disallow direct access
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function civicrm_ux_settings_page() {
   $url_param = [
     'hash' => get_option(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION),
@@ -60,8 +65,8 @@ function civicrm_ux_settings_page() {
                         <td><label for="ical-hash-field">Random Hash</label>
                         </td>
                         <td><input id="ical-hash-field" type="text"
-                                   name=<?php echo '"' . Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION . '"' ?> size="40"
-                                   value="<?php echo esc_attr(get_option(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION)); ?>"/>
+                                   name="<?= esc_attr(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION); ?>" size="40"
+                                   value="<?= esc_attr(get_option(Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION)); ?>"/>
                             <!-- TODO fix button -->
                             <button id="generate-ical-hash" type="button">
                                 Re-generate Hash
@@ -71,7 +76,7 @@ function civicrm_ux_settings_page() {
                     <tr>
                         <td>The internal feed url is:</td>
                         <td><a id="ical-internal-url"
-                               href="<?php echo $url ?>"><?php echo $url ?></a>
+                               href="<?= esc_url($url); ?>"><?= esc_html($url); ?></a>
                         </td>
                     </tr>
                 </table>
@@ -84,7 +89,7 @@ function civicrm_ux_settings_page() {
                         <td><input type="number" min="0" step="1"
                                    id="civicrm_summary_show_renewal_date"
                                    name="civicrm_summary_options[civicrm_summary_show_renewal_date]"
-                                   value="<?php echo $opt_summary_options['civicrm_summary_show_renewal_date']; ?>"/>
+                                   value="<?= esc_attr($opt_summary_options['civicrm_summary_show_renewal_date'] ?? ''); ?>"/>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
@@ -93,7 +98,7 @@ function civicrm_ux_settings_page() {
                         <td><input type="text"
                                    id="civicrm_summary_membership_join_URL"
                                    name="civicrm_summary_options[civicrm_summary_membership_join_URL]"
-                                   value="<?php echo $opt_summary_options['civicrm_summary_membership_join_URL']; ?>"/>
+                                   value="<?= esc_attr($opt_summary_options['civicrm_summary_membership_join_URL'] ?? ''); ?>"/>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
@@ -102,7 +107,7 @@ function civicrm_ux_settings_page() {
                         <td><input type="text"
                                    id="civicrm_summary_membership_renew_URL"
                                    name="civicrm_summary_options[civicrm_summary_membership_renew_URL]"
-                                   value="<?php echo $opt_summary_options['civicrm_summary_membership_renew_URL']; ?>"/>
+                                   value="<?= esc_attr($opt_summary_options['civicrm_summary_membership_renew_URL'] ?? ''); ?>"/>
                         </td>
                     </tr>
                 </table>
@@ -110,12 +115,12 @@ function civicrm_ux_settings_page() {
                 <table>
                     <tr style="vertical-align: text-top;">
                         <td colspan="2"><input type="checkbox" id="is_recur_default" name="civicrm_contribution_ux[is_recur_default]"
-                            <?php echo isset($opt_contribution_ux['is_recur_default']) ? ' checked="checked">' : '>'; ?>
+                            <?php checked( isset($opt_contribution_ux['is_recur_default']), true ); ?>
                             <label for="is_recur_default">For all Contribution Pages, set the payment to recurring by default.</label></td>
                     </tr>
                     <tr style="vertical-align: text-top;">
                         <td colspan="2"><input type="checkbox" id="is_autorenew_default" name="civicrm_contribution_ux[is_autorenew_default]"
-                            <?php echo isset($opt_contribution_ux['is_autorenew_default']) ? ' checked="checked">' : '>'; ?>
+                            <?php checked( isset($opt_contribution_ux['is_autorenew_default']), true ); ?>
                             <label for="is_autorenew_default">For all Membership Contribution Pages, set the membership to auto-renew by default.</label>
                         </td>
                     </tr>
@@ -129,7 +134,7 @@ function civicrm_ux_settings_page() {
                     ?>
                     <tr style="vertical-align: text-top;">
                         <td colspan="2"><input type="checkbox" id="event_tickets" name="civicrm_plugin_activation_blocks[event_tickets]"
-                            <?php echo isset($plugin_activation_blocks['event_tickets']) && $plugin_activation_blocks['event_tickets'] ? ' checked="checked">' : '>'; ?>
+                            <?php checked( !empty($plugin_activation_blocks['event_tickets']), true ); ?>
                             <label for="event_tickets">Event Tickets</label></td>
                     </tr>
                 </table>
@@ -144,7 +149,7 @@ function civicrm_ux_settings_page() {
                                    size="50"
                                    id="sitekey"
                                    name="civicrm_ux_cf_turnstile[sitekey]"
-                                   value="<?php echo $civicrm_ux_cf_turnstile['sitekey']; ?>"/>
+                                   value="<?= esc_attr($civicrm_ux_cf_turnstile['sitekey'] ?? ''); ?>"/>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
@@ -153,7 +158,7 @@ function civicrm_ux_settings_page() {
                                    size="50"
                                    id="secret_key"
                                    name="civicrm_ux_cf_turnstile[secret_key]"
-                                   value="<?php echo $civicrm_ux_cf_turnstile['secret_key']; ?>"/>
+                                   value="<?= esc_attr($civicrm_ux_cf_turnstile['secret_key'] ?? ''); ?>"/>
                         </td>
                     </tr>
                     <tr style="vertical-align: text-top;">
