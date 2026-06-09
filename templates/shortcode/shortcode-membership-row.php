@@ -55,7 +55,7 @@ foreach ($args['memberships'] as $membership) {
         <td><?= esc_html($membership['status_id:label']); ?></td>
         <td><?= esc_html($formattedEndDate); ?></td>
         <td>
-            <?php if ($renewalUrl && (($expiration_offset_date && $endDate->getTimestamp() <= $expiration_offset_date) || $endDate->getTimestamp() <= time())) { ?>
+            <?php if ($renewalUrl && !empty($membership['end_date']) && (($expiration_offset_date && $endDate->getTimestamp() <= $expiration_offset_date) || $endDate->getTimestamp() <= time())) { ?>
                 <div class="wp-block-button is-style-outline">
                     <a href="<?= esc_url($renewalUrl); ?>" target="_blank" class="wp-block-button__link wp-element-button">Renew this membership</a>
                 </div>
