@@ -43,7 +43,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		$mod_atts['sort'] = sanitize_text_field($mod_atts['sort']);
 		$mod_atts['hide_fields'] = sanitize_text_field($mod_atts['hide_fields']);
 		$mod_atts['css_id'] = sanitize_text_field($mod_atts['css_id']);
-		$mod_atts['autopop_user_id'] = rest_sanitize_boolean($mod_atts['autopop_user_id']);
+		$mod_atts['autopop_user_id'] = sanitize_text_field($mod_atts['autopop_user_id']);
 
 		// Validate required attributes
 		if ( empty( $mod_atts['dpid'] ) ) {
