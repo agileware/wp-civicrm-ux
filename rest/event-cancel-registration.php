@@ -42,12 +42,6 @@ class Civicrm_Ux_REST_Event_Cancel_Registration extends Abstract_Civicrm_Ux_REST
 	public function rest_api_callback( $data ) {
 		civicrm_initialize();
 
-		// Verify nonce for state-changing operation
-		$nonce = $data->get_param( 'nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'civicrm_ux_cancel_registration' ) ) {
-			return new WP_Error( 'invalid_nonce', 'Invalid security token.', ['status' => 403] );
-		}
-
         try {
             $event_id = absint($data['eid']);
             

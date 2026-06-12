@@ -42,12 +42,6 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
 	public function rest_api_callback( $data ) {
 		civicrm_initialize();
 
-		// Verify nonce for state-changing operation
-		$nonce = $data->get_param( 'nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'civicrm_ux_mark_attendance' ) ) {
-			return new WP_Error( 'invalid_nonce', 'Invalid security token.', ['status' => 403] );
-		}
-
         try {
             $participant_id = absint($data['pid']);
             $event_id = absint($data['eid']);
