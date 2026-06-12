@@ -43,7 +43,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		$mod_atts['sort'] = sanitize_text_field($mod_atts['sort']);
 		$mod_atts['hide_fields'] = sanitize_text_field($mod_atts['hide_fields']);
 		$mod_atts['css_id'] = sanitize_text_field($mod_atts['css_id']);
-		$mod_atts['autopop_user_id'] = rest_sanitize_boolean($mod_atts['autopop_user_id']);
+		$mod_atts['autopop_user_id'] = sanitize_text_field($mod_atts['autopop_user_id']);
 
 		// Validate required attributes
 		if ( empty( $mod_atts['dpid'] ) ) {
@@ -88,13 +88,16 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			'options'    => [ 'limit' => $mod_atts['limit'], 'sort' => $mod_atts['sort'] ],
 		];
 
-		// get the parameters from http request
-		foreach ( $_REQUEST as $key => $query ) {
-			$key = sanitize_key( $key );
-			if ( in_array( $key, array_keys( $header ) ) && $header[ $key ]['api.filter'] ) {
-				$params[ $key ] = sanitize_text_field($query);
-			}
-		}
+    // Prefer $_GET over $_REQUEST if filters are expected in the URL query string
+    foreach ($_GET as $key => $query) {
+      // Efficient O(1) existence and filter check
+      if (isset($header[$key]) && ! empty($header[$key]['api.filter'])) {
+        // Handle both string inputs and array inputs safely
+        $params[$key] = is_array($query)
+          ? map_deep($query, 'sanitize_text_field')
+          : sanitize_text_field($query);
+      }
+    }
 
 		// get the contact id if the user login
 		// todo checksum?
