@@ -209,9 +209,13 @@ class Civicrm_Ux_Membership_Utils {
 					'contact_id', 
 					'contact.display_name', 
 					'owner_membership_id.contact_id', 
-					'contact_owner.display_name')
+					'contact_owner.display_name',
+					'contribution_recur_id',
+					'contribution_recur.contribution_status_id',
+					'contribution_recur.next_sched_contribution_date')
 				->addJoin('Contact AS contact', 'LEFT', ['contact.id', '=', 'contact_id'])
   				->addJoin('Contact AS contact_owner', 'LEFT', ['contact_owner.id', '=', 'owner_membership_id.contact_id'])
+				->addJoin('ContributionRecur AS contribution_recur', 'LEFT', ['contribution_recur.id', '=', 'contribution_recur_id'])
 				->addWhere('contact_id', '=', $cid);
 		
 		if ( !empty($types) ) {
