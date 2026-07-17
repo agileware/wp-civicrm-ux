@@ -73,12 +73,14 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
 	 * @return bool
 	 */
 	public function check_permissions() {
-		if ( ! is_user_logged_in() || ! current_user_can( 'read' ) ) {
-			return false;
+		if ( ! current_user_can( 'register_for_events' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to cancel this event registration.', 'civicrm-ux' ),
+				[ 'status' => 403 ]
+			);
 		}
 
-		// Verify user has CiviCRM permission to register for events
-		civicrm_initialize();
-		return CRM_Core_Permission::check( 'register for events' );
+		return true;
 	}
 }
