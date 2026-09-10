@@ -217,7 +217,7 @@ For example:
 
 For now, a form can be built using a Custom HTML WordPress block. Use the HTML ID `wp-civicrm-ux-filter-form` on the form element to enable JavaScript handling from `wp-civicrm-ux-filter.js`.
 
-At this stage, only select lists and the `[urlparam]` shortcode are supported for filters.
+At this stage, only select lists and the `[urlparam]` shortcode are supported for filters. See [URL Parameter Shortcodes](#url-parameter-shortcodes) below for the full set of attributes it supports.
 
 - Map the name of the select element to the desired query parameter.
 - Set the option values to the value to pass through to the shortcode attribute.
@@ -266,6 +266,36 @@ If the API request is returning the incorrect results or if you have changed the
 ```wp transient delete --all```
 
 Alternatively, add the optional shortcode parameter *`cache_results=false`* to bypass caching. This is useful if you do not want to add the ?reset parameter to the URL. For example, `[ux_cv_api4_get entity=Event cache_results=false id=id]`.
+
+## URL Parameter Shortcodes
+
+These shortcodes read values from the current page's URL query string (or a submitted form field of the same name), and are commonly used together with `[ux_cv_api4_get]` to build filter forms, as shown in the *Filtering* section above.
+
+### `[urlparam]`
+
+Outputs the value of a URL query parameter, optionally formatted, or wraps it in an HTML attribute or tag.
+
+- *`param`* the name of the query parameter to read. Accepts a comma separated list; the first parameter found with a value is used.
+- *`default`* the value to output if the parameter is not present in the URL.
+- *`dateformat`* optional [PHP date format](https://www.php.net/manual/en/datetime.format.php) to apply if the parameter value can be parsed as a date.
+- *`attr`* optional HTML attribute name to wrap the value in, e.g. `attr="value"` outputs `value="..."`.
+- *`htmltag`* optional HTML tag name to render, using `attr` as one of its attributes. Any additional shortcode attributes not listed above are passed through as extra attributes on the tag.
+
+Example, an input field that is pre-filled from the `keyword` URL parameter:
+
+`[urlparam htmltag="input" type="text" name="keyword" id="search-keyword" attr="value" param="keyword"]`
+
+### `[ifurlparam]`
+
+Conditionally renders the shortcode content depending on whether a URL query parameter is present.
+
+- *`param`* the name of the query parameter to check for. Accepts a comma separated list.
+- *`is`* optional value to compare the parameter against. If provided, the content is only rendered when the parameter's value matches.
+- *`empty`* when set, the content is rendered only when the parameter is **not** present in the URL, instead of when it is.
+
+Example, only show content when the `keyword` parameter is present:
+
+`[ifurlparam param="keyword"]Showing results for your search.[/ifurlparam]`
 
 ## Campaign Shortcode
 
@@ -323,6 +353,12 @@ Event iCal Feed Shortcode `[ux_event_ical_feed]` generates a custom iCal Calenda
 
 - *`type`* optional parameter to filter Events by Event Type (using Event Type Label). For example: `[ux_event_ical_feed type="Meeting,Exhibition"]Click here to download an iCal feed of meeting and exhibitions[/ical-feed]`. If `type` is not specified, then will include all Event Types.
 
+### Direct feed URL
+
+The shortcode links to a hash-protected feed at `/wp-json/ICalFeed/manage?hash=...&type=...`, which only works with a valid hash. There is also a public feed of all events (no hash required) at `/wp-json/ICalFeed/event`, which also accepts an optional `type` parameter, e.g. `https://example.com/wp-json/ICalFeed/event?type=Meeting,Exhibition`.
+
+- Subscribing to either feed with Google Calendar may be affected by Google's [long refresh period](https://webapps.stackexchange.com/a/6315) for external calendars.
+
 ## Event Listing Shortcode
 
 This shortcode will display upcoming CiviCRM events which have a start date of today or a future date. `[ux_event_listing days=5 type="Training"]`  
@@ -347,6 +383,24 @@ The following shortcodes *must* be used together:
 
 - *`[ux_event_markattendance]`* provides a WordPress nonce for authentication
 - *`[ux_event_markattendance_button text="My Button Text" eventid={{api4:id}} attended_status={{status_id}} not_attended_status={{status_id}}]`* outputs a button with the given text for the given event id. It also outputs a confirmation modal dialog for the given event id. You could provide the id, for example, via `[ux_cv_api4_get]` as shown here, which is perfect for generated listings, or hardcode it in for specific event pages. You can customise which status (by ID) to set when the user has selected they have attended using `attended_status`, and which to set when they have not attended using `not_attended_status`. The button will not render for events the current logged in user does not have an active registration for, and has not passed.
+
+## Event Complete Evaluation Shortcode
+
+`[ux_event_completeevaluation_button]` outputs a button linking to an event evaluation form, for use in listings or on specific event pages. The button is only rendered once the event has finished, and only for the logged in user's own participant record for that event.
+
+- *`text`* the button text. Defaults to "Complete Evaluation".
+- *`event_id`* the CiviCRM Event ID. You could provide this, for example, via `[ux_cv_api4_get]`.
+- *`participant_status`* the participant status ID the logged in user must currently have for the event in order for the button to render, e.g. an "Attended" status.
+- *`url`* the target URL for the evaluation form. You can populate this dynamically, for example by using `[ux_cv_api4_get]`.
+- *`fallback_url`* optional. Used instead of `url` if `url` is empty.
+- *`css_classes`* optionally include additional css classes.
+- *`icon_classes`* optionally override the default icon css classes (`fa fa-pencil-square-o`).
+
+The Participant ID, Event ID and Event Title are automatically appended as `pid`, `eid` and `event_title` query parameters to the target URL.
+
+Example usage:
+
+`[ux_event_completeevaluation_button event_id={{api4:id}} participant_status=2 url={{api4:Evaluation_survey.Evaluation_link}} fallback_url="/event-evaluation-survey/"]`
 
 ## Custom Button Shortcode
 
@@ -407,7 +461,7 @@ To override the output of the shortcode when there are no membership records to 
 When linking to a CiviCRM Contribution Page to renew a membership inherited by relationship, it is important to be aware that the contact must have a permissioned relationship with the related contact. This enables the contact to renew the membership on behalf of the primary member, typically an organisation. If there is no permissioned relationship then a new organisation will be entered and the unsupervised duplicate matching rules for organisations will be used. A new membership instead of a membership renewal may also be created. [See the CiviCRM documentation for more details](https://docs.civicrm.org/user/en/latest/membership/defining-memberships)
 
 ### Deprecated shortcodes
-*The following shortcodes are marked for deprecation in a future release in favour of the above shortcodes.*
+*The following shortcodes remain functional but are deprecated in favour of `[ux_membership]` and `[ux_membership_row]` above, and may be removed in a future release. New sites should use the shortcodes above instead.*
 
 1. `[ux_membership_expiry]`  - Return a HTML tag with the membership expiry date of the login user.
 2. `[ux_membership_id]` - Return the membership id of the login user.
@@ -483,6 +537,48 @@ Parameters:
 For example: to display the External ID of a Contact, use this shortcode
 `[ux_contact_value field="external_identifier"]`
 
+## GDPR Communication Preferences Shortcode
+
+`[ux_gdpr_url]` outputs the URL to the CiviCRM communication preferences page for the logged in contact, so you can link to it from your own pages (e.g. a "manage my email preferences" link).
+
+This shortcode requires the [CiviCRM GDPR](https://github.com/veda-consulting/uk.co.vedaconsulting.gdpr) CiviCRM extension to be installed. If the extension is not installed, or no contact is logged in, `#` is returned instead.
+
+Example usage:
+
+`[ux_custom_button text="Manage my email preferences" url={{api4:...}}]` — or link to it directly, e.g. `<a href="[ux_gdpr_url]">Manage my email preferences</a>`
+
+## WordPress Helper Shortcodes
+
+These general purpose shortcodes are not specific to CiviCRM, and are provided as convenient helpers for building pages.
+
+### `[ux_cf_value]`
+
+Outputs a WordPress custom field (post meta, user meta, etc.) value, using WordPress's [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/) function.
+
+- `type` the metadata type, e.g. `post`, `user`, `comment`, `term`. Defaults to `post`.
+- `id` the object ID to read metadata from. Defaults to the current post's ID.
+- `field` **required**, the metadata field/key name to read.
+- `single` whether to return a single value or an array. Defaults to `true`.
+- `default` *not currently used.*
+
+Example usage:
+
+`[ux_cf_value type="post" field="my_custom_field"]`
+
+### `[ux_convert_date]`
+
+Converts a date/time string between timezones. Wrap the date string to convert as the shortcode content.
+
+- `timezone` the timezone the input date/time is in, e.g. `Australia/Melbourne`.
+- `return_timezone` the timezone to convert the date/time to, e.g. `UTC`.
+- `return_format` optional [PHP date format](https://www.php.net/manual/en/datetime.format.php) for the output. Defaults to `d/m/Y g:ia`.
+
+The input date format must be `d/m/Y g:ia`, e.g. `25/12/2024 6:00pm`.
+
+Example usage:
+
+`[ux_convert_date timezone="Australia/Melbourne" return_timezone="UTC"]25/12/2024 6:00pm[/ux_convert_date]`
+
 ## Self Serve Checksum Form
 
 Watch the video below which demonstrates how to use the Self Serve Checksum Form.
@@ -532,55 +628,6 @@ add_filter('ux_self_serve_checksum_email_subject', function($subject, $pageTitle
 
 ### Cloudflare Turnstile
 You can protect your Self Serve Checksum Form against spam using the free service [Cloudflare Turnstile](https://www.cloudflare.com/en-gb/products/turnstile/). Once you have a sitekey and secret key, simply add them to the settings.
-
-# For Developers
-
-## REST API
-
-@TODO Documentation in this section is incomplete
-
-## iCal feed
-- ICalFeed/event
-- ICalFeed/manage
-
-### Parameters
-`type`: filter for event type  
-For example, https://example.com/wp-json/ICalFeed/manage?hash=some&type=Meeting,Exhibition
-
-- Using this feed with Google calendar may get issue with its [long refresh period](https://webapps.stackexchange.com/a/6315).
-
-## WordPress helper shortcodes
-
-@TODO Documentation in this section is incomplete
-
-`[ux_cf_value]`
-- `type`
-- `id`
-- `field`
-- `single`
-- `default` not used yet.
-
-This shortcode is designed for developers. The first four attributes will be passed to [`get_metadata`](https://developer.wordpress.org/reference/functions/get_metadata/).
-
-`[ux_convert_date]`
-- `return_timezone` the 'to' timezone
-- `timezone` the 'from' timezone
-
-The date format for both input and output is `d/m/Y g:ia`
-
-## How to add shortcode
-1. Create a php file in **shortcodes** directory.
-2. Within the file, create a class which implements `iCivicrm_Ux_Shortcode`.
-3. Implement all functions defined in the interface. It is recommended to use PhpStorm.
-
-## How to add REST API route
-1. Create a php file in **rest** directory.
-2. Within the file, create a class which implement `iCivicrm_Ux_REST`.
-3. Implement all functions defined in the interface. It is recommended to use PhpStorm.
-
-## CSS and JavaScript
-All css files should be in `public/css` or `admin/css`. If the new css files are created, please make sure to enqueue them.
-All javascript files should be in `public/js` or `admin/js`.
 
 # About the Authors
 
