@@ -40,25 +40,6 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
       }
     }
 
-    // We still want to show the form if the previous submission was an invalid contact
-    if ( $form_submitted && ! empty( $_POST['ss-cs-email'] ) ) {
-      $email = sanitize_email( $_POST['ss-cs-email'] );
-
-      $contacts = \Civi\Api4\Contact::get( FALSE )
-                                    ->addSelect( 'id' )
-                                    ->addJoin( 'Email AS email', 'LEFT', [
-                                      'email.contact_id',
-                                      '=',
-                                      'id',
-                                    ] )
-                                    ->addWhere( 'email.email', '=', $email )
-                                    ->addWhere( 'contact_type', '=', 'Individual' )
-                                    ->addGroupBy( 'id' )
-                                    ->execute();
-
-      $form_submitted = count( $contacts ) > 0;
-    }
-
     // If there is a valid CID and checksum in the URL, display the content inside the shortcode
     $displayInvalidMessage = FALSE;
     $urlParamsKeys         = array_change_key_case( $_GET, CASE_LOWER );
@@ -323,10 +304,8 @@ class Civicrm_Ux_Shortcode_Self_Serve_Checksum extends Abstract_Civicrm_Ux_Short
                                  ->first()['id'];
       }
 
-      // If still empty, display an error message
       if ( empty( $cid ) ) {
-        // No valid contact was found, that contact record doesn't exist in our CiviCRM Installation
-        $submissionMessage = wpautop( $self_serve_checksum_setting['form_invalid_contact_text'] );
+        $submissionMessage = wpautop( $self_serve_checksum_setting['form_confirmation_text'] );
 
         $tokenData = [
           'page_title'    => $pageTitle,
