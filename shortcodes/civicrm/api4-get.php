@@ -44,8 +44,9 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			}
 		}
 
-		// default checkPermissions as FALSE, assume that security is handled by appropriate API usage.
-		$params = [ 'checkPermissions' => FALSE ];
+		// Default checkPermissions based on entity type; can be overridden via the
+		// check_permissions attribute.
+		$params = [ 'checkPermissions' => ( $atts['entity'] === 'Contact' ) ];
 
 		// cache results by default
 		$cache_results = true;

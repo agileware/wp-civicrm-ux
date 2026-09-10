@@ -46,7 +46,33 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
             $participant_id = absint($data['pid']);
             $event_id = absint($data['eid']);
             $attendance = absint($data['attendance']) == 1 ? absint($data['a_stat']) : absint($data['na_stat']);
-            
+
+            $contact_id = CRM_Core_Session::singleton()->getLoggedInContactID();
+
+            if ( empty( $contact_id ) ) {
+                return new WP_Error(
+                    'rest_forbidden',
+                    __( 'You do not have permission to mark attendance for this event registration.', 'civicrm-ux' ),
+                    [ 'status' => 403 ]
+                );
+            }
+
+            // Confirm the participant record matches the current contact and event.
+            $participant = \Civi\Api4\Participant::get(FALSE)
+                ->addWhere('id', '=', $participant_id)
+                ->addWhere('event_id', '=', $event_id)
+                ->addWhere('contact_id', '=', $contact_id)
+                ->execute()
+                ->first();
+
+            if ( empty( $participant ) ) {
+                return new WP_Error(
+                    'rest_forbidden',
+                    __( 'You do not have permission to mark attendance for this event registration.', 'civicrm-ux' ),
+                    [ 'status' => 403 ]
+                );
+            }
+
             $result = civicrm_api3('FormProcessor', 'mark_event_attendance', [
                 'pid' => $participant_id,
                 'eid' => $event_id,
@@ -73,10 +99,10 @@ class Civicrm_Ux_REST_Event_Mark_Attendance extends Abstract_Civicrm_Ux_REST {
 	 * @return bool
 	 */
 	public function check_permissions() {
-		if ( ! current_user_can( 'register_for_events' ) ) {
+		if ( ! is_user_logged_in() || ! current_user_can( 'register_for_events' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to cancel this event registration.', 'civicrm-ux' ),
+				__( 'You do not have permission to mark attendance for this event registration.', 'civicrm-ux' ),
 				[ 'status' => 403 ]
 			);
 		}
