@@ -33,6 +33,20 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				'entity' => 'Contact',
 			];
 
+		// CiviCRM accepts an entity name in any case, but the tests below are
+		// case-sensitive, so "contact" would otherwise skip both the permission
+		// check and the email/address/phone join, and "event" would skip the
+		// my_events and participant_status_id handling. Canonicalise just the two
+		// names treated specially here; any other entity is passed through as
+		// written, since names like ContributionRecur cannot be derived by case
+		// folding alone.
+		foreach ( [ 'Contact', 'Event' ] as $known_entity ) {
+			if ( strcasecmp( $atts['entity'], $known_entity ) === 0 ) {
+				$atts['entity'] = $known_entity;
+				break;
+			}
+		}
+
 		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
 		if ( array_key_exists( 'id', $atts ) &&
 			 !filter_var( $atts['id'], FILTER_VALIDATE_INT, [ 'options' => [ 'min-range' => 1 ] ] ) &&
@@ -105,13 +119,18 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 						case 'my_events':
 							// Only get events for the current logged in user
 							if ($value && $atts['entity'] == 'Event') {
-								$params['join'][] = ['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']];
-								$params['where'][] = ['participant.contact_id', '=', CRM_Core_Session::singleton()->getLoggedInContactID()];
+								// Cast to int so a visitor with no CiviCRM contact filters on 0,
+								// which matches no participant. This clause is the only thing
+								// keeping one member's registrations private, so it should not
+								// rest on how the API happens to treat a NULL comparison.
+								$contact_id = (int) CRM_Core_Session::singleton()->getLoggedInContactID();
+								$this->add_participant_join( $params );
+								$params['where'][] = ['participant.contact_id', '=', $contact_id];
 							}
 							break;
 						case 'participant_status_id':
 							if ($value && $atts['entity'] == 'Event') {
-								$params['join'][] = ['Participant AS participant', 'LEFT', ['participant.event_id', '=', 'id']];
+								$this->add_participant_join( $params );
 								$params['where'][] = ['participant.status_id', $op, $value];
 							}
 							break;
@@ -250,6 +269,22 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			ob_start();
 			civicrm_ux_load_template_part( 'shortcode', 'no-results' );
 			return ob_get_clean();
+		}
+	}
+
+	/**
+	 * Join Participant for the my_events and participant_status_id attributes.
+	 *
+	 * Both attributes need the same alias, so the join is added at most once -
+	 * repeating it would emit a duplicate alias when they are used together.
+	 *
+	 * @param array $params APIv4 params, modified in place.
+	 */
+	protected function add_participant_join( array &$params ) {
+		$join = [ 'Participant AS participant', 'LEFT', [ 'participant.event_id', '=', 'id' ] ];
+
+		if ( ! in_array( $join, $params['join'] ?? [], TRUE ) ) {
+			$params['join'][] = $join;
 		}
 	}
 
