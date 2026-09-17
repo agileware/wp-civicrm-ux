@@ -152,7 +152,16 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				$post_revision = '';
 			}
 
-			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) );
+			// Results fetched with permission checks vary by viewer, so the cache key
+			// must vary too - otherwise the first permitted visitor warms a site-wide
+			// transient that every later visitor, anonymous ones included, is served.
+			// Both identities are used because either can carry the permissions that
+			// shaped the result. Unchecked calls keep their original key, so public
+			// queries stay shared and existing caches remain valid.
+			$cache_identity = empty( $params['checkPermissions'] ) ? '' :
+				':user:' . get_current_user_id() . ':contact:' . (int) CRM_Core_Session::singleton()->getLoggedInContactID();
+
+			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) . $cache_identity );
 
 			$all = !empty($_GET['reset']) || !$cache_results ? FALSE : get_transient( $trkey );
 
