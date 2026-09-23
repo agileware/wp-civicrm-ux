@@ -23,9 +23,17 @@ class Civicrm_Ux_Event_Utils {
 		        "PRODID:-//" . get_bloginfo( "name" ) . "//NONSGML CiviEvent iCal//EN\r\n";
 
 		$timezone_str = get_option( 'timezone_string' );
-		// Generate VTIMEZONE component
+		// Generate VTIMEZONE component.
+		//
+		// generate_vtimezone() returns FALSE for a timezone it cannot construct, and WordPress
+		// leaves timezone_string EMPTY whenever the site is configured by UTC offset rather
+		// than by city - which is the default on a fresh install. Calling ->serialize() on that
+		// FALSE was a fatal, so every iCal feed returned a 500 on such a site. VTIMEZONE is an
+		// optional component, so omitting it is a valid calendar and the right degradation.
 		$timezone = self::generate_vtimezone( $timezone_str );
-		$iCal     .= $timezone->serialize();
+		if ( $timezone ) {
+			$iCal .= $timezone->serialize();
+		}
 
 		$civi_param = [
 			'sequential' => 1,
