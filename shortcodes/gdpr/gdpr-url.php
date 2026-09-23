@@ -29,6 +29,16 @@ class Civicrm_Ux_Shortcode_Gdpr_Url extends Abstract_Civicrm_Ux_Shortcode {
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 				//This plugin requires CiviCRM GDPR: https://github.com/veda-consulting/uk.co.vedaconsulting.gdpr
+				// That extension is not part of CiviCRM core, so on a site without it the class
+				// below does not exist. A missing class raises an Error, not an exception, so it
+				// would sail past the catch here and take the whole page down - rather than
+				// reaching the '#' fallback that is already the intended behaviour.
+				if ( ! class_exists( 'CRM_Gdpr_CommunicationsPreferences_Utils' ) ) {
+					error_log( 'wp-civicrm-ux: [ux_gdpr_url] needs the CiviCRM GDPR extension (uk.co.vedaconsulting.gdpr), which is not installed.' );
+
+					return '#';
+				}
+
 				$commPrefURL = CRM_Gdpr_CommunicationsPreferences_Utils::getCommPreferenceURLForContact( $cid );
 
 			} catch ( CiviCRM_API3_Exception $e ) {
