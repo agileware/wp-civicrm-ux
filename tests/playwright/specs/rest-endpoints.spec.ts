@@ -162,6 +162,29 @@ test.describe('Suite C - iCal feeds', () => {
     expect(await res.text()).toContain('BEGIN:VCALENDAR');
   });
 
+  test('C-10b the feeds still serve a calendar with no named site timezone', async ({ request }) => {
+    // Regression test. WordPress leaves timezone_string EMPTY when the site is configured by
+    // UTC offset rather than by city, which is the default on a fresh install. The feed built
+    // its VTIMEZONE from that value and called ->serialize() on the FALSE it got back, so
+    // every iCal endpoint returned a 500. VTIMEZONE is optional, so the feed should simply
+    // omit it.
+    const { wpCli } = await import('../fixtures/civi');
+    const original = wpCli(['option', 'get', 'timezone_string']).trim();
+    const hash = wpCli(['option', 'get', 'internal_ical_hash']).trim();
+
+    try {
+      wpCli(['option', 'update', 'timezone_string', '']);
+
+      for (const url of [`/wp-json/ICalFeed/manage?hash=${hash}`, '/wp-json/ICalFeed/event']) {
+        const res = await request.get(url);
+        expect(res.status(), `${url} should not 500 without a named timezone`).toBe(200);
+        expect(await res.text()).toContain('BEGIN:VCALENDAR');
+      }
+    } finally {
+      wpCli(['option', 'update', 'timezone_string', original]);
+    }
+  });
+
   for (const [label, query] of [
     ['a wrong hash', '?hash=deadbeefdeadbeefdeadbeefdeadbeef'],
     ['an empty hash', '?hash='],

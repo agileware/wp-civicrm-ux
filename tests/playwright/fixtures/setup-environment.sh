@@ -78,6 +78,13 @@ create_or_update_user privileged
 
 # ---------------------------------------------------------------- form processors
 
+echo "Setting a named site timezone..."
+# A fresh WordPress leaves timezone_string empty and uses gmt_offset instead. Most real sites
+# pick a city, so the suite matches that - and the iCal feeds only produce a VTIMEZONE
+# component when a named zone is set. The empty case is covered separately by C-10b, which is
+# the configuration that used to make the feeds return a 500.
+run wp option update timezone_string 'Australia/Melbourne'
+
 echo "Enabling the CiviCRM components the suite depends on..."
 # CiviCRM's components are core extensions, and a fresh `cv core:install` enables only some
 # of them. civi_campaign in particular is NOT enabled by default, and without it the class

@@ -114,6 +114,10 @@ function ensureEvent(string $title, string $start, string $end): int {
     // API-created event leaves it NULL - which [ux_event_listing] cannot render (see the
     // note in events.spec.ts). Set explicitly so the seed matches what a real site holds.
     'registration_link_text' => 'Register Now',
+    // "Allow self-service cancellation or transfer?" - the cancel-registration button checks
+    // this event setting and renders nothing without it, so Suite B needs it on.
+    'allow_selfcancelxfer' => TRUE,
+    'selfcancelxfer_time' => 0,
     'summary' => "$title summary",
     'description' => "$title description",
   ];
