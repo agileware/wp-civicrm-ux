@@ -78,6 +78,14 @@ create_or_update_user privileged
 
 # ---------------------------------------------------------------- form processors
 
+echo "Enabling the CiviCRM components the suite depends on..."
+# CiviCRM's components are core extensions, and a fresh `cv core:install` enables only some
+# of them. civi_campaign in particular is NOT enabled by default, and without it the class
+# \Civi\Api4\Campaign does not exist at all - seeding fails with "Class not found" rather
+# than an empty result. The others are normally on already; ext:enable is a no-op when they
+# are, so listing them keeps the suite's dependencies explicit rather than assumed.
+run cv ext:enable civi_event civi_member civi_contribute civi_campaign
+
 echo "Enabling the Form Processor extension..."
 # form-processor ships bundled with CiviCRM core (civicrm/ext/org.civicoop.form-processor),
 # so there is nothing to download - it only needs enabling.

@@ -16,6 +16,7 @@ use Civi\Api4\Contact;
 use Civi\Api4\Contribution;
 use Civi\Api4\Email;
 use Civi\Api4\Event;
+use Civi\Api4\FinancialType;
 use Civi\Api4\Membership;
 use Civi\Api4\MembershipType;
 use Civi\Api4\Participant;
@@ -194,6 +195,48 @@ ensureParticipant($memberCid, $futureEventId, 1);
 
 out('Memberships:');
 $membershipType = MembershipType::get(FALSE)->addWhere('is_active', '=', TRUE)->execute()->first();
+
+if (!$membershipType) {
+  // A fresh CiviCRM has no membership types at all, so one is created here rather than
+  // leaving Suite F with nothing to assert. A type needs an Organization to belong to and a
+  // financial type to bill against, neither of which can be assumed either.
+  $org = Contact::get(FALSE)
+    ->addWhere('organization_name', '=', PREFIX . ' Member Organisation')
+    ->addWhere('is_deleted', '=', FALSE)
+    ->execute()->first();
+
+  if (!$org) {
+    $org = Contact::create(FALSE)
+      ->addValue('contact_type', 'Organization')
+      ->addValue('organization_name', PREFIX . ' Member Organisation')
+      ->execute()->first();
+  }
+
+  // "Member Dues" is the stock financial type for memberships; fall back to whatever is
+  // available so this does not depend on the exact set a given CiviCRM version ships.
+  $financialType = FinancialType::get(FALSE)
+    ->addWhere('name', '=', 'Member Dues')
+    ->addWhere('is_active', '=', TRUE)
+    ->execute()->first()
+    ?: FinancialType::get(FALSE)->addWhere('is_active', '=', TRUE)->execute()->first();
+
+  if (!$financialType) {
+    out('  WARNING: no active financial type - cannot create a membership type.');
+  }
+  else {
+    $membershipType = MembershipType::create(FALSE)
+      ->addValue('name', PREFIX . ' Membership')
+      ->addValue('member_of_contact_id', $org['id'])
+      ->addValue('financial_type_id', $financialType['id'])
+      ->addValue('duration_unit', 'year')
+      ->addValue('duration_interval', 1)
+      ->addValue('period_type', 'rolling')
+      ->addValue('is_active', TRUE)
+      ->execute()->first();
+    out("  created membership type {$membershipType['id']} (org {$org['id']}, financial type {$financialType['id']})");
+  }
+}
+
 if ($membershipType) {
   $existing = Membership::get(FALSE)
     ->addWhere('contact_id', '=', $memberCid)
@@ -221,76 +264,105 @@ else {
 // ---------------------------------------------------------------- campaign
 
 out('Campaigns:');
-$campaignTitle = PREFIX . ' Campaign';
-$campaign = Campaign::get(FALSE)->addWhere('title', '=', $campaignTitle)->execute()->first();
-if (!$campaign) {
-  $campaign = Campaign::create(FALSE)
-    ->addValue('title', $campaignTitle)
-    ->addValue('name', strtolower(PREFIX) . '_campaign')
-    ->addValue('goal_revenue', 1000)
-    ->addValue('start_date', date('Y-m-d', strtotime('-30 days')))
-    ->addValue('end_date', date('Y-m-d', strtotime('+30 days')))
-    ->addValue('is_active', TRUE)
-    ->execute()->first();
-}
-$campaignId = (int) $campaign['id'];
-out("  campaign \"$campaignTitle\" = $campaignId");
 
-// Two completed contributions, so the thermometer has a non-zero, predictable percentage:
-// 250 of a 1000 goal = 25%.
-$existingContribs = Contribution::get(FALSE)
-  ->addWhere('campaign_id', '=', $campaignId)
-  ->selectRowCount()
-  ->execute()->count();
+// Ids default to 0 so the handover file is still complete if this section is skipped. A
+// spec that needs a campaign then fails on its own with a clear id of 0, rather than every
+// spec in the suite failing because seeded-ids.json was never written.
+$campaignId = 0;
+$emptyCampaignId = 0;
 
-if ($existingContribs === 0) {
-  foreach ([100, 150] as $amount) {
-    Contribution::create(FALSE)
-      ->addValue('contact_id', $memberCid)
-      ->addValue('financial_type_id', 1)
-      ->addValue('total_amount', $amount)
-      ->addValue('receive_date', date('Y-m-d H:i:s'))
-      ->addValue('contribution_status_id:name', 'Completed')
-      ->addValue('campaign_id', $campaignId)
-      ->execute();
-  }
-  out('  2 completed contributions totalling 250');
+// CiviCampaign is a core extension that setup-environment.sh enables. If it somehow is not
+// enabled, the class does not exist and the whole script would fatal here - taking the ids
+// handover down with it. Campaigns are one optional suite, so this degrades instead.
+if (!class_exists(Campaign::class)) {
+  out('  WARNING: CiviCampaign is not enabled - skipping campaigns. Suite G will not run.');
 }
 else {
-  out("  $existingContribs contribution(s) already present");
-}
+  $campaignTitle = PREFIX . ' Campaign';
+  $campaign = Campaign::get(FALSE)->addWhere('title', '=', $campaignTitle)->execute()->first();
+  if (!$campaign) {
+    $campaign = Campaign::create(FALSE)
+      ->addValue('title', $campaignTitle)
+      ->addValue('name', strtolower(PREFIX) . '_campaign')
+      ->addValue('goal_revenue', 1000)
+      ->addValue('start_date', date('Y-m-d', strtotime('-30 days')))
+      ->addValue('end_date', date('Y-m-d', strtotime('+30 days')))
+      ->addValue('is_active', TRUE)
+      ->execute()->first();
+  }
+  $campaignId = (int) $campaign['id'];
+  out("  campaign \"$campaignTitle\" = $campaignId");
 
-// An empty campaign, to prove the thermometer does not divide by zero.
-$emptyTitle = PREFIX . ' Empty Campaign';
-$empty = Campaign::get(FALSE)->addWhere('title', '=', $emptyTitle)->execute()->first();
-if (!$empty) {
-  $empty = Campaign::create(FALSE)
-    ->addValue('title', $emptyTitle)
-    ->addValue('name', strtolower(PREFIX) . '_empty_campaign')
-    ->addValue('goal_revenue', 500)
-    ->addValue('is_active', TRUE)
-    ->execute()->first();
+  // Two completed contributions, so the thermometer has a non-zero, predictable percentage:
+  // 250 of a 1000 goal = 25%.
+  $existingContribs = Contribution::get(FALSE)
+    ->addWhere('campaign_id', '=', $campaignId)
+    ->selectRowCount()
+    ->execute()->count();
+
+  if ($existingContribs === 0) {
+    $donationType = FinancialType::get(FALSE)
+      ->addWhere('name', '=', 'Donation')
+      ->addWhere('is_active', '=', TRUE)
+      ->execute()->first()
+      ?: FinancialType::get(FALSE)->addWhere('is_active', '=', TRUE)->execute()->first();
+
+    foreach ([100, 150] as $amount) {
+      Contribution::create(FALSE)
+        ->addValue('contact_id', $memberCid)
+        ->addValue('financial_type_id', $donationType['id'])
+        ->addValue('total_amount', $amount)
+        ->addValue('receive_date', date('Y-m-d H:i:s'))
+        ->addValue('contribution_status_id:name', 'Completed')
+        ->addValue('campaign_id', $campaignId)
+        ->execute();
+    }
+    out('  2 completed contributions totalling 250');
+  }
+  else {
+    out("  $existingContribs contribution(s) already present");
+  }
+
+  // An empty campaign, to prove the thermometer does not divide by zero.
+  $emptyTitle = PREFIX . ' Empty Campaign';
+  $empty = Campaign::get(FALSE)->addWhere('title', '=', $emptyTitle)->execute()->first();
+  if (!$empty) {
+    $empty = Campaign::create(FALSE)
+      ->addValue('title', $emptyTitle)
+      ->addValue('name', strtolower(PREFIX) . '_empty_campaign')
+      ->addValue('goal_revenue', 500)
+      ->addValue('is_active', TRUE)
+      ->execute()->first();
+  }
+  $emptyCampaignId = (int) $empty['id'];
+  out("  empty campaign = $emptyCampaignId");
 }
-out("  empty campaign = {$empty['id']}");
 
 // ---------------------------------------------------------------- activity
 
 out('Activities:');
 $activitySubject = PREFIX . ' Activity';
-$activity = Activity::get(FALSE)->addWhere('subject', '=', $activitySubject)->execute()->first();
-if (!$activity) {
-  Activity::create(FALSE)
-    ->addValue('activity_type_id:name', 'Meeting')
-    ->addValue('subject', $activitySubject)
-    ->addValue('source_contact_id', $memberCid)
-    ->addValue('target_contact_id', [$memberCid])
-    ->addValue('status_id:name', 'Completed')
-    ->addValue('activity_date_time', date('Y-m-d H:i:s', strtotime('-7 days')))
-    ->execute();
-  out("  activity \"$activitySubject\" created");
+// One optional record for Suite I. Caught rather than fatal for the same reason as the
+// campaign block: a missing activity type must not cost the whole suite its ids file.
+try {
+  $activity = Activity::get(FALSE)->addWhere('subject', '=', $activitySubject)->execute()->first();
+  if (!$activity) {
+    Activity::create(FALSE)
+      ->addValue('activity_type_id:name', 'Meeting')
+      ->addValue('subject', $activitySubject)
+      ->addValue('source_contact_id', $memberCid)
+      ->addValue('target_contact_id', [$memberCid])
+      ->addValue('status_id:name', 'Completed')
+      ->addValue('activity_date_time', date('Y-m-d H:i:s', strtotime('-7 days')))
+      ->execute();
+    out("  activity \"$activitySubject\" created");
+  }
+  else {
+    out("  activity \"$activitySubject\" already present");
+  }
 }
-else {
-  out("  activity \"$activitySubject\" already present");
+catch (Throwable $e) {
+  out('  WARNING: could not seed the activity - ' . $e->getMessage());
 }
 
 // ---------------------------------------------------------------- handover
@@ -304,7 +376,7 @@ $ids = [
   'pastEventId' => $pastEventId,
   'futureEventId' => $futureEventId,
   'campaignId' => $campaignId,
-  'emptyCampaignId' => (int) $empty['id'],
+  'emptyCampaignId' => $emptyCampaignId,
 ];
 
 file_put_contents(__DIR__ . '/seeded-ids.json', json_encode($ids, JSON_PRETTY_PRINT) . "\n");
