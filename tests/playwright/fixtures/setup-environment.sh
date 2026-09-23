@@ -166,14 +166,35 @@ create_page ux-test-contact-value 'UX Test Contact Value' \
 create_page ux-test-membership 'UX Test Membership' \
   'STATUS=[ux_membership_status] TYPE=[ux_membership_type] ID=[ux_membership_id] EXPIRY=[ux_membership_expiry]'
 
+# Every campaign shortcode, against the funded campaign and the empty one. The seed gives the
+# funded campaign a 1000 goal and 250 of completed contributions, so the thermometer is 25%.
 create_page ux-test-campaign 'UX Test Campaign' \
-  'GOAL=[ux_campaign_goal_amount id="__CAMPAIGN_ID__"] RAISED=[ux_campaign_total_raised id="__CAMPAIGN_ID__"]'
+  'GOAL=[ux_campaign_goal_amount id="__CAMPAIGN_ID__"]
+RAISED=[ux_campaign_total_raised id="__CAMPAIGN_ID__"]
+COUNT=[ux_campaign_number_contributions id="__CAMPAIGN_ID__"]
+DAYS=[ux_campaign_days_remaining id="__CAMPAIGN_ID__"]
+END=[ux_campaign_end_date id="__CAMPAIGN_ID__"]
+THERMO=[ux_campaign_thermometer id="__CAMPAIGN_ID__"]
+INFO=[ux_campaign_info_thermometer id="__CAMPAIGN_ID__"]
+HONOUR=[ux_campaign_honour_listing id="__CAMPAIGN_ID__"]
+EMPTYGOAL=[ux_campaign_goal_amount id="__EMPTY_CAMPAIGN_ID__"]
+EMPTYRAISED=[ux_campaign_total_raised id="__EMPTY_CAMPAIGN_ID__"]
+EMPTYCOUNT=[ux_campaign_number_contributions id="__EMPTY_CAMPAIGN_ID__"]
+EMPTYTHERMO=[ux_campaign_thermometer id="__EMPTY_CAMPAIGN_ID__"]
+NOID=[ux_campaign_goal_amount]'
 
 create_page ux-test-self-serve-checksum 'UX Test Self Serve Checksum' \
   '[ux_self_serve_checksum]UX_PROTECTED_CONTENT[/ux_self_serve_checksum]'
 
+# ux_convert_date reads the time to convert from the shortcode's CONTENT, in d/m/Y g:ia, and
+# needs BOTH timezones - each defaults to an empty string, which is not a valid DateTimeZone.
+# 10:00 in Melbourne (UTC+11 in January) is 23:00 UTC the previous day.
 create_page ux-test-utility 'UX Test Utility' \
-  'DATE=[ux_convert_date timezone="Australia/Melbourne" return_format="Y-m-d"] GDPR=[ux_gdpr_url]'
+  'DATE=[ux_convert_date timezone="Australia/Melbourne" return_timezone="UTC" return_format="Y-m-d H:i"]15/01/2026 10:00am[/ux_convert_date]
+BADTZ=[ux_convert_date timezone="Not/AZone" return_timezone="UTC"]15/01/2026 10:00am[/ux_convert_date]
+BADTIME=[ux_convert_date timezone="UTC" return_timezone="UTC"]not a date[/ux_convert_date]
+GDPR=[ux_gdpr_url]
+BUTTON=[ux_custom_button text="Go" url="https://example.test/target" fallback_url="https://example.test/fallback"]'
 
 create_page ux-test-activity-listing 'UX Test Activity Listing' \
   '[ux_activity_listing]'
