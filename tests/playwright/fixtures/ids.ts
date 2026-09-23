@@ -6,6 +6,7 @@ export type SeededIds = {
   privilegedContactId: number;
   pastEventId: number;
   futureEventId: number;
+  unattendedEventId: number;
   campaignId: number;
   emptyCampaignId: number;
 };
@@ -73,6 +74,7 @@ function load(): SeededIds {
     privilegedContactId: contactId(contacts, 'Privileged'),
     pastEventId: byTitle(events, `${PREFIX} Past Event`),
     futureEventId: byTitle(events, `${PREFIX} Future Event`),
+    unattendedEventId: byTitle(events, `${PREFIX} Unattended Event`),
     campaignId: byTitle(campaigns, `${PREFIX} Campaign`, false),
     emptyCampaignId: byTitle(campaigns, `${PREFIX} Empty Campaign`, false),
   };

@@ -110,6 +110,10 @@ function ensureEvent(string $title, string $start, string $end): int {
     'is_public' => TRUE,
     'is_active' => TRUE,
     'is_online_registration' => TRUE,
+    // CiviCRM's own event form always populates this, but the column is nullable and an
+    // API-created event leaves it NULL - which [ux_event_listing] cannot render (see the
+    // note in events.spec.ts). Set explicitly so the seed matches what a real site holds.
+    'registration_link_text' => 'Register Now',
     'summary' => "$title summary",
     'description' => "$title description",
   ];
@@ -182,6 +186,14 @@ $futureEventId = ensureEvent(
   PREFIX . ' Future Event',
   date('Y-m-d H:i:s', strtotime('+30 days')),
   date('Y-m-d H:i:s', strtotime('+30 days +3 hours'))
+);
+// A third event nobody is registered for. Without it the member is a participant on EVERY
+// seeded event, so a my_events listing and an unfiltered listing return the same count and
+// a broken contact filter would be indistinguishable from a working one (D-09).
+$unattendedEventId = ensureEvent(
+  PREFIX . ' Unattended Event',
+  date('Y-m-d H:i:s', strtotime('+45 days')),
+  date('Y-m-d H:i:s', strtotime('+45 days +3 hours'))
 );
 
 out('Participants:');
@@ -378,6 +390,7 @@ out('  ' . json_encode([
   'privilegedContactId' => $privilegedCid,
   'pastEventId' => $pastEventId,
   'futureEventId' => $futureEventId,
+  'unattendedEventId' => $unattendedEventId,
   'campaignId' => $campaignId,
   'emptyCampaignId' => $emptyCampaignId,
 ]));

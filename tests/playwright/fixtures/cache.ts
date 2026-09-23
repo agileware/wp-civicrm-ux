@@ -28,14 +28,14 @@ export function purgeApi4Transients(): void {
  * writes no cache entry at all.
  */
 export function listApi4Transients(): string[] {
-  // The table prefix is read first: these commands run through execFileSync, which does not
-  // invoke a shell, so a $(...) substitution inside the query would be passed through as text.
-  const prefix = wpCli(['db', 'prefix']).trim();
+  // `wp option list` goes through $wpdb, whereas `wp db query` shells out to the mysql client
+  // binary - which the WordPress container does not ship ("env: 'mysql': No such file or
+  // directory"). Same result, no external dependency, and no table prefix to resolve.
   const out = wpCli([
-    'db',
-    'query',
-    `SELECT option_name FROM ${prefix}options WHERE option_name LIKE '_transient_ux_cv_api4_get%'`,
-    '--skip-column-names',
+    'option',
+    'list',
+    '--search=_transient_ux_cv_api4_get*',
+    '--field=option_name',
   ]);
   return out.split('\n').map((l) => l.trim()).filter(Boolean);
 }

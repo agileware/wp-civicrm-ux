@@ -9,6 +9,7 @@
 import { test, expect, PAGES } from '../fixtures/base';
 import { seededIds } from '../fixtures/ids';
 import {
+  civiApi4,
   getParticipant,
   getParticipantStatus,
   setParticipantStatus,
@@ -39,10 +40,48 @@ test.describe('Suite A - event display', () => {
     expect(errors, `console errors: ${errors.join(' | ')}`).toHaveLength(0);
   });
 
+  test('A-07 an event with no registration_link_text still renders', async ({ anonymousPage }) => {
+    // Regression test. registration_link_text is `varchar(255) NULL` with no default, so an
+    // event created through the API rather than CiviCRM's own form leaves it NULL. The
+    // listing used to pass that straight into a non-nullable `string` parameter, which is a
+    // TypeError in PHP 8 - so one such event took down every page using the shortcode.
+    const eventId = ids.unattendedEventId;
+    const original = civiApi4<Array<{ registration_link_text: string | null }>>('Event.get', {
+      where: [['id', '=', eventId]],
+      select: ['registration_link_text'],
+    })[0].registration_link_text;
+
+    try {
+      civiApi4('Event.update', {
+        where: [['id', '=', eventId]],
+        values: { registration_link_text: null },
+      });
+
+      await anonymousPage.goto(PAGES.eventListing);
+      const body = (await anonymousPage.textContent('body')) || '';
+
+      expect(body).not.toContain('There has been a critical error');
+      expect(body).toContain('UXTEST');
+      // Falls back to the default label rather than rendering an empty link.
+      expect(body).toContain('Register now');
+    } finally {
+      civiApi4('Event.update', {
+        where: [['id', '=', eventId]],
+        values: { registration_link_text: original },
+      });
+    }
+  });
+
   test('A-05 the iCal feed link renders and resolves to a calendar', async ({ anonymousPage, request }) => {
     await anonymousPage.goto(PAGES.eventIcalFeed);
-    const href = await anonymousPage.locator('a[href*="ICalFeed"], a[href*="ical"]').first().getAttribute('href');
-    expect(href, 'no iCal feed link was rendered').toBeTruthy();
+
+    // Scoped to the post body, and matched on the REST namespace only. A looser `a[href*="ical"]`
+    // also matches this page's own nav link, because the host page's slug contains "ical".
+    const href = await anonymousPage
+      .locator('.entry-content a[href*="ICalFeed"]')
+      .first()
+      .getAttribute('href');
+    expect(href, 'no iCal feed link was rendered in the post body').toBeTruthy();
 
     const res = await request.get(href!);
     expect(res.status()).toBe(200);
@@ -86,9 +125,12 @@ test.describe('Suite B - marking attendance through the UI', () => {
       const dialog = memberPage.locator(`#event-markattendance-confirm-dialog-${ids.pastEventId}`);
       await expect(dialog).toBeVisible();
 
-      // The confirmation dialog's own submit control; matched on visible text so the test
-      // does not depend on the template's internal class names.
-      await dialog.getByRole('button', { name: /attend|yes|confirm/i }).first().click();
+      // The dialog is a form: pick "Yes" and submit. The radio carries the attendance value
+      // (1 = attended), and the hidden attended_status/not_attended_status fields supply the
+      // participant status ids the REST call is built from - see
+      // templates/shortcode/shortcode-event-markattendance-form.php.
+      await dialog.locator('#attendance-yes').check();
+      await dialog.locator('button.submit').click();
       await memberPage.waitForLoadState('networkidle');
 
       expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Attended);
@@ -104,12 +146,16 @@ test.describe('Suite B - cancel registration', () => {
 
     try {
       await memberPage.goto(PAGES.cancelRegistration);
-      const button = memberPage.locator('button.event-cancel-registration, .event-cancelregistration button').first();
+      const button = memberPage.locator('button.event-cancel-registration');
       await expect(button).toBeVisible();
       await button.click();
 
-      const dialog = memberPage.locator('dialog[open], .event-cancelregistration-confirm-dialog').first();
-      await dialog.getByRole('button', { name: /cancel|yes|confirm/i }).first().click();
+      // Note the dialog id/class say "cancellation" while the trigger button says
+      // "cancel-registration" - the markup in event-cancelregistration-button.php is the
+      // authority here, not the shortcode name.
+      const dialog = memberPage.locator(`#event-cancellation-confirm-dialog-${ids.futureEventId}`);
+      await expect(dialog).toBeVisible();
+      await dialog.locator('button.confirm-yes').click();
       await memberPage.waitForLoadState('networkidle');
 
       expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Cancelled);
@@ -120,8 +166,6 @@ test.describe('Suite B - cancel registration', () => {
 
   test('B-08 the cancel button is absent for an anonymous visitor', async ({ anonymousPage }) => {
     await anonymousPage.goto(PAGES.cancelRegistration);
-    await expect(
-      anonymousPage.locator('button.event-cancel-registration, .event-cancelregistration button')
-    ).toHaveCount(0);
+    await expect(anonymousPage.locator('button.event-cancel-registration')).toHaveCount(0);
   });
 });

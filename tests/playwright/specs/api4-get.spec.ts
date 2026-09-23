@@ -142,10 +142,19 @@ test.describe('Suite D - my_events isolation', () => {
 
     const count = (s: string) => s.match(/E=/g)?.length ?? 0;
     expect(count(withLower)).toBe(count(withCapital));
+
     // Before the fix the lowercase form dropped the contact filter and returned every event.
-    expect(count(withLower)).toBeLessThan(
-      civiApi4<Array<{ id: number }>>('Event.get', { select: ['id'], limit: 0 }).length
-    );
+    // The comparison is only meaningful because seed-data.php creates an event nobody is
+    // registered for - otherwise the member is a participant on every event and the filtered
+    // and unfiltered counts are identical either way.
+    const allEvents = civiApi4<Array<{ id: number }>>('Event.get', { select: ['id'], limit: 0 }).length;
+    const myParticipations = civiApi4<Array<{ id: number }>>('Participant.get', {
+      where: [['contact_id', '=', ids.memberContactId]],
+      select: ['id'],
+    }).length;
+
+    expect(allEvents).toBeGreaterThan(myParticipations);
+    expect(count(withLower)).toBe(myParticipations);
   });
 
   test('D-10 a visitor with no CiviCRM contact sees no events', async ({ anonymousPage }) => {

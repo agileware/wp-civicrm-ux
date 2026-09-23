@@ -52,12 +52,19 @@ test.describe('Suite F - a member sees their own membership', () => {
 
 test.describe('Suite F - negative cases', () => {
   test('F-05 an anonymous visitor sees no membership data', async ({ anonymousPage }) => {
+    const membership = civiApi4<Array<{ id: number }>>('Membership.get', {
+      where: [['contact_id', '=', ids.memberContactId]],
+      select: ['id'],
+    })[0];
+    test.skip(!membership, 'No membership was seeded.');
+
     await anonymousPage.goto(PAGES.membership);
     const body = (await anonymousPage.textContent('body')) || '';
 
-    // The labels still render - the shortcodes simply resolve to nothing - so the assertion
-    // is that no VALUE follows each one.
-    expect(body).toMatch(/STATUS=\s*(TYPE=|$)/);
+    // Asserted on the member's actual record rather than on the shape of the label text: a
+    // whitespace-sensitive regex over "STATUS= TYPE= ..." breaks on any theme or markup
+    // change, while "the seeded membership's id must not appear" is the thing that matters.
+    expect(body).not.toContain(`ID=${membership.id}`);
     expect(body).not.toMatch(/ID=\d/);
   });
 
