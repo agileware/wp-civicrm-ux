@@ -380,6 +380,31 @@ catch (Throwable $e) {
   out('  WARNING: could not seed the activity - ' . $e->getMessage());
 }
 
+// A second activity with NO target contact. Activity APIv3 only builds target_contact_name
+// while walking an activity's actual targets, so a targetless one has no such key - which is
+// exactly what used to fatal the listing. Both shapes need to exist for Suite I to prove the
+// name still renders AND that a missing key is survivable.
+$untargetedSubject = PREFIX . ' Untargeted Activity';
+try {
+  $untargeted = Activity::get(FALSE)->addWhere('subject', '=', $untargetedSubject)->execute()->first();
+  if (!$untargeted) {
+    Activity::create(FALSE)
+      ->addValue('activity_type_id:name', 'Meeting')
+      ->addValue('subject', $untargetedSubject)
+      ->addValue('source_contact_id', $memberCid)
+      ->addValue('status_id:name', 'Completed')
+      ->addValue('activity_date_time', date('Y-m-d H:i:s', strtotime('-6 days')))
+      ->execute();
+    out("  activity \"$untargetedSubject\" created (no target contact)");
+  }
+  else {
+    out("  activity \"$untargetedSubject\" already present");
+  }
+}
+catch (Throwable $e) {
+  out('  WARNING: could not seed the untargeted activity - ' . $e->getMessage());
+}
+
 // ---------------------------------------------------------------- summary
 
 // Printed for the CI log only. The ids are deliberately NOT written to a file: this script

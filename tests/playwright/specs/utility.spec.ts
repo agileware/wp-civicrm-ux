@@ -81,6 +81,27 @@ test.describe('Suite I - ux_activity_listing', () => {
     expect(body).toContain('UXTEST Activity');
   });
 
+  test('I-04b an activity with no target contact does not break the listing', async ({ memberPage }) => {
+    // Regression test. Activity APIv3 builds target_contact_name only while walking an
+    // activity's actual targets, so an activity with none has no such key at all - unlike
+    // target_contact_id, which is initialised to an empty array either way. Reading the
+    // missing key into end() was a TypeError, so a single targetless activity fatalled the
+    // whole listing. Confirmed against the CiviCRM 6.16.5 source.
+    const seeded = civiApi4<Array<{ id: number }>>('Activity.get', {
+      where: [['subject', '=', 'UXTEST Untargeted Activity']],
+      select: ['id'],
+    });
+    test.skip(!seeded.length, 'No untargeted activity was seeded.');
+
+    await memberPage.goto(PAGES.activityListing);
+    const body = (await memberPage.textContent('body')) || '';
+
+    expect(body).not.toContain('There has been a critical error');
+    expect(body).toContain('UXTEST Untargeted Activity');
+    // The targeted activity is still listed alongside it.
+    expect(body).toContain('UXTEST Activity');
+  });
+
   test('I-05 an anonymous visitor sees no activity data', async ({ anonymousPage }) => {
     await anonymousPage.goto(PAGES.activityListing);
     const body = (await anonymousPage.textContent('body')) || '';

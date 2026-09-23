@@ -21,6 +21,17 @@ function field(body: string, label: string): string {
   return match ? match[1].trim() : '';
 }
 
+/**
+ * Numeric value of a money-formatted figure.
+ *
+ * These render through CRM_Utils_Money::format, so "1000" comes back as "$ 1,000.00" - the
+ * currency symbol, the thousands separator and the spacing are all site configuration. Only
+ * the amount is asserted on.
+ */
+function money(value: string): number {
+  return Number.parseFloat(value.replace(/[^0-9.]/g, ''));
+}
+
 test.describe('Suite G - funded campaign', () => {
   test.beforeEach(() => {
     test.skip(!ids.campaignId, 'CiviCampaign is not enabled - campaigns were not seeded.');
@@ -35,10 +46,9 @@ test.describe('Suite G - funded campaign', () => {
     await anonymousPage.goto(PAGES.campaign);
     const body = (await anonymousPage.textContent('body')) || '';
 
-    // Both are rendered through CRM_Utils_Money::format, so the amount is asserted on its
-    // digits rather than on a currency symbol or separator this site happens to use.
-    expect(field(body, 'GOAL')).toContain(String(Math.round(campaign.goal_revenue)));
-    expect(field(body, 'RAISED')).toMatch(/250/);
+    expect(money(field(body, 'GOAL'))).toBe(Number(campaign.goal_revenue));
+    // 100 + 150 from the two completed contributions seed-data.php creates.
+    expect(money(field(body, 'RAISED'))).toBe(250);
     expect(field(body, 'GOAL')).not.toContain('Campaign not found');
   });
 
@@ -108,8 +118,12 @@ test.describe('Suite G - edge cases', () => {
     const body = (await anonymousPage.textContent('body')) || '';
 
     expect(body).not.toContain('There has been a critical error');
-    expect(body).not.toMatch(/Division by zero|NAN|INF/i);
+    // Asserted on the empty campaign's own figures rather than scanning the whole page: a
+    // page-wide /INF/i also matches this page's own "INFO=" label for the info thermometer.
+    expect(body).not.toContain('Division by zero');
     expect(field(body, 'EMPTYCOUNT')).toBe('0');
+    expect(money(field(body, 'EMPTYRAISED'))).toBe(0);
+    expect(money(field(body, 'EMPTYGOAL'))).toBe(500);
     // The empty campaign's meter is the last one on the page.
     const meters = anonymousPage.locator('.campaign-thermometer-wrap .campaign-meter span');
     const width = await meters.last().evaluate((el) => (el as HTMLElement).style.width);
