@@ -3,7 +3,3 @@ playwright-report/
 test-results/
 blob-report/
 .playwright/
-
-# Written by seed-data.php at setup time, consumed by fixtures/ids.ts. Regenerated on every
-# run and specific to one environment's ids, so it is never committed.
-fixtures/seeded-ids.json

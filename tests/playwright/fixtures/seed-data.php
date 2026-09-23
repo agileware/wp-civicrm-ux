@@ -265,9 +265,8 @@ else {
 
 out('Campaigns:');
 
-// Ids default to 0 so the handover file is still complete if this section is skipped. A
-// spec that needs a campaign then fails on its own with a clear id of 0, rather than every
-// spec in the suite failing because seeded-ids.json was never written.
+// Ids default to 0 so the summary below is still complete if this section is skipped, and
+// so a spec that needs a campaign fails on its own rather than taking the rest down with it.
 $campaignId = 0;
 $emptyCampaignId = 0;
 
@@ -365,11 +364,15 @@ catch (Throwable $e) {
   out('  WARNING: could not seed the activity - ' . $e->getMessage());
 }
 
-// ---------------------------------------------------------------- handover
+// ---------------------------------------------------------------- summary
 
-// Written where the placeholder resolver and the specs can both read it, so neither has to
-// re-derive ids that this script already knows.
-$ids = [
+// Printed for the CI log only. The ids are deliberately NOT written to a file: this script
+// runs as www-data, while the repository is bind-mounted from the runner's checkout and owned
+// by the runner user, so www-data cannot write into it. Everything that needs these ids reads
+// them back from CiviCRM instead, looking the records up by their UXTEST names - the database
+// is the one source of truth both the container and the runner can already reach.
+out('Seeded:');
+out('  ' . json_encode([
   'memberContactId' => $memberCid,
   'otherContactId' => $otherCid,
   'privilegedContactId' => $privilegedCid,
@@ -377,8 +380,4 @@ $ids = [
   'futureEventId' => $futureEventId,
   'campaignId' => $campaignId,
   'emptyCampaignId' => $emptyCampaignId,
-];
-
-file_put_contents(__DIR__ . '/seeded-ids.json', json_encode($ids, JSON_PRETTY_PRINT) . "\n");
-out('Wrote seeded-ids.json:');
-out('  ' . json_encode($ids));
+]));

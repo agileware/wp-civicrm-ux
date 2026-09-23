@@ -16,7 +16,7 @@ on every push to `master`, every pull request, and on demand.
 | `fixtures/base.ts` | Logged-in page fixtures per role, page slugs, REST helpers |
 | `fixtures/civi.ts` | `cv api3`/`api4` and `wp` helpers for data-level assertions |
 | `fixtures/cache.ts` | Transient purging — see *Caching* below |
-| `fixtures/ids.ts` | Reads the ids written by `seed-data.php` |
+| `fixtures/ids.ts` | Resolves the seeded records' ids from CiviCRM |
 | `fixtures/setup-environment.sh` | Roles, users, Form Processors, seed data, host pages |
 | `fixtures/seed-data.php` | CiviCRM records, run through `cv scr` |
 | `fixtures/resolve-page-placeholders.php` | Substitutes seeded ids into the host pages |
