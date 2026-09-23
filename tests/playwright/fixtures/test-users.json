@@ -1,0 +1,26 @@
+{
+  "member": {
+    "username": "ux_member",
+    "password": "Ux-Test-Member-1!",
+    "email": "ux-member@example.test",
+    "role": "ux_member",
+    "firstName": "Uxtest",
+    "lastName": "Member"
+  },
+  "otherMember": {
+    "username": "ux_other_member",
+    "password": "Ux-Test-Other-1!",
+    "email": "ux-other@example.test",
+    "role": "ux_member",
+    "firstName": "Uxtest",
+    "lastName": "Othermember"
+  },
+  "privileged": {
+    "username": "ux_privileged",
+    "password": "Ux-Test-Privileged-1!",
+    "email": "ux-privileged@example.test",
+    "role": "ux_privileged",
+    "firstName": "Uxtest",
+    "lastName": "Privileged"
+  }
+}

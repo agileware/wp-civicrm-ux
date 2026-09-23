@@ -1,0 +1,20 @@
+name: frontend tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  playwright:
+    uses: agileware/ci-workflows/.github/workflows/playwright-tests.yml@main
+    secrets:
+      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      EXTENSION_NAME: wp-civicrm-ux
+      # This repo is a WordPress plugin, not a CiviCRM extension - it has no info.xml, so it
+      # must be mounted under wp-content/plugins and activated with wp-cli.
+      COMPONENT_TYPE: plugin
+      SETUP_SCRIPT: tests/playwright/fixtures/setup-environment.sh
