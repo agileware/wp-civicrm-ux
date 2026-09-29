@@ -17,4 +17,4 @@ jobs:
     with:
       VERSION: ${{ inputs.VERSION }}
       VERSION_FILE: civicrm-ux.php
-      EXCLUDE_PATHS: "tests .github CONTRIBUTING.md composer.json composer.lock"
+      EXCLUDE_PATHS: "tests .github CONTRIBUTING.md composer.json composer.lock .gitignore"
