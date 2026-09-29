@@ -57,5 +57,6 @@ The plugin bootstraps from `civicrm-ux.php`, which loads `includes/class-civicrm
 
 ## Versioning and releases
 
-- The plugin version lives in the `Version:` header of `civicrm-ux.php`. Bump it as part of any release.
+- The plugin version lives in the `Version:` header of `civicrm-ux.php`. Bump it and merge that to `master` as part of any release.
 - Updates are distributed via the GitHub-based updater (`includes/class-civicrm-ux-upgrader.php`), configured against the `agileware/wp-civicrm-ux` repository — there is no separate `readme.txt` or changelog file to keep in sync.
+- Releases are cut from a `release` branch, not `master` directly, so that `tests/`, `.github/`, this file, and the Composer metadata never reach client sites (the updater downloads whatever a version tag points at, in full). To cut a release, run "Cut release" from the Actions tab with a version matching the header you just bumped — it builds the filtered `release` branch, tags it, and publishes the GitHub Release the updater reads.
