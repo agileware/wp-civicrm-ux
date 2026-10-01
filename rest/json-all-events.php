@@ -154,7 +154,6 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                         'street_type'            => $event['address.street_type'],
                         'country'                => $event['address.country_id:label'],
                         'is_online_registration' => $event['is_online_registration'],
-                        'extra_fields'           => []
                     )
                 );
 
@@ -171,8 +170,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                     $event_obj['extendedProps']['image_url'] = $image_url;
                 }
 
+                // Written at the top level, where wp_civi_ux_event_inject_content filters have always
+                // found it. FullCalendar moves unknown top-level properties into extendedProps.
                 foreach ($extra_fields as $field) {
-                    $event_obj['extra_fields'][$field] = $event[$field];
+                    $event_obj['extra_fields'][$field] = $event[$field] ?? null;
                 }
 
                 $event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
