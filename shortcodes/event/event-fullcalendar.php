@@ -40,8 +40,9 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 		$colors_arr = array();
 
-		// Sanitize shortcode parameters
-		if (count($atts) > 1) {
+		// Sanitize shortcode parameters. Every check below is guarded by isset(), so this runs for
+		// any attributes at all: a count($atts) > 1 guard skipped shortcodes with a single attribute.
+		if (!empty($atts)) {
 			if (isset($atts['types'])) {
 				$types_tmp = explode(",", $atts['types']);
 				for ($i = 0; $i < count($types_tmp); $i++) {
