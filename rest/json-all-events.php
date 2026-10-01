@@ -98,7 +98,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 			$events = array();
 
             $eventQuery =  Event::get(FALSE)
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.supplemental_address_1', 'address.supplemental_address_2', 'address.supplemental_address_3', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.state_province_id:abbr', 'address.state_province_id:label', 'address.city', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.supplemental_address_1', 'address.supplemental_address_2', 'address.supplemental_address_3', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.state_province_id:abbr', 'address.state_province_id:label', 'address.city', 'address.country_id:label', 'is_online_registration', 'is_show_location', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
                 ->addWhere('start_date', '>=', $start_date)
@@ -134,6 +134,16 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
                 if (!is_user_logged_in() and $force_login) {
                     $url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
+                }
+
+                // CiviCRM's own event pages hide the location when "Show Location" is off, so the
+                // calendar does too: blanking the address here covers every output built below.
+                if ( empty( $event['is_show_location'] ) ) {
+                    foreach ( array_keys( $event ) as $key ) {
+                        if ( str_starts_with( $key, 'address.' ) ) {
+                            $event[ $key ] = null;
+                        }
+                    }
                 }
 
                 $event += [
