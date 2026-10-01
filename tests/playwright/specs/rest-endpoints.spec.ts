@@ -10,6 +10,8 @@ import type { APIRequestContext, Page } from '@playwright/test';
 import { test, expect, PAGES, getRestNonce, restGet } from '../fixtures/base';
 import { seededIds } from '../fixtures/ids';
 import {
+  civiApi4,
+  civiApi4First,
   getParticipant,
   getParticipantStatus,
   setParticipantStatus,
@@ -294,5 +296,49 @@ test.describe('Suite C - all-events JSON', () => {
     for (const event of events) {
       expect(event.extra_fields, `event ${event.id}`).toBeUndefined();
     }
+  });
+
+  test('C-19 an event with "Show Location" off is listed without its address', async ({ request }) => {
+    // CiviCRM's own event pages hide the venue when is_show_location is off. The seeded events
+    // have no venue, so this gives one a location block, checks it is listed while the flag is
+    // on - otherwise the hidden case would pass vacuously - then turns the flag off.
+    const eventId = ids.unattendedEventId;
+    const where = [['id', '=', eventId]];
+    const original = civiApi4First<{ loc_block_id: number | null; is_show_location: boolean }>('Event.get', {
+      where,
+      select: ['loc_block_id', 'is_show_location'],
+    });
+    const address = civiApi4First<{ id: number }>('Address.create', {
+      values: { street_address: 'UXTEST 1 Venue Street', city: 'Melbourne', location_type_id: 1 },
+    });
+    const locBlock = civiApi4First<{ id: number }>('LocBlock.create', { values: { address_id: address.id } });
+
+    try {
+      civiApi4('Event.update', { where, values: { loc_block_id: locBlock.id, is_show_location: true } });
+      const shown = (await getEventsAll(request, {})).find((e) => e.id === eventId);
+      expect(shown?.extendedProps.street_address).toBe('UXTEST 1 Venue Street');
+
+      civiApi4('Event.update', { where, values: { is_show_location: false } });
+      const hidden = (await getEventsAll(request, {})).find((e) => e.id === eventId);
+      expect(hidden).toBeDefined();
+      expect(hidden!.extendedProps.street_address).toBeNull();
+      expect(hidden!.extendedProps.html_render).not.toContain('Venue Street');
+    } finally {
+      civiApi4('Event.update', {
+        where,
+        values: { loc_block_id: original.loc_block_id, is_show_location: original.is_show_location },
+      });
+      civiApi4('LocBlock.delete', { where: [['id', '=', locBlock.id]] });
+      civiApi4('Address.delete', { where: [['id', '=', address.id]] });
+    }
+  });
+
+  test('C-20 a calendar with a single attribute still sanitises its types', async ({ anonymousPage }) => {
+    // The sanitising block was guarded by count($atts) > 1, so a lone types attribute reached
+    // the event type filter unsanitised while the endpoint filtered on the sanitised label.
+    const config = await calendarConfig(anonymousPage, PAGES.eventCalendarSingleAttr);
+
+    expect(config.types).toBe('Conference');
+    expect((config as Record<string, unknown>).filterTypes).toEqual(['Conference']);
   });
 });
