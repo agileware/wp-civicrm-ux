@@ -120,7 +120,9 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		wp_enqueue_script( 'fullcalendar-base', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js', [] );
 		wp_enqueue_script( 'popper', 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js', [] );
 		wp_enqueue_script( 'tippy', 'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js', [ 'popper' ] );
-		wp_enqueue_script( 'ux-fullcalendar', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/event-fullcalendar.js', [ 'fullcalendar-base', 'popper', 'tippy', 'wp-api-request' ] );
+		// Versioned by mtime: a browser holding a copy from before fields_sig would send no
+		// signature, and the endpoint would silently drop the shortcode's extra_fields.
+		wp_enqueue_script( 'ux-fullcalendar', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/event-fullcalendar.js', [ 'fullcalendar-base', 'popper', 'tippy', 'wp-api-request' ], filemtime( WP_CIVICRM_UX_PLUGIN_PATH . 'public/js/event-fullcalendar.js' ) );
 
         $ux_fullcalendar = [
             'ajax_url' => get_rest_url(),
