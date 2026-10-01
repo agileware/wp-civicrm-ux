@@ -75,6 +75,8 @@ export { expect, users };
 export const PAGES = {
   eventListing: '/ux-test-event-listing/',
   eventCalendar: '/ux-test-event-calendar/',
+  eventCalendarFields: '/ux-test-event-calendar-fields/',
+  eventCalendarSingleAttr: '/ux-test-event-calendar-single-attr/',
   eventIcalFeed: '/ux-test-event-ical-feed/',
   markAttendance: '/ux-test-mark-attendance/',
   cancelRegistration: '/ux-test-cancel-registration/',

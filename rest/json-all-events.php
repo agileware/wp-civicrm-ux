@@ -55,8 +55,23 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$start_date = preg_replace("([^0-9-])", "", sanitize_text_field($_REQUEST['start_date'] ?? ''));
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login'] ?? '');
-		$extra_fields = !empty( $_REQUEST['extra_fields'] ) ? explode( ',', sanitize_text_field($_REQUEST['extra_fields']) ) : [];
-		$extra_fields = array_filter($extra_fields, fn($field) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ));
+		$extra_fields_param    = sanitize_text_field( wp_unslash( $_REQUEST['extra_fields'] ?? '' ) );
+		$image_src_field_param = sanitize_text_field( wp_unslash( $_REQUEST['image_src_field'] ?? '' ) );
+		$fields_sig            = sanitize_text_field( wp_unslash( $_REQUEST['fields_sig'] ?? '' ) );
+
+		// The field names arrive in the request, and Event.get below runs without permission
+		// checks, so they are honoured only with the signature the shortcode issued for them.
+		// They are filtered again here as well, so a signature issued before a custom field was
+		// disabled does not keep publishing it.
+		if ( Shortcode::verifyFieldConfig( $extra_fields_param, $image_src_field_param, $fields_sig ) ) {
+			$extra_fields    = Shortcode::allowedFields( array_filter( array_map( 'trim', explode( ',', $extra_fields_param ) ) ) );
+			$image_src_field = Shortcode::allowedImageSrcField( $image_src_field_param );
+		} else {
+			$extra_fields = [];
+			// Pages cached before the signature was introduced still ask for the default image
+			// field. That one is fixed, so it is safe to honour without a signature.
+			$image_src_field = $image_src_field_param === Shortcode::DEFAULT_IMAGE_SRC_FIELD ? $image_src_field_param : null;
+		}
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
@@ -83,7 +98,7 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 			$events = array();
 
             $eventQuery =  Event::get(FALSE)
-                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.supplemental_address_1', 'address.supplemental_address_2', 'address.supplemental_address_3', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.state_province_id:abbr', 'address.state_province_id:label', 'address.city', 'address.country_id:label', 'is_online_registration', ...$extra_fields)
+                ->addSelect('id', 'title', 'summary', 'description', 'event_type_id:label', 'start_date', 'end_date', 'address.street_address', 'address.supplemental_address_1', 'address.supplemental_address_2', 'address.supplemental_address_3', 'address.street_number', 'address.street_number_suffix', 'address.street_name', 'address.street_type', 'address.state_province_id:abbr', 'address.state_province_id:label', 'address.city', 'address.country_id:label', 'is_online_registration', 'is_show_location', ...$extra_fields)
                 ->addJoin('LocBlock AS loc_block', 'LEFT', ['loc_block_id', '=', 'loc_block_id.id'])
                 ->addJoin('Address AS address', 'LEFT', ['loc_block.address_id', '=', 'address.id'])
                 ->addWhere('start_date', '>=', $start_date)
@@ -95,11 +110,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $eventQuery->addWhere('event_type_id:label', 'IN', $types);
             }
 
-            if(!empty($_REQUEST['image_src_field'])) {
-                $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field'], 'image_src_field');
+            if(!empty($image_src_field)) {
                 $eventQuery->addSelect($image_src_field);
-            } else {
-                $image_src_field = null;
             }
 
             $events = $eventQuery->execute();
@@ -122,6 +134,16 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
                 if (!is_user_logged_in() and $force_login) {
                     $url = get_site_url() . '/wp-login.php?redirect_to=' . urlencode($url);
+                }
+
+                // CiviCRM's own event pages hide the location when "Show Location" is off, so the
+                // calendar does too: blanking the address here covers every output built below.
+                if ( empty( $event['is_show_location'] ) ) {
+                    foreach ( array_keys( $event ) as $key ) {
+                        if ( str_starts_with( $key, 'address.' ) ) {
+                            $event[ $key ] = null;
+                        }
+                    }
                 }
 
                 $event += [
@@ -154,7 +176,6 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                         'street_type'            => $event['address.street_type'],
                         'country'                => $event['address.country_id:label'],
                         'is_online_registration' => $event['is_online_registration'],
-                        'extra_fields'           => []
                     )
                 );
 
@@ -171,8 +192,10 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                     $event_obj['extendedProps']['image_url'] = $image_url;
                 }
 
+                // Written at the top level, where wp_civi_ux_event_inject_content filters have always
+                // found it. FullCalendar moves unknown top-level properties into extendedProps.
                 foreach ($extra_fields as $field) {
-                    $event_obj['extra_fields'][$field] = $event[$field];
+                    $event_obj['extra_fields'][$field] = $event[$field] ?? null;
                 }
 
                 $event_obj = apply_filters( 'wp_civi_ux_event_inject_content', $event_obj );
@@ -180,8 +203,12 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $res['result'][] = $event_obj;
 			}
 		} catch (CRM_Core_Exception $e) {
+            // The exception message can name tables, fields or SQL, and this endpoint is public, so
+            // it goes to the CiviCRM log and the caller gets a generic error.
+            \CRM_Core_Error::debug_var( 'rest_get_events_all', $e->getMessage() );
             http_response_code(500);
-			$res['err'] = $e->getMessage();
+            $res['success'] = false;
+			$res['err'] = __( 'Events could not be loaded.', 'civicrm-ux' );
 		}
 
 		echo json_encode($res);

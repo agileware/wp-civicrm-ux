@@ -56,7 +56,9 @@ const events = function (info, successCallback, failureCallback) {
                 image_src_field: uxFullcalendar.image_src_field,
                 force_login: uxFullcalendar.force_login,
                 redirect_after_login: uxFullcalendar.redirect_after_login,
-                extra_fields: uxFullcalendar.extra_fields
+                extra_fields: uxFullcalendar.extra_fields,
+                // Signs extra_fields and image_src_field; the endpoint ignores them without it.
+                fields_sig: uxFullcalendar.fields_sig
             },
             // Store events in client's browser after success to prevent further AJAX requests
             success: function (response) {
