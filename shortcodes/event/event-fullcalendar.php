@@ -26,7 +26,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 		$colors_arr = array();
-		$extra_fields_arr = array();
 
 		// Sanitize shortcode parameters
 		if (count($atts) > 1) {
@@ -43,9 +42,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 					array_push($colors_arr, sanitize_hex_color_no_hash($color));
 				}
 			}
-			if (isset($atts['extra_fields'])) {
-                $extra_fields_arr = array_map( fn( $field ) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ), explode( ",", $atts['extra_fields'] ) );
-            }
 			if (isset($atts['image_src_field'])) {
 				$atts['image_src_field'] = Civicrm_Ux_Validators::validateAPIFieldName( $atts['image_src_field'], 'image_src_field' );
 			}
@@ -66,7 +62,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 				'force_login' => FALSE,
 				'start' => date('Y-m-d', strtotime('-1 year')),
 				'image_src_field' => 'file.uri',
-				'extra_fields' => join(",", $extra_fields_arr)
+				'extra_fields' => ''
 			), $atts, $tag
 		);
 
@@ -77,6 +73,12 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		$wporg_atts['start'] = sanitize_text_field($wporg_atts['start']);
 		$wporg_atts['image_src_field'] = sanitize_text_field($wporg_atts['image_src_field']);
 		$wporg_atts['extra_fields'] = sanitize_text_field($wporg_atts['extra_fields']);
+
+		// Validated here, on the final value: shortcode_atts() prefers the raw attribute over any
+		// validated default, so checking the attribute before it had no effect.
+		$requested_fields = array_filter( array_map( 'trim', explode( ',', $wporg_atts['extra_fields'] ) ) );
+		$extra_fields = array_filter( $requested_fields, fn( $field ) => Civicrm_Ux_Validators::validateAPIFieldName( $field, 'extra_fields' ) !== null );
+		$wporg_atts['extra_fields'] = implode( ',', $extra_fields );
 
 		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 
