@@ -55,11 +55,13 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$start_date = preg_replace("([^0-9-])", "", sanitize_text_field($_REQUEST['start_date'] ?? ''));
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login'] ?? '');
-		$extra_fields_param = sanitize_text_field( wp_unslash( $_REQUEST['extra_fields'] ?? '' ) );
+		$extra_fields_param    = sanitize_text_field( wp_unslash( $_REQUEST['extra_fields'] ?? '' ) );
+		$image_src_field_param = sanitize_text_field( wp_unslash( $_REQUEST['image_src_field'] ?? '' ) );
 
 		// Event.get below runs without permission checks, so only fields the calendar may publish
 		// are selected.
-		$extra_fields = Shortcode::allowedFields( array_filter( array_map( 'trim', explode( ',', $extra_fields_param ) ) ) );
+		$extra_fields    = Shortcode::allowedFields( array_filter( array_map( 'trim', explode( ',', $extra_fields_param ) ) ) );
+		$image_src_field = Shortcode::allowedImageSrcField( $image_src_field_param );
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
@@ -98,11 +100,8 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $eventQuery->addWhere('event_type_id:label', 'IN', $types);
             }
 
-            if(!empty($_REQUEST['image_src_field'])) {
-                $image_src_field = Civicrm_Ux_Validators::validateAPIFieldName($_REQUEST['image_src_field'], 'image_src_field');
+            if(!empty($image_src_field)) {
                 $eventQuery->addSelect($image_src_field);
-            } else {
-                $image_src_field = null;
             }
 
             $events = $eventQuery->execute();

@@ -10,6 +10,11 @@ use Civi\Api4\Event;
 
 class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortcode {
 	/**
+	 * The image field the calendar asks for when the shortcode names none.
+	 */
+	const DEFAULT_IMAGE_SRC_FIELD = 'file.uri';
+
+	/**
 	 * Event fields the calendar never publishes, even when a shortcode names them: they hold the
 	 * names and addresses CiviCRM sends registration confirmations from and copies them to.
 	 */
@@ -49,9 +54,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 					array_push($colors_arr, sanitize_hex_color_no_hash($color));
 				}
 			}
-			if (isset($atts['image_src_field'])) {
-				$atts['image_src_field'] = Civicrm_Ux_Validators::validateAPIFieldName( $atts['image_src_field'], 'image_src_field' );
-			}
 			if (isset($atts['force_login'])) {
 				$atts['force_login'] = filter_var($atts['force_login'], FILTER_VALIDATE_BOOLEAN);
 			}
@@ -68,7 +70,7 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
                 'colors' => NULL,
 				'force_login' => FALSE,
 				'start' => date('Y-m-d', strtotime('-1 year')),
-				'image_src_field' => 'file.uri',
+				'image_src_field' => static::DEFAULT_IMAGE_SRC_FIELD,
 				'extra_fields' => ''
 			), $atts, $tag
 		);
@@ -81,15 +83,21 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		$wporg_atts['image_src_field'] = sanitize_text_field($wporg_atts['image_src_field']);
 		$wporg_atts['extra_fields'] = sanitize_text_field($wporg_atts['extra_fields']);
 
-		// extra_fields names the Event fields the REST endpoint selects, and the browser sends it back
-		// with each request. Keep only the fields that are safe to publish. This runs on the final
-		// value: shortcode_atts() prefers the raw attribute over any validated default.
+		// extra_fields and image_src_field name the Event fields the REST endpoint selects, and the
+		// browser sends them back with each request. Keep only the fields that are safe to publish.
+		// This runs on the final values: shortcode_atts() prefers the raw attribute over any default.
 		$requested_fields = array_filter( array_map( 'trim', explode( ',', $wporg_atts['extra_fields'] ) ) );
 		$extra_fields = static::allowedFields( $requested_fields );
 		foreach ( array_diff( $requested_fields, $extra_fields ) as $rejected ) {
 			error_log( sprintf( 'ux_event_fullcalendar: extra_fields "%s" is not an Event field the calendar may publish, and was ignored', $rejected ) );
 		}
 		$wporg_atts['extra_fields'] = implode( ',', $extra_fields );
+
+		$requested_image_field = $wporg_atts['image_src_field'];
+		$wporg_atts['image_src_field'] = static::allowedImageSrcField( $requested_image_field ) ?? '';
+		if ( $requested_image_field !== '' && $wporg_atts['image_src_field'] === '' ) {
+			error_log( sprintf( 'ux_event_fullcalendar: image_src_field "%s" is not an Event field the calendar may publish, and was ignored', $requested_image_field ) );
+		}
 
 		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 
@@ -223,5 +231,22 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 
 			return ! in_array( $field_meta['name'], static::PRIVATE_EVENT_FIELDS, TRUE );
 		} ) );
+	}
+
+	/**
+	 * @param string $field The image_src_field the shortcode or request names
+	 *
+	 * @return string|null The field when the calendar may select it, otherwise null
+	 */
+	public static function allowedImageSrcField( string $field ): ?string {
+		if ( $field === '' ) {
+			return NULL;
+		}
+
+		if ( $field === static::DEFAULT_IMAGE_SRC_FIELD ) {
+			return $field;
+		}
+
+		return static::allowedFields( [ $field ] )[0] ?? NULL;
 	}
 }
