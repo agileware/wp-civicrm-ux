@@ -10,7 +10,8 @@ use Civi\Api4\Event;
 
 class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortcode {
 	/**
-	 * The image field the calendar asks for when the shortcode names none.
+	 * The image field the calendar asks for when the shortcode names none. It is fixed, so the
+	 * REST endpoint can honour it without a signature - see verifyFieldConfig().
 	 */
 	const DEFAULT_IMAGE_SRC_FIELD = 'file.uri';
 
@@ -84,8 +85,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		$wporg_atts['extra_fields'] = sanitize_text_field($wporg_atts['extra_fields']);
 
 		// extra_fields and image_src_field name the Event fields the REST endpoint selects, and the
-		// browser sends them back with each request. Keep only the fields that are safe to publish.
-		// This runs on the final values: shortcode_atts() prefers the raw attribute over any default.
+		// browser sends them back with each request. Keep only the fields that are safe to publish,
+		// then sign the result: the endpoint ignores any set that does not carry this signature.
 		$requested_fields = array_filter( array_map( 'trim', explode( ',', $wporg_atts['extra_fields'] ) ) );
 		$extra_fields = static::allowedFields( $requested_fields );
 		foreach ( array_diff( $requested_fields, $extra_fields ) as $rejected ) {
@@ -98,6 +99,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		if ( $requested_image_field !== '' && $wporg_atts['image_src_field'] === '' ) {
 			error_log( sprintf( 'ux_event_fullcalendar: image_src_field "%s" is not an Event field the calendar may publish, and was ignored', $requested_image_field ) );
 		}
+
+		$wporg_atts['fields_sig'] = static::signFieldConfig( $wporg_atts['extra_fields'], $wporg_atts['image_src_field'] );
 
 		$redirect_after_login = isset($atts['redirect_after_login']) ? $atts['redirect_after_login'] : '';
 
@@ -175,7 +178,8 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 	 * filter.
 	 *
 	 * The custom group's is_public flag is deliberately not consulted: sites leave it off on groups
-	 * they publish on the calendar.
+	 * they publish on the calendar, and the signature already stops a visitor choosing fields. The
+	 * page author's choice of fields is the control, as it was before the signature.
 	 *
 	 * @param string[] $fields
 	 *
@@ -248,5 +252,20 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
 		}
 
 		return static::allowedFields( [ $field ] )[0] ?? NULL;
+	}
+
+	/**
+	 * Sign the field configuration a shortcode hands to the browser, so the REST endpoint can tell
+	 * a configuration a page author chose from one a visitor typed into the URL.
+	 *
+	 * The signature covers the exact strings the browser sends back, and depends on nothing about
+	 * the viewer, so a page served from a full-page cache still carries a valid one.
+	 */
+	public static function signFieldConfig( string $extra_fields, string $image_src_field ): string {
+		return hash_hmac( 'sha256', "ux_event_fullcalendar\n{$extra_fields}\n{$image_src_field}", wp_salt( 'nonce' ) );
+	}
+
+	public static function verifyFieldConfig( string $extra_fields, string $image_src_field, string $signature ): bool {
+		return $signature !== '' && hash_equals( static::signFieldConfig( $extra_fields, $image_src_field ), $signature );
 	}
 }

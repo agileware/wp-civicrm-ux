@@ -57,11 +57,21 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 		$redirect_after_login = esc_url($_REQUEST['redirect_after_login'] ?? '');
 		$extra_fields_param    = sanitize_text_field( wp_unslash( $_REQUEST['extra_fields'] ?? '' ) );
 		$image_src_field_param = sanitize_text_field( wp_unslash( $_REQUEST['image_src_field'] ?? '' ) );
+		$fields_sig            = sanitize_text_field( wp_unslash( $_REQUEST['fields_sig'] ?? '' ) );
 
-		// Event.get below runs without permission checks, so only fields the calendar may publish
-		// are selected.
-		$extra_fields    = Shortcode::allowedFields( array_filter( array_map( 'trim', explode( ',', $extra_fields_param ) ) ) );
-		$image_src_field = Shortcode::allowedImageSrcField( $image_src_field_param );
+		// The field names arrive in the request, and Event.get below runs without permission
+		// checks, so they are honoured only with the signature the shortcode issued for them.
+		// They are filtered again here as well, so a signature issued before a custom field was
+		// disabled does not keep publishing it.
+		if ( Shortcode::verifyFieldConfig( $extra_fields_param, $image_src_field_param, $fields_sig ) ) {
+			$extra_fields    = Shortcode::allowedFields( array_filter( array_map( 'trim', explode( ',', $extra_fields_param ) ) ) );
+			$image_src_field = Shortcode::allowedImageSrcField( $image_src_field_param );
+		} else {
+			$extra_fields = [];
+			// Pages cached before the signature was introduced still ask for the default image
+			// field. That one is fixed, so it is safe to honour without a signature.
+			$image_src_field = $image_src_field_param === Shortcode::DEFAULT_IMAGE_SRC_FIELD ? $image_src_field_param : null;
+		}
 
         if(!empty($_REQUEST['colors']) && !is_array($_REQUEST['colors'])) {
             $_REQUEST['colors'] = explode(',', $_REQUEST['colors']);
