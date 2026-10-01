@@ -140,6 +140,6 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
     }
 
     public static function getDefaultForceLogin() {
-        apply_filters( 'ux_event_fullcalendar/force_login', false );
+        return apply_filters( 'ux_event_fullcalendar/force_login', false );
     }
 }
