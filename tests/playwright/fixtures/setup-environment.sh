@@ -140,6 +140,11 @@ create_page ux-test-event-listing 'UX Test Event Listing' \
 create_page ux-test-event-calendar 'UX Test Event Calendar' \
   '[ux_event_fullcalendar]'
 
+# One field the calendar may publish, a join to a contact's email, and an Event column holding
+# an email address. The shortcode must sign only the first (C-16).
+create_page ux-test-event-calendar-fields 'UX Test Event Calendar Fields' \
+  '[ux_event_fullcalendar extra_fields="max_participants,created_id.email_primary.email,bcc_confirm"]'
+
 create_page ux-test-event-ical-feed 'UX Test Event iCal Feed' \
   '[ux_event_ical_feed]'
 

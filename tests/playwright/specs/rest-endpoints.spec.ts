@@ -6,6 +6,7 @@
  * exactly the defect 1.32.6 fixed - the endpoint used to trust any pid the caller supplied.
  */
 
+import type { APIRequestContext, Page } from '@playwright/test';
 import { test, expect, PAGES, getRestNonce, restGet } from '../fixtures/base';
 import { seededIds } from '../fixtures/ids';
 import {
@@ -205,11 +206,93 @@ test.describe('Suite C - iCal feeds', () => {
   });
 });
 
+type CalendarEvent = {
+  id: number;
+  extra_fields?: Record<string, unknown>;
+  extendedProps: Record<string, unknown>;
+};
+
+async function getEventsAll(request: APIRequestContext, params: Record<string, string>) {
+  const res = await request.get('/wp-json/civicrm_ux/get_events_all', {
+    params: { start_date: '2000-01-01', ...params },
+  });
+  expect(res.status()).toBe(200);
+  const events = (await res.json()).result as CalendarEvent[];
+  // Every negative case below asserts an absence, which an empty result would pass vacuously.
+  expect(events.length).toBeGreaterThan(0);
+  return events;
+}
+
+/** The field configuration [ux_event_fullcalendar] hands to its script. */
+async function calendarConfig(page: Page, url: string) {
+  await page.goto(url);
+  return page.evaluate(() => (window as any).uxFullcalendar as Record<string, string | undefined>);
+}
+
 test.describe('Suite C - all-events JSON', () => {
   test('C-13 the endpoint returns valid JSON to an anonymous caller', async ({ request }) => {
     const res = await request.get('/wp-json/civicrm_ux/get_events_all');
     expect(res.status()).toBe(200);
     const body = await res.json();
     expect(Array.isArray(body) || typeof body === 'object').toBe(true);
+  });
+
+  test('C-14 unsigned extra_fields return nothing, joins included', async ({ request }) => {
+    // The reported disclosure: Event.get runs without permission checks and follows joins, so
+    // these two names used to return the name and email of whoever created each event.
+    const events = await getEventsAll(request, {
+      extra_fields: 'created_id.display_name,created_id.email_primary.email,max_participants',
+    });
+
+    for (const event of events) {
+      expect(event.extra_fields, `event ${event.id}`).toBeUndefined();
+      expect(event.extendedProps.extra_fields, `event ${event.id}`).toBeUndefined();
+    }
+  });
+
+  test('C-15 an unsigned image_src_field other than the default is refused', async ({ request }) => {
+    // The same select as extra_fields, returned through file.uri and image_url instead.
+    const events = await getEventsAll(request, { image_src_field: 'created_id.email_primary.email' });
+
+    for (const event of events) {
+      expect(event.extendedProps['file.uri'], `event ${event.id}`).toBeUndefined();
+      expect(event.extendedProps.image_url, `event ${event.id}`).toBeUndefined();
+    }
+  });
+
+  test('C-16 the shortcode signs only the fields the calendar may publish', async ({ anonymousPage }) => {
+    const config = await calendarConfig(anonymousPage, PAGES.eventCalendarFields);
+
+    expect(config.extra_fields).toBe('max_participants');
+    expect(config.image_src_field).toBe('file.uri');
+    expect(config.fields_sig).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  test('C-17 the signed configuration from the page is honoured', async ({ anonymousPage, request }) => {
+    const config = await calendarConfig(anonymousPage, PAGES.eventCalendarFields);
+
+    const events = await getEventsAll(request, {
+      extra_fields: config.extra_fields!,
+      image_src_field: config.image_src_field!,
+      fields_sig: config.fields_sig!,
+    });
+
+    for (const event of events) {
+      expect(Object.keys(event.extra_fields ?? {}), `event ${event.id}`).toEqual(['max_participants']);
+    }
+  });
+
+  test("C-18 a page's signature does not authorise different fields", async ({ anonymousPage, request }) => {
+    const config = await calendarConfig(anonymousPage, PAGES.eventCalendarFields);
+
+    const events = await getEventsAll(request, {
+      extra_fields: 'created_id.email_primary.email',
+      image_src_field: config.image_src_field!,
+      fields_sig: config.fields_sig!,
+    });
+
+    for (const event of events) {
+      expect(event.extra_fields, `event ${event.id}`).toBeUndefined();
+    }
   });
 });
