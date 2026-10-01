@@ -203,8 +203,12 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
                 $res['result'][] = $event_obj;
 			}
 		} catch (CRM_Core_Exception $e) {
+            // The exception message can name tables, fields or SQL, and this endpoint is public, so
+            // it goes to the CiviCRM log and the caller gets a generic error.
+            \CRM_Core_Error::debug_var( 'rest_get_events_all', $e->getMessage() );
             http_response_code(500);
-			$res['err'] = $e->getMessage();
+            $res['success'] = false;
+			$res['err'] = __( 'Events could not be loaded.', 'civicrm-ux' );
 		}
 
 		echo json_encode($res);
