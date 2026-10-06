@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   playwright:
     uses: agileware/ci-workflows/.github/workflows/playwright-tests.yml@main
