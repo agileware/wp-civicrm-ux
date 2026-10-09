@@ -67,10 +67,13 @@ function urlparam($atts, $content) {
     }
 
     if($atts['attr']) {
-        $return = ' ' . $atts['attr'] . '="' . $return . '" ';
+        // $atts['attr'] is an attribute name and $return its value; both are reduced to safe
+        // forms so a crafted attribute name or value cannot break out of the tag.
+        $attr_name = preg_replace('/[^A-Za-z0-9_:-]/', '', $atts['attr']);
+        $return = ' ' . $attr_name . '="' . esc_attr( $return ) . '" ';
 
         if($atts['htmltag']) {
-            $tagname = $atts['htmltag'];
+            $tagname = preg_replace('/[^A-Za-z0-9]/', '', $atts['htmltag']);
 
             foreach(array_keys($defaults) as $key) {
                 unset($atts[$key]);
@@ -78,7 +81,11 @@ function urlparam($atts, $content) {
 
             $otheratts = "";
             foreach($atts as $key => $val) {
-                $otheratts .= " $key=\"$val\"";
+                $key = preg_replace('/[^A-Za-z0-9_:-]/', '', $key);
+                if ( $key === '' ) {
+                    continue;
+                }
+                $otheratts .= ' ' . $key . '="' . esc_attr( $val ) . '"';
             }
 
             $return = "<$tagname $otheratts $return".($content ? ">$content</$tagname>" : "/>");

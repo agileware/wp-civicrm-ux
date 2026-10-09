@@ -122,12 +122,15 @@ class Civicrm_Ux_Shortcode_Contact_value extends Abstract_Civicrm_Ux_Shortcode {
 				if ( strpos( $values, 'http' ) !== 0 ) {
 					$values = 'https://' . $values;
 				}
+				return esc_url( $values );
 			}
-			return $values;
+			return esc_html( $values );
 		}
 
-		$content = implode( ', ', $values );
+		$content = esc_html( implode( ', ', $values ) );
 
+		// A site that needs rich markup for a specific field can override this; the default is
+		// escaped, because the value is a contact field that someone may have been able to set.
 		$filtered = apply_filters('ux_contact_value/output', $content, $values, $this->mod_atts);
 
 		return $filtered;

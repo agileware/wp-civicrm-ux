@@ -56,6 +56,9 @@ class Civicrm_Ux_Shortcode_Custom_Button extends Abstract_Civicrm_Ux_Shortcode {
         // Append the URL parameters
         $mod_atts['url'] = trailingslashit($mod_atts['url']) . $mod_atts['url_params'];
 
-		return '<a href="' . $mod_atts['url'] . '" class="button wp-element-button ' . $mod_atts['css_classes'] . '">' . $mod_atts['text'] . '</a>';
+        // Class list reduced to valid tokens so an attribute value cannot break out of the markup.
+        $css_classes = implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', $mod_atts['css_classes'] ) ) ) );
+
+		return '<a href="' . esc_url( $mod_atts['url'] ) . '" class="button wp-element-button ' . esc_attr( $css_classes ) . '">' . esc_html( $mod_atts['text'] ) . '</a>';
 	}
 }
