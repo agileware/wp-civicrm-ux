@@ -54,7 +54,9 @@ class Civicrm_Ux_REST_JSON_All_Events extends Abstract_Civicrm_Ux_REST {
 
 		$start_date = preg_replace("([^0-9-])", "", sanitize_text_field($_REQUEST['start_date'] ?? ''));
         $force_login = rest_sanitize_boolean($_REQUEST['force_login'] ?? Shortcode::getDefaultForceLogin());
-		$redirect_after_login = esc_url($_REQUEST['redirect_after_login'] ?? '');
+		// Restrict the post-registration redirect to this site. It becomes the base of the
+		// register link, so an off-site value would turn every event link into an open redirect.
+		$redirect_after_login = esc_url_raw( wp_validate_redirect( wp_unslash( $_REQUEST['redirect_after_login'] ?? '' ), '' ) );
 		$extra_fields_param    = sanitize_text_field( wp_unslash( $_REQUEST['extra_fields'] ?? '' ) );
 		$image_src_field_param = sanitize_text_field( wp_unslash( $_REQUEST['image_src_field'] ?? '' ) );
 		$fields_sig            = sanitize_text_field( wp_unslash( $_REQUEST['fields_sig'] ?? '' ) );

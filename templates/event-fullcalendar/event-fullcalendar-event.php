@@ -54,9 +54,11 @@ extract($args);
 
         <div class="civicrm-ux-event-listing-buttons">
             <?php if (!empty($event['is_online_registration'])) : ?>
-                <button class="civicrm-ux-event-listing-register" onclick="window.location.href='<?= esc_url($url); ?>'">
+                <?php // A link, not an onclick handler: an href is escaped as a URL, whereas a URL
+                      // placed inside a JS string in onclick can be decoded back into script. ?>
+                <a class="civicrm-ux-event-listing-register" href="<?= esc_url($url); ?>" role="button">
                     Click here to register
-                </button>
+                </a>
             <?php endif; ?>
         </div>
     </div>
