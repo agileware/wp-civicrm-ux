@@ -41,8 +41,10 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 		// Sanitize inputs
 		$mod_atts['text'] = sanitize_text_field($mod_atts['text']);
 		$mod_atts['eventid'] = absint($mod_atts['eventid']);
-		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
-		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
+		// Reduce the class lists to valid HTML class tokens so an attribute value cannot carry
+		// quotes or event handlers into the button markup below.
+		$mod_atts['css_classes'] = implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', (string) $mod_atts['css_classes'] ) ) ) );
+		$mod_atts['icon_classes'] = implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', (string) $mod_atts['icon_classes'] ) ) ) );
 
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
@@ -111,6 +113,6 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
                                     </div>
                                 </dialog>';
 
-		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" class="event-cancel-registration wp-civicrm-ux-button ' . $mod_atts['css_classes'] . '"><i class="' . $mod_atts['icon_classes'] . '"></i>' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
+		return '<div class="event-links"><button data-eventId="' . esc_attr( $mod_atts['eventid'] ) . '" class="event-cancel-registration wp-civicrm-ux-button ' . esc_attr( $mod_atts['css_classes'] ) . '"><i class="' . esc_attr( $mod_atts['icon_classes'] ) . '"></i>' . esc_html( $mod_atts['text'] ) . '</button>' . $confirmation_dialog . '</div>';
 	}
 }
