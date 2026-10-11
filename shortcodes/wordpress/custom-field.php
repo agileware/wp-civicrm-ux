@@ -51,6 +51,12 @@ class Civicrm_Ux_Shortcode_Wordpress_CF_Value extends Abstract_Civicrm_Ux_Shortc
 
 		$result = get_metadata( $mod_atts['type'], $mod_atts['id'], $mod_atts['field'], $mod_atts['single'] );
 
-		return $result;
+		// Meta can hold arbitrary values, including ones set by lower-privileged users, so escape
+		// before returning it into the page. An array (single=false) is joined for display.
+		if ( is_array( $result ) ) {
+			$result = implode( ', ', array_map( 'strval', $result ) );
+		}
+
+		return esc_html( (string) $result );
 	}
 }

@@ -54,8 +54,12 @@ class Civicrm_Ux_Shortcode_Event_ICal_Feed extends Abstract_Civicrm_Ux_Shortcode
 			'type' => '',
 		], $atts, $tag );
 
-		$url = add_query_arg( $mod_atts, get_rest_url( null, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );
+		// type is a comma list of event type labels; reduce it to the characters those can contain
+		// so it cannot carry quotes or markup into the link below.
+		$mod_atts['type'] = preg_replace( '/[^A-Za-z0-9 ,_-]/', '', (string) $mod_atts['type'] );
 
-		return "<a href='$url'>" . ( empty( $content ) ? 'iCal Feed' : $content ) . "</a>";
+		$url = add_query_arg( array_map( 'rawurlencode', $mod_atts ), get_rest_url( null, '/' . self::API_NAMESPACE . '/' . self::EXTERNAL_ENDPOINT ) );
+
+		return '<a href="' . esc_url( $url ) . '">' . ( empty( $content ) ? 'iCal Feed' : wp_kses_post( $content ) ) . '</a>';
 	}
 }

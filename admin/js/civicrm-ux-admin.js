@@ -42,7 +42,9 @@
     $(document).ready(function() {
         $("#generate-ical-hash").on('click', function (event) {
             event.preventDefault();
-            let hash = generateId(16);
+            // 32 hex characters = 128 bits of entropy. The hash is the only secret protecting the
+            // internal feed, so it should not be guessable.
+            let hash = generateId(32);
             $('#ical-hash-field').val(hash);
         })
     });

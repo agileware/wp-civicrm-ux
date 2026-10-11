@@ -1,4 +1,22 @@
 (function() {
+// Event data (titles, locations, image URLs) is rendered into tooltip markup with innerHTML, so
+// it is escaped first. The server-built html_render / html_entry strings are already escaped by
+// their templates and are not passed through these.
+const escapeHtml = function (value) {
+    return String(value ?? '').replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+};
+
+const safeHttpUrl = function (value) {
+    try {
+        const url = new URL(value, window.location.origin);
+        return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
+    } catch (e) {
+        return '';
+    }
+};
+
 const domevent = function (eventName, detail) {
     if (typeof Window.CustomEvent === "function") {
         return new CustomEvent(eventName, {
@@ -195,11 +213,17 @@ const eventDidMount = function (info) {
             }
 
             if(info.event.extendedProps["file.uri"]) {
-                eventElements.eventImg = `<img id="event-img" src="${event_img}">`;
+                // The image URL and the title/location below come from event records, so they are
+                // escaped before going into this markup; the image URL is also restricted to
+                // http(s) so a javascript: or data: value cannot be used.
+                const safeImg = safeHttpUrl(event_img);
+                if (safeImg) {
+                    eventElements.eventImg = `<img id="event-img" src="${escapeHtml(safeImg)}">`;
+                }
             }
 
             if(event_location) {
-                eventElements.eventLocation = `<div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">${event_location}</span></div>`
+                eventElements.eventLocation = `<div class="event-location"><i class="fa fa-map-marker"></i><span class="event-location-text">${escapeHtml(event_location)}</span></div>`
             }
 
             info.view.calendar.el.dispatchEvent(domevent('fullcalendar:buildTippy', eventElements));
@@ -207,7 +231,7 @@ const eventDidMount = function (info) {
             const template = document.createElement('template');
 
             template.innerHTML =
-                `<div class="event-name">${info.event.title}</div>
+                `<div class="event-name">${escapeHtml(info.event.title)}</div>
                  ${eventElements.eventImg}
                  <div class="event-time"><i class="fa fa-clock-o"></i>${eventElements.eventTimeText}</div>
                  ${eventElements.eventLocation}`;
@@ -323,7 +347,8 @@ document.addEventListener("DOMContentLoaded", function () {
     sortByTypeSelect.classList.add("fc-button-primary");
     sortByTypeSelect.innerHTML = '<option selected value="all">Filter by Event Type</option>';
     for (const type of event_types) {
-        sortByTypeSelect.innerHTML += '<option value="' + type + '">' + type + '</option>';
+        // new Option sets value/text as data, so an event type label cannot inject markup.
+        sortByTypeSelect.add(new Option(type, type));
     }
     sortByTypeSelect.setAttribute("id", "event-selector");
     sortByTypeBtn.style.display = "none";

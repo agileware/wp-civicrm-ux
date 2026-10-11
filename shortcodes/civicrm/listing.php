@@ -135,7 +135,7 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		$tbody_html  = "";
 		foreach ( $header as $key => $value ) {
 			if ( $value['api.return'] ) {
-				$header_html .= "<th>{$value['title']}</th>";
+				$header_html .= '<th>' . esc_html( $value['title'] ) . '</th>';
 			}
 		}
 		foreach ( $values as $record ) {
@@ -149,16 +149,16 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 				// fixme deprecated - used on SPA listing
 				foreach ( $record as $key => $value ) {
 					if ( $key == 'website' ) {
-						$row_html .= "<td><a href='" . htmlentities( $value ) . "'>" . htmlentities( $value ) . "</a></td>";
+						$row_html .= '<td><a href="' . esc_url( $value ) . '">' . esc_html( $value ) . '</a></td>';
 					} else {
-						$row_html .= "<td>" . htmlentities( $value ) . "</td>";
+						$row_html .= '<td>' . esc_html( $value ) . '</td>';
 					}
 				}
 			}
 
 			$tbody_html .= "<tr>$row_html</tr>";
 		}
-		$html = "<table id='$css_id' class='ux-cv-listing'><thead>$header_html</thead><tbody>$tbody_html</tbody></table>";
+		$html = '<table id="' . esc_attr( $css_id ) . '" class="ux-cv-listing"><thead>' . $header_html . '</thead><tbody>' . $tbody_html . '</tbody></table>';
 
 		return $html;
 	}

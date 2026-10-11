@@ -118,9 +118,14 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
         wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [] );
 		wp_enqueue_style( 'ux-fullcalendar-styles', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/css/event-fullcalendar.css', [] );
 
+		// These load from a CDN, so they are pinned to exact versions (not a floating @2 / @6 tag)
+		// and carry Subresource Integrity hashes, added by the script_loader_tag filter below. A
+		// browser then refuses a script whose contents do not match, so a hijacked or altered CDN
+		// file cannot run on the page.
 		wp_enqueue_script( 'fullcalendar-base', 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js', [] );
-		wp_enqueue_script( 'popper', 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js', [] );
-		wp_enqueue_script( 'tippy', 'https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js', [ 'popper' ] );
+		wp_enqueue_script( 'popper', 'https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js', [] );
+		wp_enqueue_script( 'tippy', 'https://unpkg.com/tippy.js@6.3.7/dist/tippy-bundle.umd.js', [ 'popper' ] );
+		add_filter( 'script_loader_tag', [ __CLASS__, 'add_sri_attributes' ], 10, 2 );
 		// Versioned by mtime: a browser holding a copy from before fields_sig would send no
 		// signature, and the endpoint would silently drop the shortcode's extra_fields.
 		wp_enqueue_script( 'ux-fullcalendar', WP_CIVICRM_UX_PLUGIN_URL . WP_CIVICRM_UX_PLUGIN_NAME . '/public/js/event-fullcalendar.js', [ 'fullcalendar-base', 'popper', 'tippy', 'wp-api-request' ], filemtime( WP_CIVICRM_UX_PLUGIN_PATH . 'public/js/event-fullcalendar.js' ) );
@@ -165,6 +170,31 @@ class Civicrm_Ux_Shortcode_Event_FullCalendar extends Abstract_Civicrm_Ux_Shortc
     public static function getDefaultColor() {
         return apply_filters( 'ux_event_fullcalendar/default_color', 'transparent' );
     }
+
+	/**
+	 * Add Subresource Integrity attributes to the CDN scripts this shortcode enqueues.
+	 *
+	 * The hashes are tied to the exact pinned versions above; if a version is changed, its hash
+	 * must be regenerated (openssl dgst -sha384 -binary <file> | openssl base64 -A).
+	 *
+	 * @param string $tag    The script tag.
+	 * @param string $handle The script handle.
+	 *
+	 * @return string
+	 */
+	public static function add_sri_attributes( $tag, $handle ) {
+		$sri = [
+			'fullcalendar-base' => 'sha384-B1OFx8Gy9GjPu8UbUyXbGQpzll9ubAUQ9agInFJ8NnD7nYG1u/CLR+Sqr5yifl4q',
+			'popper'            => 'sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r',
+			'tippy'             => 'sha384-dtMr4wkcxQWUqsJFgElu4AttgIhOsjr2vYIzP2mv0MZbD/uJ6OHxFdbgE3MOKabN',
+		];
+
+		if ( isset( $sri[ $handle ] ) && strpos( $tag, 'integrity=' ) === false ) {
+			$tag = str_replace( ' src=', ' integrity="' . esc_attr( $sri[ $handle ] ) . '" crossorigin="anonymous" src=', $tag );
+		}
+
+		return $tag;
+	}
 
     public static function getDefaultForceLogin() {
         return apply_filters( 'ux_event_fullcalendar/force_login', false );

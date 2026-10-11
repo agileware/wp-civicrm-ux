@@ -41,10 +41,12 @@ function civicrm_ux_load_template_part( $slug, $name, $args = [] ) {
         $template = WP_CIVICRM_UX_PLUGIN_PATH . 'templates/' . $slug . '/' . $slug . '-' . $name . '.php';
     }
 
-    // Extract arguments to be used in the template
-    if ( ! empty( $args ) ) {
-        extract( $args );
-    }
+    // The arguments are NOT extracted into this function's scope. extract() here used the
+    // caller's own keys, so an $args key named 'template' (which reaches here as raw shortcode
+    // attributes from some callers) would overwrite the $template path computed above and get
+    // require'd by load_template() below - a local file inclusion. load_template() passes $args
+    // into the template, where it is read as $args or extracted by the template itself, so
+    // extracting here was never needed for the template to work.
 
     /**
      * Load the template file

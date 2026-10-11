@@ -47,8 +47,10 @@ class Civicrm_Ux_Shortcode_Event_CompleteEvaluation_Button extends Abstract_Civi
 		$mod_atts['participant_status'] = sanitize_text_field($mod_atts['participant_status']);
 		$mod_atts['url'] = sanitize_url($mod_atts['url']);
 		$mod_atts['fallback_url'] = sanitize_url($mod_atts['fallback_url']);
-		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
-		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
+		// Reduce the class lists to valid HTML class tokens so an attribute value cannot carry
+		// quotes or event handlers into the button markup below.
+		$mod_atts['css_classes'] = implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', (string) $mod_atts['css_classes'] ) ) ) );
+		$mod_atts['icon_classes'] = implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', (string) $mod_atts['icon_classes'] ) ) ) );
 
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
@@ -91,9 +93,10 @@ class Civicrm_Ux_Shortcode_Event_CompleteEvaluation_Button extends Abstract_Civi
             'event_title' => $event['title']
         ];
 
-        // Append the URL parameters
-        $mod_atts['url'] = add_query_arg($query, $mod_atts['url']);
+        // Append the URL parameters. rawurlencode the event title, which comes from the event
+        // record, so it cannot break out of the href attribute.
+        $mod_atts['url'] = add_query_arg( array_map( 'rawurlencode', $query ), $mod_atts['url'] );
 
-		return '<a href="' . $mod_atts['url'] . '" class="button wp-civicrm-ux-button event-complete-evaluation ' . $mod_atts['css_classes'] . '"><i class="' . $mod_atts['icon_classes'] . '"></i>' . $mod_atts['text'] . '</a>';
+		return '<a href="' . esc_url( $mod_atts['url'] ) . '" class="button wp-civicrm-ux-button event-complete-evaluation ' . esc_attr( $mod_atts['css_classes'] ) . '"><i class="' . esc_attr( $mod_atts['icon_classes'] ) . '"></i>' . esc_html( $mod_atts['text'] ) . '</a>';
 	}
 }

@@ -101,4 +101,6 @@ export const PARTICIPANT_STATUS = {
   Attended: 2,
   NoShow: 3,
   Cancelled: 4,
+  // Pending (pay later) - class "Pending", i.e. a registration that has not been confirmed.
+  PendingPayLater: 5,
 } as const;

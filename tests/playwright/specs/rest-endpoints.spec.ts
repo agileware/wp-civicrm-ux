@@ -101,26 +101,57 @@ test.describe('Suite C - mark attendance', () => {
     expect(getParticipantStatus(own.id)).toBe(before);
   });
 
-  test('C-07 the route accepts an arbitrary status id for the caller’s own record', async ({
-    memberPage,
-  }) => {
+  test('C-07 a status id that is not an attendance outcome is refused', async ({ memberPage }) => {
+    const own = getParticipant(ids.memberContactId, ids.pastEventId);
+    const nonce = await getRestNonce(memberPage, PAGES.markAttendance, 'event_markattendance_wp_nonce');
+
+    // The target status in the URL is only honoured when it is a real attendance outcome
+    // (Positive/Negative class). A Pending status is not, so the caller cannot move their own
+    // record to it through this route, and the status is left unchanged.
+    const res = await restGet(
+      memberPage,
+      markAttendanceUrl(own.id, ids.pastEventId, 1, PARTICIPANT_STATUS.PendingPayLater),
+      nonce
+    );
+
+    expect(res.status).toBe(403);
+    expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Registered);
+  });
+
+  test('C-07b a participant that is not Registered cannot be marked', async ({ memberPage }) => {
     const own = getParticipant(ids.memberContactId, ids.pastEventId);
     const nonce = await getRestNonce(memberPage, PAGES.markAttendance, 'event_markattendance_wp_nonce');
 
     try {
-      // a_stat is caller-supplied and unvalidated, so a member can set their own participant
-      // status to any id - here Cancelled. This documents current behaviour rather than
-      // endorsing it; see section 7 of the test plan.
+      // Only a confirmed (Registered) participant can be marked, so a pending/waitlisted/unapproved
+      // registration cannot be promoted to attended through this route.
+      setParticipantStatus(own.id, PARTICIPANT_STATUS.PendingPayLater);
+
       const res = await restGet(
         memberPage,
-        markAttendanceUrl(own.id, ids.pastEventId, 1, PARTICIPANT_STATUS.Cancelled),
+        markAttendanceUrl(own.id, ids.pastEventId, 1, PARTICIPANT_STATUS.Attended),
         nonce
       );
-      expect(res.status).toBe(200);
-      expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Cancelled);
+
+      expect(res.status).toBe(403);
+      expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.PendingPayLater);
     } finally {
       setParticipantStatus(own.id, PARTICIPANT_STATUS.Registered);
     }
+  });
+
+  test('C-07c attendance on an event that has not ended is refused', async ({ memberPage }) => {
+    const own = getParticipant(ids.memberContactId, ids.futureEventId);
+    const nonce = await getRestNonce(memberPage, PAGES.markAttendance, 'event_markattendance_wp_nonce');
+
+    const res = await restGet(
+      memberPage,
+      markAttendanceUrl(own.id, ids.futureEventId, 1, PARTICIPANT_STATUS.Attended),
+      nonce
+    );
+
+    expect(res.status).toBe(403);
+    expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Registered);
   });
 });
 
@@ -150,6 +181,53 @@ test.describe('Suite C - cancel registration', () => {
     } finally {
       setParticipantStatus(own.id, PARTICIPANT_STATUS.Registered);
     }
+  });
+
+  test('C-09b cancellation is refused when the event disallows self-service', async ({ memberPage }) => {
+    const own = getParticipant(ids.memberContactId, ids.futureEventId);
+    const nonce = await getRestNonce(memberPage, PAGES.cancelRegistration, 'event_cancellation_wp_nonce');
+
+    try {
+      // The event setting that drives the button must also be honoured by the endpoint.
+      civiApi4('Event.update', { where: [['id', '=', ids.futureEventId]], values: { allow_selfcancelxfer: false } });
+
+      const res = await restGet(
+        memberPage,
+        `/wp-json/civicrm_ux/cancel-event-registration/${ids.futureEventId}`,
+        nonce
+      );
+
+      expect(res.status).toBe(403);
+      expect(getParticipantStatus(own.id)).toBe(PARTICIPANT_STATUS.Registered);
+    } finally {
+      civiApi4('Event.update', { where: [['id', '=', ids.futureEventId]], values: { allow_selfcancelxfer: true } });
+    }
+  });
+
+  test('C-09c cancelling an event the caller is not registered on creates no record', async ({ memberPage }) => {
+    const nonce = await getRestNonce(memberPage, PAGES.cancelRegistration, 'event_cancellation_wp_nonce');
+
+    const countFor = () =>
+      civiApi4<Array<unknown>>('Participant.get', {
+        where: [
+          ['contact_id', '=', ids.memberContactId],
+          ['event_id', '=', ids.unattendedEventId],
+        ],
+        select: ['id'],
+      }).length;
+
+    expect(countFor()).toBe(0);
+
+    const res = await restGet(
+      memberPage,
+      `/wp-json/civicrm_ux/cancel-event-registration/${ids.unattendedEventId}`,
+      nonce
+    );
+
+    // Refused because the caller has no registration on this event, and - the point of the test -
+    // no stray Cancelled participant row is created for them.
+    expect(res.status).toBe(403);
+    expect(countFor()).toBe(0);
   });
 });
 
@@ -200,6 +278,34 @@ test.describe('Suite C - iCal feeds', () => {
       expect(res.status()).toBe(404);
     });
   }
+
+  test('C-11b special characters in an event title do not break the feed structure', async ({ request }) => {
+    // A title can contain commas, semicolons and line breaks. Each is an iCal control character,
+    // so the feed must escape them (RFC 5545): the title stays on one SUMMARY line and cannot add
+    // extra properties or events.
+    const title = civiApi4First<{ title: string }>('Event.get', {
+      where: [['id', '=', ids.futureEventId]],
+      select: ['title'],
+    }).title;
+
+    try {
+      civiApi4('Event.update', {
+        where: [['id', '=', ids.futureEventId]],
+        values: { title: 'UXTEST a, b; c\nSUMMARY:injected' },
+      });
+
+      const res = await request.get('/wp-json/ICalFeed/event');
+      expect(res.status()).toBe(200);
+      const body = await res.text();
+
+      // The comma and semicolon are escaped, and the newline became a literal \n, so the injected
+      // "SUMMARY:injected" never starts its own property line.
+      expect(body).toContain('UXTEST a\\, b\\; c\\nSUMMARY:injected');
+      expect(body).not.toMatch(/\r\nSUMMARY:injected/);
+    } finally {
+      civiApi4('Event.update', { where: [['id', '=', ids.futureEventId]], values: { title } });
+    }
+  });
 
   test('C-12 the external feed is public and returns a calendar', async ({ request }) => {
     const res = await request.get('/wp-json/ICalFeed/event');

@@ -17,4 +17,7 @@ jobs:
     with:
       VERSION: ${{ inputs.VERSION }}
       VERSION_FILE: civicrm-ux.php
-      EXCLUDE_PATHS: "tests .github CONTRIBUTING.md composer.json composer.lock .gitignore"
+      # vendor/sabre/*/bin hold command-line dev scripts that have no runtime purpose and are
+      # reachable over the web on a client site (one fetches a URL and writes a PHP file), so they
+      # are stripped from the release.
+      EXCLUDE_PATHS: "tests .github CONTRIBUTING.md composer.json composer.lock .gitignore vendor/sabre/vobject/bin vendor/sabre/xml/bin vendor/sabre/uri/bin"

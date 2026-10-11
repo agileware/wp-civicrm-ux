@@ -20,7 +20,7 @@ class Civicrm_Ux_Event_Utils {
 		// Header part
 		$iCal = "BEGIN:VCALENDAR\r\n" .
 		        "VERSION:2.0\r\n" .
-		        "PRODID:-//" . get_bloginfo( "name" ) . "//NONSGML CiviEvent iCal//EN\r\n";
+		        "PRODID:-//" . self::escape_ical_text( get_bloginfo( "name" ) ) . "//NONSGML CiviEvent iCal//EN\r\n";
 
 		$timezone_str = get_option( 'timezone_string' );
 		// Generate VTIMEZONE component.
@@ -73,17 +73,22 @@ class Civicrm_Ux_Event_Utils {
 				$civi_param['event_type_id'] = [ 'IN' => $opts['types'] ];
 			}
 
-			// extra information for internal usage
-			$civi_param['api.Participant.get'] = [
-				'sequential'            => 1,
-				'event_id'              => "\$value.id",
-				'status_id'             => [ 'IN' => $counted_type ],
-				'options'               => [ 'limit' => PHP_INT_MAX ],
-				'api.Contact.getsingle' => [
-					'sequential' => 1,
-					'id'         => "\$value.contact_id",
-				],
-			];
+			// The participant and contact details are only output on the internal feed, so only
+			// load them there. The external feed is public and anonymous, and loading every
+			// participant and contact of every future event on each request wasted work and pulled
+			// personal data the feed never used.
+			if ( $internal ) {
+				$civi_param['api.Participant.get'] = [
+					'sequential'            => 1,
+					'event_id'              => "\$value.id",
+					'status_id'             => [ 'IN' => $counted_type ],
+					'options'               => [ 'limit' => PHP_INT_MAX ],
+					'api.Contact.getsingle' => [
+						'sequential' => 1,
+						'id'         => "\$value.contact_id",
+					],
+				];
+			}
 
 
 			$result = civicrm_api3( 'Event', 'get', $civi_param );
@@ -160,16 +165,18 @@ class Civicrm_Ux_Event_Utils {
 				// Internal usage will have more information
 				$count = $event['api.Participant.get']['count'];
 				$iCal  .= 'SUMMARY:' .
-				          $event['title'] . " - $count Participants" .
+				          self::escape_ical_text( $event['title'] . " - $count Participants" ) .
 				          "\r\n";
-				$iCal .= "DESCRIPTION:Event url: $url";
+				$iCal .= "DESCRIPTION:Event url: " . self::escape_ical_text( $url );
 				if ( $count > 0 ) {
 					$iCal .= '\n' . "{$count} Participants:";
 					foreach ( $event['api.Participant.get']['values'] as $participant ) {
 						$contact = $participant['api.Contact.getsingle'];
-						$name    = $contact['display_name'];
-						$email   = $contact['email'];
-						$phone   = $contact['phone'];
+						// Escaped per value: a registrant controls their own name, email and phone,
+						// and a raw CR/LF or comma would otherwise inject extra calendar properties.
+						$name    = self::escape_ical_text( $contact['display_name'] ?? '' );
+						$email   = self::escape_ical_text( $contact['email'] ?? '' );
+						$phone   = self::escape_ical_text( $contact['phone'] ?? '' );
 						$iCal    .= '\n' . "{$name}, {$email}, {$phone}";
 					}
 				}
@@ -177,9 +184,9 @@ class Civicrm_Ux_Event_Utils {
 			} else {
 				// External usage
 				$iCal .= 'SUMMARY:' .
-				         $event['title'] .
+				         self::escape_ical_text( $event['title'] ) .
 				         "\r\n";
-				$iCal .= "DESCRIPTION:Event url: $url\r\n";
+				$iCal .= "DESCRIPTION:Event url: " . self::escape_ical_text( $url ) . "\r\n";
 			}
 			$iCal .= "END:VEVENT\r\n";
 		}
@@ -188,6 +195,22 @@ class Civicrm_Ux_Event_Utils {
 		$iCal .= 'END:VCALENDAR';
 
 		return $iCal;
+	}
+
+	/**
+	 * Escape a value for use as an iCalendar TEXT value (RFC 5545 section 3.3.11).
+	 *
+	 * Backslash, semicolon and comma are escaped and any line break becomes a literal "\n", so a
+	 * value drawn from a record - an event title, or a registrant's own name, email or phone -
+	 * cannot break out of its property or inject further calendar lines.
+	 *
+	 * @param string $value
+	 *
+	 * @return string
+	 */
+	static protected function escape_ical_text( $value ) {
+		$value = str_replace( [ '\\', ';', ',' ], [ '\\\\', '\\;', '\\,' ], (string) $value );
+		return preg_replace( '/\r\n|\r|\n/', '\\n', $value );
 	}
 
 	/**

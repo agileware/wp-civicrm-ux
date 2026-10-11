@@ -14,7 +14,7 @@
 import { test, expect, PAGES, NO_RESULTS } from '../fixtures/base';
 import { purgeApi4Transients, listApi4Transients } from '../fixtures/cache';
 import { seededIds } from '../fixtures/ids';
-import { civiApi4 } from '../fixtures/civi';
+import { civiApi4, civiApi4First } from '../fixtures/civi';
 
 const ids = seededIds();
 
@@ -183,6 +183,38 @@ test.describe('Suite D - my_events isolation', () => {
         `[ux_cv_api4_get entity="Event" ${attrs} limit="50"]E=[api4:id]|[/ux_cv_api4_get]`
       );
       expect(html.match(/E=/g)?.length ?? 0).toBe(expected);
+    }
+  });
+});
+
+test.describe('Suite D - field values are rendered as literal text', () => {
+  test('D-16 markup and shortcodes in a field value are shown literally', async ({ privilegedPage }) => {
+    const original = civiApi4First<{ last_name: string }>('Contact.get', {
+      where: [['id', '=', ids.otherContactId]],
+      select: ['last_name'],
+    }).last_name;
+
+    // A value a contact could carry: HTML, plus a shortcode. The rendered page must show both as
+    // text - the HTML escaped, and the shortcode left as literal characters rather than executed.
+    const payload = '<i>ux-markup</i>[ux_campaign_goal_amount id="999999"]';
+
+    try {
+      civiApi4('Contact.update', { where: [['id', '=', ids.otherContactId]], values: { last_name: payload } });
+      purgeApi4Transients();
+
+      await privilegedPage.goto(PAGES.api4Contact);
+      const html = await privilegedPage.content();
+
+      // The italic tag is escaped, so it is never present as live markup.
+      expect(html).not.toContain('<i>ux-markup</i>');
+      expect(html).toContain('&lt;i&gt;ux-markup&lt;/i&gt;');
+      // The nested shortcode did not run: neither its "not found" message nor an empty figure
+      // from ux_campaign_goal_amount appears; the brackets were left inert.
+      expect(html).not.toContain('Campaign not found');
+      expect(html).not.toContain('Please provide the campaign id');
+    } finally {
+      civiApi4('Contact.update', { where: [['id', '=', ids.otherContactId]], values: { last_name: original } });
+      purgeApi4Transients();
     }
   });
 });

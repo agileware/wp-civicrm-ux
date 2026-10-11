@@ -101,12 +101,15 @@ test.describe('Suite G - funded campaign', () => {
     expect(field(body, 'END')).toContain(campaign.end_date.slice(0, 4));
   });
 
-  test('G-05 the honour listing renders without exposing a fatal', async ({ anonymousPage }) => {
+  test('G-05 the honour listing renders nothing unless the campaign is allow-listed', async ({ anonymousPage }) => {
     await anonymousPage.goto(PAGES.campaign);
     const body = (await anonymousPage.textContent('body')) || '';
 
     expect(body).not.toContain('There has been a critical error');
-    expect(field(body, 'HONOUR')).not.toContain('Campaign not found');
+    // A campaign is only listed when a site opts it in through the
+    // ux_campaign_honour_listing/allowed_campaign_ids filter. The test site adds no such filter,
+    // so the listing is empty and no donor name is published.
+    expect(field(body, 'HONOUR').trim()).toBe('');
   });
 });
 

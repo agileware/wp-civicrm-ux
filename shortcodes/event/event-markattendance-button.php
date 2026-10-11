@@ -45,8 +45,10 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 		$mod_atts['eventid'] = absint($mod_atts['eventid']);
 		$mod_atts['attended_status'] = absint($mod_atts['attended_status']);
 		$mod_atts['not_attended_status'] = absint($mod_atts['not_attended_status']);
-		$mod_atts['css_classes'] = sanitize_text_field($mod_atts['css_classes']);
-		$mod_atts['icon_classes'] = sanitize_text_field($mod_atts['icon_classes']);
+		// Reduce the class lists to valid HTML class tokens so an attribute value cannot carry
+		// quotes or event handlers into the button markup below.
+		$mod_atts['css_classes'] = $this->sanitize_class_list($mod_atts['css_classes']);
+		$mod_atts['icon_classes'] = $this->sanitize_class_list($mod_atts['icon_classes']);
 
 		$args = [];
 
@@ -116,6 +118,17 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
                                     </div>
                                 </dialog>';
 
-		return '<div class="event-links"><button data-eventId="' . $mod_atts['eventid'] . '" data-participantId="' . $participant['id'] . '" class="event-mark-attendance wp-civicrm-ux-button ' . $mod_atts['css_classes'] . '"><i class="' . $mod_atts['icon_classes'] . '"></i>' . $mod_atts['text'] . '</button>' . $confirmation_dialog . '</div>';
+		return '<div class="event-links"><button data-eventId="' . esc_attr( $mod_atts['eventid'] ) . '" data-participantId="' . esc_attr( $participant['id'] ) . '" class="event-mark-attendance wp-civicrm-ux-button ' . esc_attr( $mod_atts['css_classes'] ) . '"><i class="' . esc_attr( $mod_atts['icon_classes'] ) . '"></i>' . esc_html( $mod_atts['text'] ) . '</button>' . $confirmation_dialog . '</div>';
+	}
+
+	/**
+	 * Reduce a space-separated class string to valid HTML class tokens.
+	 *
+	 * @param string $classes
+	 *
+	 * @return string
+	 */
+	protected function sanitize_class_list( $classes ) {
+		return implode( ' ', array_filter( array_map( 'sanitize_html_class', explode( ' ', (string) $classes ) ) ) );
 	}
 }
