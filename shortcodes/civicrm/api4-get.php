@@ -180,7 +180,10 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			$cache_identity = empty( $params['checkPermissions'] ) ? '' :
 				':user:' . get_current_user_id() . ':contact:' . (int) CRM_Core_Session::singleton()->getLoggedInContactID();
 
-			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) . $cache_identity );
+			// The key also varies by post and by the template in $content: two shortcodes with the
+			// same params but different output templates must not share a cache entry, and a
+			// preview on one post must not overwrite the rendered output cached for another.
+			$trkey = $this->get_shortcode_name() . '__' . $post_revision . md5( $atts['entity'] . ':get:' . json_encode( $params ) . $cache_identity . ':post:' . $post_id . ':tpl:' . (string) $content );
 
 			$all = !empty($_GET['reset']) || !$cache_results ? FALSE : get_transient( $trkey );
 
@@ -214,6 +217,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					}
 
 					$field = $fields[ $match['field'] ] ?? [];
+					$append_br = FALSE;
 
 					if ( array_key_exists( 'data_type', $field ) && ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) ) {
 						$output = isset( $match['format'] ) ? Civicrm_Ux::getInstance()->strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
@@ -222,10 +226,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 							$output = $this->getAttachmentUrl( $output );
 
 							if ( $output && preg_match( '/^img( : (?<w> \d+ %? ) x (?<h> \d+ %? ) | : alt= (?<alt>.*) | : [^:]* )* /x', $match['format'], $m ) ) {
-								$output = '<img src="' . $output . '"'
-								          . ( !empty($m['w']) ? " width=\"{$m['w']}\" height=\"{$m['h']}\"" : '' ) .
-								          ' alt="' . ( !empty($m['alt']) ? htmlentities( $m['alt'] ) : '" role="presentation' ) .
-								          '">';
+								// Intentional image markup. The src is a signed CiviCRM file URL and
+								// the dimensions and alt come from the shortcode format; escape each
+								// and return the markup directly so it is not re-escaped as text.
+								$img = '<img src="' . esc_url( $output ) . '"';
+								if ( ! empty( $m['w'] ) ) {
+									$img .= ' width="' . esc_attr( $m['w'] ) . '" height="' . esc_attr( $m['h'] ) . '"';
+								}
+								$img .= ' alt="' . ( ! empty( $m['alt'] ) ? esc_attr( $m['alt'] ) : '' ) . '"'
+								        . ( empty( $m['alt'] ) ? ' role="presentation"' : '' ) . '>';
+
+								return $img;
 							}
 						} catch (\CRM_Core_Exception $e) {
 							\Civi::log()->error( 'WordPress Post ID: ' . get_the_ID() . '; CiviCRM APIv4 Shortcode: ' . $this->get_shortcode_name() . '; Params: ' . json_encode( $params ) . ';' );
@@ -237,11 +248,17 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 							$output = implode( ', ', $output );
 						}
 						if ( strcasecmp( $match['format'] ?? '', 'br' ) === 0 ) {
-							$output .= '<br />';
+							$append_br = TRUE;
 						}
 					}
 
-					return apply_filters( 'esc_html', wp_check_invalid_utf8( $output ) );
+					// Escape the field value, and neutralise shortcode brackets so a stored value
+					// cannot inject markup or a shortcode when the assembled template is run through
+					// do_shortcode() below. (apply_filters('esc_html', ...) did neither - no core
+					// callback is attached to that filter name, so it was a no-op.)
+					$output = str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], esc_html( wp_check_invalid_utf8( (string) $output ) ) );
+
+					return $append_br ? $output . '<br />' : $output;
 				}, shortcode_unautop( $content ) );
 
 				$output = apply_filters( $this->get_shortcode_name() . '/output', $output, $result, $params, $atts );

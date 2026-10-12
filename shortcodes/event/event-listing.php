@@ -109,8 +109,8 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
     $end_date_text .= ' ' . (!empty($event['event_tz']) ? $event['event_tz'] : CRM_Core_Config::singleton()->userSystem->getTimeZoneString());
 
     $output = '<div class="civicrm-event-listing-item"><h3 class="civicrm-event-item-header">' . $this->get_event_info_link_html($event['id'], $event['title']) . '</h3>' .
-      '<p class="civicrm-event-item-date">' . $start_date_text . $end_date_text . '</p>' .
-      '<p class="civicrm-event-item-summary">' . $event['summary'] . '</p>';
+      '<p class="civicrm-event-item-date">' . esc_html( $start_date_text . $end_date_text ) . '</p>' .
+      '<p class="civicrm-event-item-summary">' . wp_kses_post( $event['summary'] ?? '' ) . '</p>';
 
     // If on-line registration is enabled display the register now link
     if ($event['is_online_registration']) {
@@ -133,13 +133,13 @@ class Civicrm_Ux_Shortcode_Event_Listing extends Abstract_Civicrm_Ux_Shortcode {
   private function get_event_register_link_html(string $event_id, ?string $text = NULL) {
     // URLs must be absolute as this shortcode may be used by the au.com.agileware.evaluatewpshortcode extension
     $url = CRM_Utils_System::url('civicrm/event/register', ['id' => $event_id],TRUE,NULL,TRUE,TRUE);
-    return '<a target=_blank href="' . $url . '">' . ( $text ?: 'Register now' ) . '</a>';
+    return '<a target="_blank" rel="noopener" href="' . esc_url( $url ) . '">' . esc_html( $text ?: 'Register now' ) . '</a>';
   }
 
   private function get_event_info_link_html(string $event_id, ?string $text = NULL) {
     // URLs must be absolute as this shortcode may be used by the au.com.agileware.evaluatewpshortcode extension
     $url = CRM_Utils_System::url('civicrm/event/info', ['id' => $event_id],TRUE,NULL,TRUE,TRUE);
-    return '<a target=_blank href="' . $url . '">' . ( $text ?: 'More information' ) . '</a>';
+    return '<a target="_blank" rel="noopener" href="' . esc_url( $url ) . '">' . esc_html( $text ?: 'More information' ) . '</a>';
   }
 
 }

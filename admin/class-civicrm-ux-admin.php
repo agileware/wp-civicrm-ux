@@ -150,7 +150,19 @@ class Civicrm_Ux_Admin {
 
 	public function register_settings() {
 		//register our settings
-		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION );
+		register_setting( 'civicrm-ux-settings-group', Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION, [
+			'type'              => 'string',
+			// The feed hash is a shared secret, so keep it to hex and reject anything too short to
+			// be hard to guess; an empty value is allowed (it disables the internal feed).
+			'sanitize_callback' => function ( $value ) {
+				$value = preg_replace( '/[^a-f0-9]/i', '', (string) $value );
+				if ( $value !== '' && strlen( $value ) < 16 ) {
+					add_settings_error( Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION, 'ical_hash_too_short', __( 'The iCal feed hash is too short; use the Re-generate button for a secure value.', 'civicrm-ux' ) );
+					return get_option( Civicrm_Ux_Shortcode_Event_ICal_Feed::HASH_OPTION, '' );
+				}
+				return $value;
+			},
+		] );
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_summary_options' );
 		register_setting( 'civicrm-ux-settings-group', 'civicrm_contribution_ux' );
 

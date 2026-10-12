@@ -44,7 +44,10 @@ class Civicrm_Ux_Shortcode_Membership_Row extends Abstract_Civicrm_Ux_Shortcode 
 
 		// Sanitize inputs
 		$atts['expiration_offset'] = sanitize_text_field($atts['expiration_offset']);
-		$atts['renewal_url'] = sanitize_url($atts['renewal_url']);
+		// The renewal link has the viewer's cid and checksum appended, so it must stay on this
+		// site: a checksum is a bearer credential, and an off-site renewal_url would hand it to
+		// another host. wp_validate_redirect drops any URL whose host is not allowed.
+		$atts['renewal_url'] = esc_url_raw( wp_validate_redirect( sanitize_url($atts['renewal_url']), '' ) );
 
         $args = [
             'content' => $content,
