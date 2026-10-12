@@ -2,14 +2,14 @@
 
 This plugin adds many useful shortcodes and provides additional functionality to improve the user experience for integrating CiviCRM with a WordPress site.
 
-> **Security — who may edit pages**
->
-> These shortcodes run CiviCRM queries and render CiviCRM data on behalf of the person who
-> authors the page. Anyone who can add or edit a page containing them can cause CiviCRM data to
-> be displayed, and some shortcodes (for example `[ux_cv_api4_get]`) read data without applying
-> CiviCRM's own permission checks. Only trusted internal staff who are permitted to view all of
-> the CiviCRM data should be able to edit pages that use these shortcodes — do not grant page
-> editing capabilities (Contributor, Author or Editor) to untrusted or public-facing users.
+## Security and CiviCRM data
+
+These shortcodes run CiviCRM queries and render CiviCRM data on behalf of the person who
+authors the page. Anyone who can add or edit a page containing them can cause CiviCRM data to
+be displayed, and some shortcodes (for example `[ux_cv_api4_get]`) read data without applying
+CiviCRM's own permission checks. Only trusted internal staff who are permitted to view all of
+the CiviCRM data should be able to edit pages that use these shortcodes — do not grant page
+editing capabilities (Contributor, Author or Editor) to untrusted or public-facing users.
 
 ## Events Calendar Shortcode
 
