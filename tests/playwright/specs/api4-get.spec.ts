@@ -219,6 +219,76 @@ test.describe('Suite D - field values are rendered as literal text', () => {
   });
 });
 
+test.describe('Suite D - rich text fields are rendered as filtered markup', () => {
+  test('D-17 RichTextEditor fields keep safe markup, drop scripts and leave shortcodes inert', async ({ privilegedPage }) => {
+    const original = civiApi4First<{ description: string }>('Event.get', {
+      where: [['id', '=', ids.futureEventId]],
+      select: ['description'],
+    }).description;
+
+    // Event.description is a RichTextEditor field: staff-entered HTML that must render as markup
+    // (escaping it showed raw <p> tags on event pages), while still being run through
+    // wp_kses_post and keeping shortcodes in the value inert.
+    const payload =
+      '<p><strong>ux-rich</strong> <a href="https://example.org/">link</a></p>' +
+      '<script>window.uxInjected=1</script><img src="x" onerror="window.uxInjected=1">' +
+      '[ux_campaign_goal_amount id="999999"]';
+
+    try {
+      civiApi4('Event.update', { where: [['id', '=', ids.futureEventId]], values: { description: payload } });
+      purgeApi4Transients();
+
+      const html = await renderShortcode(
+        privilegedPage,
+        `[ux_cv_api4_get entity="Event" id="${ids.futureEventId}"]RT=[api4:description]|TXT=[api4:title][/ux_cv_api4_get]`,
+        true
+      );
+
+      expect(html).toContain('<strong>ux-rich</strong>');
+      expect(html).toContain('<a href="https://example.org/">link</a>');
+      expect(html).not.toContain('&lt;strong&gt;');
+      // kses drops the disallowed tag and attribute (it leaves the script's inner text behind as
+      // inert text, which is fine).
+      expect(html).not.toContain('<script>window.uxInjected');
+      expect(html).not.toContain('onerror');
+      expect(html).not.toContain('Campaign not found');
+      expect(html).not.toContain('Please provide the campaign id');
+    } finally {
+      civiApi4('Event.update', { where: [['id', '=', ids.futureEventId]], values: { description: original } });
+      purgeApi4Transients();
+    }
+  });
+
+  test('D-18 the :html format opts a plain text field into filtered markup', async ({ privilegedPage }) => {
+    const original = civiApi4First<{ last_name: string }>('Contact.get', {
+      where: [['id', '=', ids.otherContactId]],
+      select: ['last_name'],
+    }).last_name;
+
+    try {
+      civiApi4('Contact.update', {
+        where: [['id', '=', ids.otherContactId]],
+        values: { last_name: '<em>ux-html</em><script>window.uxInjected=1</script>' },
+      });
+      purgeApi4Transients();
+
+      const html = await renderShortcode(
+        privilegedPage,
+        `[ux_cv_api4_get entity="Contact" id="${ids.otherContactId}"]H=[api4:last_name:html]|T=[api4:last_name][/ux_cv_api4_get]`,
+        true
+      );
+
+      // With :html the markup survives kses; without it the same value is escaped.
+      expect(html).toContain('H=<em>ux-html</em>');
+      expect(html).toContain('T=&lt;em&gt;ux-html&lt;/em&gt;');
+      expect(html).not.toContain('<script>window.uxInjected');
+    } finally {
+      civiApi4('Contact.update', { where: [['id', '=', ids.otherContactId]], values: { last_name: original } });
+      purgeApi4Transients();
+    }
+  });
+});
+
 test.describe('Suite D - other entities pass through unmodified', () => {
   for (const entity of ['LineItem', 'OptionValue', 'Participant']) {
     test(`D-12 entity="${entity}" is not mangled by the case fold`, async ({ privilegedPage }) => {
@@ -243,7 +313,11 @@ test.describe('Suite D - other entities pass through unmodified', () => {
  *
  * Kept at the bottom because it is a test utility, not part of the plugin's surface.
  */
-async function renderShortcode(page: import('@playwright/test').Page, shortcode: string): Promise<string> {
+async function renderShortcode(
+  page: import('@playwright/test').Page,
+  shortcode: string,
+  asHtml = false
+): Promise<string> {
   const { wpCli } = await import('../fixtures/civi');
   const slug = `ux-tmp-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
   wpCli([
@@ -257,7 +331,7 @@ async function renderShortcode(page: import('@playwright/test').Page, shortcode:
   ]);
   try {
     await page.goto(`/${slug}/`);
-    return (await page.textContent('body')) || '';
+    return asHtml ? await page.content() : (await page.textContent('body')) || '';
   } finally {
     const id = wpCli(['post', 'list', '--post_type=page', `--name=${slug}`, '--field=ID']).trim();
     if (id) {
