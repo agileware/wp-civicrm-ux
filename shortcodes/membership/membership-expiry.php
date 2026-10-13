@@ -33,21 +33,24 @@ class Civicrm_Ux_Shortcode_Membership_Expiry extends Abstract_Civicrm_Ux_Shortco
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid, 'return' => [ 'end_date', 'status_id.is_current_member', 'membership_type_id.name' ] ) );
+				// Nobody logged in: there is no membership to describe. Without a contact the query
+				// below would have no contact filter and return other contacts' memberships.
+				if ( empty( $cid ) ) {
+					return '';
+				}
 
-				foreach ( $memberships["values"] as $membership ) {
+				$memberships = civicrm_api3( 'Membership', 'get', array( 'contact_id' => $cid, 'return' => [ 'end_date', 'status_id.is_current_member', 'membership_type_id.name' ], 'options' => [ 'limit' => 0 ] ) );
 
-					if ( $membership['status_id.is_current_member'] ) {
-						// TODO - Include the membership type with the expiry message
+				// Describe the most recent membership (the latest end date), and only when it has a
+				// current status; a membership with no end date has no expiry to describe.
+				$membership = Civicrm_Ux_Membership_Utils::get_most_recent_membership( $memberships['values'] );
 
-						$membership_end_date = CRM_Utils_Date::customFormat($membership['end_date']);
+				if ( $membership && $membership['status_id.is_current_member'] && ! empty( $membership['end_date'] ) ) {
+					// TODO - Include the membership type with the expiry message
 
-						$membership_expiry_message .= '<div>' . 'Your membership expires on ' . $membership_end_date . '</div>';
+					$membership_end_date = CRM_Utils_Date::customFormat($membership['end_date']);
 
-						break;
-
-					}
-
+					$membership_expiry_message .= '<div>' . 'Your membership expires on ' . $membership_end_date . '</div>';
 				}
 
 				return $membership_expiry_message;

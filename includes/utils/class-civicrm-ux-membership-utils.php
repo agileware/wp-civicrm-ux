@@ -100,8 +100,62 @@ class Civicrm_Ux_Membership_Utils {
 	}
 
 	/**
+	 * Pick the most recent membership from a list: the one with the latest end date.
+	 *
+	 * A current membership with no end date (a lifetime membership) counts as the latest, while
+	 * a membership with no end date and no current status (such as a pending or cancelled
+	 * application that never started) counts as the oldest. When memberships
+	 * end on the same date, one with a current status wins over one without, so a cancelled or
+	 * pending application for the same period does not hide the contact's active membership; a
+	 * remaining tie goes to the higher id. This does not depend on the order the list was returned
+	 * in, which is by membership id.
+	 *
+	 * @param array $memberships Memberships as returned by the Membership.get API, each with an
+	 *                           "id", optionally an "end_date", and optionally the
+	 *                           "status_id.is_current_member" flag.
+	 *
+	 * @return array|null The most recent membership, or null when the list is empty.
+	 */
+	static public function get_most_recent_membership( array $memberships ) {
+		$latest = null;
+
+		foreach ( $memberships as $membership ) {
+			if ( $latest === null || self::membership_recency_key( $membership ) > self::membership_recency_key( $latest ) ) {
+				$latest = $membership;
+			}
+		}
+
+		return $latest;
+	}
+
+	/**
+	 * Sort key for get_most_recent_membership(): the end date, then whether the status is current,
+	 * then the id. The end dates are compared as strings, which orders dates written as Y-m-d
+	 * correctly.
+	 */
+	static protected function membership_recency_key( array $membership ) {
+		$is_current = ! empty( $membership['status_id.is_current_member'] );
+
+		if ( ! empty( $membership['end_date'] ) ) {
+			$end_date = $membership['end_date'];
+		} else {
+			// No end date. A current membership without one is a lifetime membership, which never
+			// ends, so it ranks last-ending. Any other status without dates is an application that
+			// never started (pending, cancelled), so it ranks lowest rather than hiding a real one.
+			$end_date = $is_current ? '9999-12-31 23:59:59' : '0000-00-00 00:00:00';
+		}
+
+		return $end_date . '|' . ( $is_current ? '1' : '0' ) . '|' . str_pad( (string) ( $membership['id'] ?? 0 ), 12, '0', STR_PAD_LEFT );
+	}
+
+	/**
 	 * This function is merged from
 	 * agileware/agileware-civicrm-membership-summary
+	 *
+	 * Describes the logged in contact's most recent membership (see get_most_recent_membership()).
+	 * The status, end date and summary are only filled in when that membership has a current
+	 * status; the type and renewal date are filled in for any status. Nothing is described when
+	 * nobody is logged in.
 	 *
 	 * @return array
 	 * @throws Exception
@@ -125,37 +179,51 @@ class Civicrm_Ux_Membership_Utils {
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-				$memberships = civicrm_api3( 'Membership', 'get', [
-					'contact_id' => $cid,
-					'return'     => [
-						'membership_type_id.name',
-						'end_date',
-						'status_id.label',
-						'status_id.is_current_member',
-					],
-				] );
+				// With no logged in contact there is no membership to describe. Without this the
+				// query below has no contact filter and returns other contacts' memberships.
+				$membership = null;
+				if ( ! empty( $cid ) ) {
+					$memberships = civicrm_api3( 'Membership', 'get', [
+						'contact_id' => $cid,
+						'return'     => [
+							'membership_type_id.name',
+							'end_date',
+							'status_id.label',
+							'status_id.is_current_member',
+						],
+						'options'    => [ 'limit' => 0 ],
+					] );
 
-				foreach ( $memberships['values'] as $membership ) {
+					$membership = self::get_most_recent_membership( $memberships['values'] );
+				}
 
-					$membership_types    = $membership['membership_type_id.name'];
-					$membership_end_date = new DateTime( $membership['end_date'] );
-					$end_date_format     = CRM_Utils_Date::customFormat( $membership_end_date->format( 'Y-m-d' ) );
-					$end_date_before     = new DateTime( $membership['end_date'] );
-					$renewal_date        = $end_date_before->modify( '-' . (string) ( $summary_show_renewal_date ) . 'day' );
-					$renewal_date_format = CRM_Utils_Date::customFormat( $renewal_date->format( 'Y-m-d' ) );
-					$today_date          = new DateTime( 'now' );
+				if ( $membership ) {
+
+					$membership_types = $membership['membership_type_id.name'];
+
+					// A membership with no end date (a lifetime membership) has no renewal date and
+					// no end date to describe.
+					$has_end_date = ! empty( $membership['end_date'] );
+
+					if ( $has_end_date ) {
+						$membership_end_date = new DateTime( $membership['end_date'] );
+						$end_date_format     = CRM_Utils_Date::customFormat( $membership_end_date->format( 'Y-m-d' ) );
+						$end_date_before     = new DateTime( $membership['end_date'] );
+						$renewal_date        = $end_date_before->modify( '-' . (string) ( $summary_show_renewal_date ) . 'day' );
+						$renewal_date_format = CRM_Utils_Date::customFormat( $renewal_date->format( 'Y-m-d' ) );
+					}
+					$today_date = new DateTime( 'now' );
 
 					if ( $membership['status_id.is_current_member'] ) {
 						$membership_summary_status .= $membership['status_id.label'];
-						if ( $today_date < $renewal_date ) {
+						if ( ! $has_end_date ) {
+							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '</div>';
+						} elseif ( $today_date < $renewal_date ) {
 							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . ', next renewal date ' . $renewal_date_format . '</div>';
-							break;
 						} elseif ( ( $today_date >= $renewal_date ) && ( $today_date <= $membership_end_date ) ) {
 							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '. Your membership expires on ' . $end_date_format . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
-							break;
 						} elseif ( ( $today_date > $membership_end_date ) ) {
 							$membership_summary_message .= '<div>' . $membership_types . ' member - ' . $membership_summary_status . '.' . $end_date_format . '</div><div>' . '<a href="' . (string) ( $summary_show_renewal_URL ) . '">' . 'Click here to renew your membership' . '</a></div>';
-							break;
 						}
 					}
 

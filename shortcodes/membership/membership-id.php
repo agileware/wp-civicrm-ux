@@ -50,9 +50,13 @@ class Civicrm_Ux_Shortcode_Membership_Id extends Abstract_Civicrm_Ux_Shortcode{
 		$params = array_filter( $mod_atts, function ( $value ) {
 			return !empty($value) || $value === 0;
 		});
+		// Read every matching membership so the most recent one can be picked, instead of the
+		// first one returned (the lowest id).
+		$params['options'] = [ 'limit' => 0 ];
+		$params['return']  = [ 'id', 'end_date', 'status_id.is_current_member' ];
 		$membership = civicrm_api3( 'Membership', 'get', $params );
 		if ( $membership['count'] ) {
-			$membership = array_shift( $membership['values'] );
+			$membership = Civicrm_Ux_Membership_Utils::get_most_recent_membership( $membership['values'] );
 
 			return $membership['id'];
 		}
