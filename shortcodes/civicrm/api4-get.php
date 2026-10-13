@@ -195,7 +195,7 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 			$fields = civicrm_api4( $atts['entity'], 'getfields', [
 				'checkPermissions' => FALSE,
-				'select'           => [ 'name', 'data_type', 'fk_entity' ],
+				'select'           => [ 'name', 'data_type', 'fk_entity', 'input_type' ],
 			] )->indexBy( 'name' );
 
 			$results = civicrm_api4( $atts['entity'], 'get', $params );
@@ -218,6 +218,12 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 					$field = $fields[ $match['field'] ] ?? [];
 					$append_br = FALSE;
+					// Rich text fields (e.g. Event description, RichTextEditor custom fields) hold
+					// HTML that staff entered in CiviCRM, so render it as markup filtered through
+					// wp_kses_post rather than escaping it to literal text. The ":html" format
+					// opts any other field in, e.g. a TextArea that holds HTML.
+					$is_html = ( ( $field['input_type'] ?? NULL ) === 'RichTextEditor' )
+					           || strcasecmp( $match['format'] ?? '', 'html' ) === 0;
 
 					if ( array_key_exists( 'data_type', $field ) && ( ( $field['data_type'] == 'Date' ) || ( $field['data_type'] == 'Timestamp' ) ) ) {
 						$output = isset( $match['format'] ) ? Civicrm_Ux::getInstance()->strftime( $match['format'], strtotime( $output ) ) : CRM_Utils_Date::customFormat( $output );
@@ -256,7 +262,12 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 					// cannot inject markup or a shortcode when the assembled template is run through
 					// do_shortcode() below. (apply_filters('esc_html', ...) did neither - no core
 					// callback is attached to that filter name, so it was a no-op.)
-					$output = str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], esc_html( wp_check_invalid_utf8( (string) $output ) ) );
+					//
+					// HTML fields are filtered with wp_kses_post instead (scripts, event handlers and
+					// other unsafe markup are stripped) and get the same bracket neutralisation.
+					$output = wp_check_invalid_utf8( (string) $output );
+					$output = $is_html ? wp_kses_post( $output ) : esc_html( $output );
+					$output = str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], $output );
 
 					return $append_br ? $output . '<br />' : $output;
 				}, shortcode_unautop( $content ) );
