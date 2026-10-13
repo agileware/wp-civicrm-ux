@@ -8,9 +8,32 @@
 
 import { test, expect, PAGES } from '../fixtures/base';
 import { seededIds } from '../fixtures/ids';
-import { civiApi4 } from '../fixtures/civi';
+import { civiApi4, civiApi4First } from '../fixtures/civi';
 
 const ids = seededIds();
+
+/** The seeded membership, which every case in this file builds on. */
+function seededMembership() {
+  return civiApi4First<{ id: number; membership_type_id: number; end_date: string; join_date: string }>(
+    'Membership.get',
+    {
+      where: [['contact_id', '=', ids.memberContactId]],
+      select: ['id', 'membership_type_id', 'end_date', 'join_date'],
+      orderBy: { id: 'ASC' },
+    }
+  );
+}
+
+/** Add another membership for the member; callers delete it again in a finally block. */
+function addMembership(values: Record<string, unknown>) {
+  return civiApi4First<{ id: number }>('Membership.create', {
+    values: { contact_id: ids.memberContactId, ...values },
+  });
+}
+
+function deleteMembership(id: number) {
+  civiApi4('Membership.delete', { where: [['id', '=', id]] });
+}
 
 test.describe('Suite F - a member sees their own membership', () => {
   test('F-01 status, type and id match the CiviCRM record', async ({ memberPage }) => {
@@ -50,11 +73,69 @@ test.describe('Suite F - a member sees their own membership', () => {
   });
 });
 
+test.describe('Suite F - the most recent membership is shown', () => {
+  test('F-03 a later-ending membership is shown instead of the oldest record', async ({ memberPage }) => {
+    const seeded = seededMembership();
+    test.skip(!seeded, 'No membership was seeded.');
+
+    // The shortcodes used to read memberships in id order, so they showed the first record (the
+    // lowest id) or the last one, whichever the code happened to reach. They now show the
+    // membership with the latest end date, whatever its id.
+    const later = addMembership({
+      membership_type_id: seeded.membership_type_id,
+      join_date: seeded.join_date,
+      start_date: seeded.join_date,
+      end_date: new Date(new Date(seeded.end_date).getTime() + 365 * 86400000).toISOString().slice(0, 10),
+    });
+
+    try {
+      await memberPage.goto(PAGES.membership);
+      const body = (await memberPage.textContent('body')) || '';
+
+      expect(body).toMatch(new RegExp(`ID=${later.id}\\b`));
+      expect(body).not.toMatch(new RegExp(`ID=${seeded.id}\\b`));
+    } finally {
+      deleteMembership(later.id);
+    }
+  });
+
+  test('F-04 a cancelled record with the same end date does not hide the active membership', async ({
+    memberPage,
+  }) => {
+    const seeded = seededMembership();
+    test.skip(!seeded, 'No membership was seeded.');
+
+    // A cancelled or pending application for the same period is created after the real
+    // membership, so it has the higher id. When end dates tie, the membership with a current
+    // status wins; otherwise the member's active membership would show no status at all.
+    const cancelled = addMembership({
+      membership_type_id: seeded.membership_type_id,
+      join_date: seeded.join_date,
+      start_date: seeded.join_date,
+      end_date: seeded.end_date,
+      'status_id:name': 'Cancelled',
+      is_override: true,
+    });
+
+    try {
+      await memberPage.goto(PAGES.membership);
+      const body = (await memberPage.textContent('body')) || '';
+
+      expect(body).toMatch(new RegExp(`ID=${seeded.id}\\b`));
+      expect(body).not.toMatch(new RegExp(`ID=${cancelled.id}\\b`));
+      expect(body).toMatch(/STATUS=\S/);
+      expect(body).toContain('EXPIRY=');
+    } finally {
+      deleteMembership(cancelled.id);
+    }
+  });
+});
+
 test.describe('Suite F - negative cases', () => {
   test('F-05 an anonymous visitor sees no membership data', async ({ anonymousPage }) => {
-    const membership = civiApi4<Array<{ id: number }>>('Membership.get', {
+    const membership = civiApi4<Array<{ id: number; 'membership_type_id:label': string }>>('Membership.get', {
       where: [['contact_id', '=', ids.memberContactId]],
-      select: ['id'],
+      select: ['id', 'membership_type_id:label'],
     })[0];
     test.skip(!membership, 'No membership was seeded.');
 
@@ -66,6 +147,12 @@ test.describe('Suite F - negative cases', () => {
     // change, while "the seeded membership's id must not appear" is the thing that matters.
     expect(body).not.toContain(`ID=${membership.id}`);
     expect(body).not.toMatch(/ID=\d/);
+
+    // With nobody logged in the shortcodes used to query memberships with no contact filter, and
+    // so showed another member's type, status and expiry. The type and the expiry sentence are
+    // text that only a membership record can produce.
+    expect(body).not.toContain(membership['membership_type_id:label']);
+    expect(body).not.toContain('Your membership expires');
   });
 
   test('F-06 a logged-in user with no membership degrades cleanly', async ({ privilegedPage }) => {
