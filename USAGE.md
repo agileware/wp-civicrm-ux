@@ -209,6 +209,8 @@ Limited format support is available:
 * File upload fields can be output as images with width, height, and alt text specified, e.g. `[api4:My_Custom_Field_Group.Image_Upload:img:800x300:alt=A picture]`
 * A line break tag can be output with fields only when they contain data with `:br`, e.g. `[api4:My_Custom_Field_Group.Optional_Field:br]`
 
+Field values are escaped and shown as plain text, except rich text fields. Fields that use the rich text editor in CiviCRM (for example the event `description`, or a custom field with the *Rich Text Editor* input type) are output as HTML, filtered through WordPress's `wp_kses_post` so scripts and other unsafe markup are removed. To output HTML from any other field, such as a *Note* (TextArea) custom field that holds HTML, add `:html`, e.g. `[api4:My_Custom_Field_Group.Notes:html]`. Shortcodes inside a field value are never run.
+
 #### Filtering
 
 Specifying a non-numeric `id` attribute to the `[ux_cv_api4_get]` shortcode instructs it to use that value parameter in the GET request as the ID, e.g. `[ux_cv_api4_get entity=Event is_public=1 is_active=1 id=event_id]` with the url `http://example.org/event/?event_id=20` will result in the event with id 20 being fetched for the shortcode.
@@ -469,17 +471,41 @@ To override the output of the shortcode when there are no membership records to 
 
 When linking to a CiviCRM Contribution Page to renew a membership inherited by relationship, it is important to be aware that the contact must have a permissioned relationship with the related contact. This enables the contact to renew the membership on behalf of the primary member, typically an organisation. If there is no permissioned relationship then a new organisation will be entered and the unsupervised duplicate matching rules for organisations will be used. A new membership instead of a membership renewal may also be created. [See the CiviCRM documentation for more details](https://docs.civicrm.org/user/en/latest/membership/defining-memberships)
 
-### Deprecated shortcodes
-*The following shortcodes remain functional but are deprecated in favour of `[ux_membership]` and `[ux_membership_row]` above, and may be removed in a future release. New sites should use the shortcodes above instead.*
+### Other shortcodes
 
-1. `[ux_membership_expiry]`  - Return a HTML tag with the membership expiry date of the login user.
-2. `[ux_membership_id]` - Return the membership id of the login user.
-3. `[ux_membership_join_url]` - Return the join form URL. The URL can be configured in the settings page.
-4. `[ux_membership_renewal_date]` - Return the renewal date of the membership for the login user
-5. `[ux_membership_renewal_url]` - Return the renewal form URL. The URL can be configured in the settings page.
-6. `[ux_membership_status]` - Return the membership status of the login user.
-7. `[ux_membership_summary]` - Return the membership summary of the login user.
-8. `[ux_membership_type]` - Return the membership type of the login user. 
+These shortcodes below show **the most recent** membership only, and which one they show follows the rules below, so read them before relying on these shortcodes.
+#### Which membership is shown
+
+- **Logged-in users only.** The shortcodes use the contact of the logged-in user. They do not accept a `cid` and checksum link, and they show nothing to a visitor who is not logged in (`[ux_membership_id]` shows `not found`).
+- **The most recent membership is the one with the latest end date.** The type, status, expiry date, renewal date, summary and ID all come from that one membership, whichever order the memberships were created in.
+  - If two memberships end on the same date, the one with a current status wins, so a cancelled or pending application for the same period does not hide the member's active membership. If they still tie, the one with the higher membership ID wins.
+  - A membership with no end date counts as the most recent if its status is current (for example a lifetime membership, which never ends). A membership with no end date and no current status (for example a pending or cancelled application that never started) counts as the oldest.
+- **The status, expiry and summary are only shown when the most recent membership has a current status.** A status is current when *Current Member?* is ticked on it in CiviCRM. In a default CiviCRM, New, Current and Grace are current; Pending, Expired, Cancelled and Deceased are not. When the most recent membership is not current, they are **empty** even if the member has an older membership that is current. The type and the renewal date are shown for any status.
+- **If the contact has no membership at all**, nothing is shown.
+
+| Situation | Type | Status | Expiry | Renewal date | Summary |
+|---|---|---|---|---|---|
+| The most recent membership has a current status | Shown | Shown | Shown | Shown | Shown |
+| The most recent membership is Expired, Cancelled or any other non-current status | Shown | Empty | Empty | Shown (a date in the past) | Empty |
+| A lifetime membership (current, with no end date) | Shown | Shown | Empty (it never ends) | Empty | Shown, without a date |
+| No memberships, or not logged in | Empty | Empty | Empty | Empty | Empty |
+
+If you need to show every membership with its real status and expiry date, whatever the status is, use `[ux_membership]` with `[ux_membership_row]` instead.
+
+#### The shortcodes
+
+1. `[ux_membership_expiry]` - Return a HTML tag with the sentence "Your membership expires on *date*", using the date format configured in CiviCRM. Empty unless the most recent membership has a current status and an end date. It never shows an expiry date for an ended membership.
+2. `[ux_membership_id]` - Return the ID of the most recent membership, which is the same membership the other shortcodes describe. Shows `not found` if there is no membership or the visitor is not logged in.
+3. `[ux_membership_join_url]` - Return the join form URL as plain text (not a link), as set in *Settings > CiviCRM UX*, under *Membership Summary*, in *URL for the Membership Join page*. It does not depend on the contact's memberships.
+4. `[ux_membership_renewal_date]` - Return the renewal date: the membership's end date minus the number of days set in *The number of days to show the renewal notice and URL*, in the same settings area. It is calculated from the most recent membership, so if that membership is not current it shows a date in the past. It is empty for a membership with no end date.
+5. `[ux_membership_renewal_url]` - Return the renewal form URL as plain text (not a link), as set in *Settings > CiviCRM UX*, in *URL for the Membership Renewal page*. It does not depend on the contact's memberships.
+6. `[ux_membership_status]` - Return the label of the membership status. Empty unless the most recent membership has a current status, so it is empty for Expired and Cancelled memberships.
+7. `[ux_membership_summary]` - Return a sentence summarising the membership. Empty unless the most recent membership has a current status. The wording depends on the date:
+   - for a membership with no end date: "*type* member - *status*"
+   - before the renewal notice period starts: "*type* member - *status*, next renewal date *date*"
+   - during the renewal notice period (from the renewal date until the end date): "*type* member - *status*. Your membership expires on *date*", followed by a "Click here to renew your membership" link to the renewal URL
+   - after the end date, while the status is still current (for example Grace): "*type* member - *status*.*end date*", followed by the same renewal link
+8. `[ux_membership_type]` - Return the name of the type of the most recent membership. This is the type's name, which can differ from the label shown in `[ux_membership_row]`. It is shown for any status, including Expired and Cancelled.
 
 ## CiviCRM Data Processor Shortcode
 
