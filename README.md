@@ -25,7 +25,7 @@ Contributor, Author or Editor roles) to untrusted or public-facing users.***
 ## Features
 
 * Interactive Events Calendar, Event Listing and iCal Feed shortcodes
-* A CiviCRM APIv4 shortcode for building custom listings and pages from any CiviCRM entity
+* A CiviCRM APIv4 shortcode for building custom listings and pages from CiviCRM contacts and events
 * Campaign fundraising shortcodes, including a thermometer graph and contribution honour roll
 * Event registration cancellation and self-service attendance marking shortcodes
 * Membership summary, status and renewal shortcodes

@@ -35,6 +35,8 @@ You can include additional parameters in the fullcalendar shortcode to limit the
 
 The CiviCRM APIv4 is directly accessible using the `[ux_cv_api4_get]` WordPress shortcode. You can use the CiviCRM APIv4 Explorer to understand how to query CiviCRM using the APIv4.
 
+This shortcode only queries the **Contact** and **Event** entities. These are the two it is designed and documented for, and the two it can show safely. Other entities are not available: a query for any other entity (for example `entity=Contribution`) renders nothing. A site that genuinely needs another entity can add it with the `ux_cv_api4_get/allowed_entities` filter, but should do so only for an entity it is sure is safe to display, having read the Permissions note below.
+
 Below are some examples of how the `[ux_cv_api4_get]` WordPress shortcode can be used.
 
 ### Event Listing Example 1
@@ -254,11 +256,17 @@ Example usage:
 ```
 
 
+### Permissions
+
+`Contact` queries run with CiviCRM's permission checks **on**, so they return only the records the person viewing the page is allowed to see. `Event` queries run with permission checks **off**, because an events listing or calendar is meant to show public events to anonymous visitors, who usually do not have the *access CiviEvent* permission. Add `is_public=1 is_active=1` to an Event query yourself to limit it to public, active events — the shortcode does not add those conditions for you, so without them it returns every event, including non-public and inactive ones.
+
+`check_permissions=0` turns the checks off for a query (and `check_permissions=1` turns them on). Use `check_permissions=0` deliberately: it returns **every** matching record to whoever can view the page, so only use it where that is intended, and keep such pages visible only to the audience that should see the data. If you allow a further entity through the `ux_cv_api4_get/allowed_entities` filter, it defaults to checks on. See the security note at the top of this guide about who should be allowed to edit pages that use these shortcodes.
+
 ### CiviCRM API trouble-shooting
 
 If the CiviCRM API shortcode is not evaluating and returning a **blank** result, check the CiviCRM log file for errors. An error message along with a CiviCRM backtrace will be shown.
 
-As the CiviCRM API requests are performed by the logged in user, verify that this user has the requisite permissions for the API request. This can be performed by executing the same command using the WP or CV CLI.
+A blank result can also mean the viewer does not have permission to see the records. Verify the permissions by running the same query as that user with the WP or CV CLI (below). To confirm whether permissions are the cause, you can temporarily add `check_permissions=0`.
 
 Using the **wp** CLI:
 ```wp --user=<WP User Name> cv api4 Contact.get +w id=<Contact ID>```

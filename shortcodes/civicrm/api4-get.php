@@ -33,19 +33,29 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 				'entity' => 'Contact',
 			];
 
-		// CiviCRM accepts an entity name in any case, but the tests below are
-		// case-sensitive, so "contact" would otherwise skip both the permission
-		// check and the email/address/phone join, and "event" would skip the
-		// my_events and participant_status_id handling. Canonicalise just the two
-		// names treated specially here; any other entity is passed through as
-		// written, since names like ContributionRecur cannot be derived by case
-		// folding alone.
-		foreach ( [ 'Contact', 'Event' ] as $known_entity ) {
-			if ( strcasecmp( $atts['entity'], $known_entity ) === 0 ) {
-				$atts['entity'] = $known_entity;
+		// This shortcode only queries Contact and Event. Those are the entities it is designed and
+		// documented for, and the two it handles safely: Contact runs with permission checks, and
+		// Event is a public events listing. Every other entity ran with permission checks off and
+		// returned whole tables - contributions, memberships, notes and so on - to whoever could
+		// see the page, with no real use case. Entity names are accepted in any case and
+		// canonicalised to the allowed spelling. A site that genuinely needs another entity can add
+		// it with the ux_cv_api4_get/allowed_entities filter, accepting responsibility for it.
+		$allowed_entities = (array) apply_filters( $this->get_shortcode_name() . '/allowed_entities', [ 'Contact', 'Event' ] );
+
+		$entity = NULL;
+		foreach ( $allowed_entities as $allowed_entity ) {
+			if ( strcasecmp( $atts['entity'], $allowed_entity ) === 0 ) {
+				$entity = $allowed_entity;
 				break;
 			}
 		}
+
+		if ( $entity === NULL ) {
+			error_log( sprintf( 'ux_cv_api4_get: entity "%s" is not allowed; only %s may be queried', $atts['entity'], implode( ', ', $allowed_entities ) ) );
+			return '';
+		}
+
+		$atts['entity'] = $entity;
 
 		// If "id" attribute exists but isn't an integer, replace it with a GET parameter with that name.
 		if ( array_key_exists( 'id', $atts ) &&
@@ -58,9 +68,11 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 			}
 		}
 
-		// Default checkPermissions based on entity type; can be overridden via the
-		// check_permissions attribute.
-		$params = [ 'checkPermissions' => ( $atts['entity'] === 'Contact' ) ];
+		// Default checkPermissions by entity, overridable with the check_permissions attribute.
+		// Event defaults to unchecked, because an events listing or calendar shows public events to
+		// anonymous visitors, who usually lack the "access CiviEvent" permission. Everything else
+		// (Contact, and any entity a site adds through the filter above) defaults to checked.
+		$params = [ 'checkPermissions' => ( $atts['entity'] !== 'Event' ) ];
 
 		// cache results by default
 		$cache_results = true;

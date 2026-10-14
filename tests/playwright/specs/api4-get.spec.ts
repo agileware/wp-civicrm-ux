@@ -105,6 +105,35 @@ test.describe('Suite D - public Event queries are unchanged', () => {
   });
 });
 
+test.describe('Suite D - only Contact and Event may be queried', () => {
+  test('D-13 a disallowed entity returns nothing, even with check_permissions=0', async ({ privilegedPage }) => {
+    // The shortcode queries only Contact and Event. A contribution exists and the viewer is
+    // privileged, so the empty result is the entity restriction, not a lack of permission or data.
+    const seeded = civiApi4<Array<{ id: number }>>('Contribution.get', { select: ['id'], checkPermissions: false })[0];
+    test.skip(!seeded, 'No contribution exists to prove the entity would otherwise return rows.');
+
+    const html = await renderShortcode(
+      privilegedPage,
+      `[ux_cv_api4_get entity="Contribution" check_permissions="0" cache_results="false" limit="3"]C=[api4:id]|[/ux_cv_api4_get]`
+    );
+    expect(html).not.toMatch(/C=\d/);
+  });
+
+  test('D-14 Contact and Event are still allowed', async ({ privilegedPage, anonymousPage }) => {
+    const contact = await renderShortcode(
+      privilegedPage,
+      `[ux_cv_api4_get entity="Contact" id="${ids.otherContactId}" cache_results="false"]C=[api4:id][/ux_cv_api4_get]`
+    );
+    expect(contact).toMatch(/C=\d/);
+
+    const events = await renderShortcode(
+      anonymousPage,
+      `[ux_cv_api4_get entity="Event" is_public="1" is_active="1" cache_results="false" limit="1"]E=[api4:id][/ux_cv_api4_get]`
+    );
+    expect(events).toMatch(/E=\d/);
+  });
+});
+
 test.describe('Suite D - my_events isolation', () => {
   test('D-08 each member sees only their own registrations', async ({ memberPage, otherMemberPage }) => {
     const expectedMember = civiApi4<Array<{ id: number }>>('Participant.get', {
@@ -289,17 +318,17 @@ test.describe('Suite D - rich text fields are rendered as filtered markup', () =
   });
 });
 
-test.describe('Suite D - other entities pass through unmodified', () => {
-  for (const entity of ['LineItem', 'OptionValue', 'Participant']) {
-    test(`D-12 entity="${entity}" is not mangled by the case fold`, async ({ privilegedPage }) => {
+test.describe('Suite D - other entities are rejected', () => {
+  for (const entity of ['LineItem', 'OptionValue', 'Participant', 'Membership']) {
+    test(`D-12 entity="${entity}" returns nothing`, async ({ privilegedPage }) => {
+      // Only Contact and Event are queryable; any other entity renders nothing, whatever records
+      // exist and whatever permission the viewer has.
       purgeApi4Transients();
       const html = await renderShortcode(
         privilegedPage,
-        `[ux_cv_api4_get entity="${entity}" limit="1"]OK=[api4:id][/ux_cv_api4_get]`
+        `[ux_cv_api4_get entity="${entity}" check_permissions="0" limit="1"]OK=[api4:id][/ux_cv_api4_get]`
       );
-      // A mangled multi-word entity name (Contributionrecur, Lineitem) would throw and fall
-      // through to the no-results template instead.
-      expect(html).toContain('OK=');
+      expect(html).not.toContain('OK=');
     });
   }
 });
