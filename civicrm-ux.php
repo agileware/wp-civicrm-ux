@@ -21,6 +21,7 @@
  * Text Domain:       civicrm-ux
  * Domain Path:       /languages
  * GitHub Plugin URI: agileware/wp-civicrm-ux
+ * Update URI:        https://github.com/agileware/wp-civicrm-ux
  */
 
 // Disallow direct access
