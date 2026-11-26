@@ -1,6 +1,6 @@
 # Contributing to CiviCRM UX
 
-This guide is for developers who want to help maintain or extend this plugin. If you just want to *use* the plugin's shortcodes, see the [User Guide](USAGE.md) instead.
+This guide is for developers who want to help maintain or extend this plugin. If you just want to *use* the plugin's shortcodes, see the [documentation](README.md#documentation) instead.
 
 ## Architecture overview
 
@@ -18,7 +18,7 @@ The plugin bootstraps from `civicrm-ux.php`, which loads `includes/class-civicrm
 - `includes/` — plugin bootstrap, the module manager/loader infrastructure, and shared utility classes (`includes/utils/`).
 - `includes/abstract-class/` — the abstract base classes described above.
 - `includes/interface/` — shared interfaces.
-- `templates/` — front-end template parts, overridable from a theme (see the Membership Shortcodes section of [USAGE.md](USAGE.md) for how theme overrides work).
+- `templates/` — front-end template parts, overridable from a theme (see [Membership Shortcodes](docs/membership.md#use-template-parts-to-override-output) for how theme overrides work).
 - `admin/` and `public/` — admin settings screens and front-end assets (`css`/`js` subdirectories, plus `partials/` for admin views).
 - `packaged/` — bundled third-party code that isn't installed via Composer, e.g. `packaged/url-params/` (the `[urlparam]`/`[ifurlparam]` shortcodes) and `packaged/PHP81_BC/`. Treat these as vendored — avoid modifying them in place; update at the source instead if a fix is needed.
 - `data/` — example CiviCRM Form Processor exports referenced from the User Guide.
@@ -31,7 +31,7 @@ The plugin bootstraps from `civicrm-ux.php`, which loads `includes/class-civicrm
    - `get_shortcode_name()` — returns the shortcode tag, e.g. `'ux_my_shortcode'`.
    - `shortcode_callback( $atts = [], $content = null, $tag = '' )` — returns the HTML output.
 4. Normalise attribute keys with `array_change_key_case()`, apply defaults with `shortcode_atts()`, and sanitise every attribute (`sanitize_text_field()`, `absint()`, `sanitize_url()`, etc.) before use — follow the existing shortcodes in `shortcodes/` as a pattern.
-5. Document the new shortcode in [USAGE.md](USAGE.md).
+5. Document the new shortcode in a page under [docs/](docs/), and add it to the documentation table in [README.md](README.md#documentation).
 
 ## How to add a REST API route
 

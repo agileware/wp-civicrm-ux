@@ -50,7 +50,7 @@ function civicrm_ux_settings_page() {
         <h1>CiviCRM UX</h1>
         <h2>Usage Documentation</h2>
         <p>
-            Documentation on the available shortcodes and functionality for this plugin is available on our Github project page, <a href="https://github.com/agileware/wp-civicrm-ux/blob/master/USAGE.md" target="_blank">CiviCRM UX User Guide</a>.
+            Documentation on the available shortcodes and functionality for this plugin is available on our Github project page, <a href="https://github.com/agileware/wp-civicrm-ux/blob/master/README.md#documentation" target="_blank">CiviCRM UX User Guide</a>.
         </p>
         <h2>How To Say Thank You!</h2>
         <p>
@@ -173,7 +173,7 @@ function civicrm_ux_settings_page() {
                 </table>
                 <h2>Self Serve Checksum Form</h2>
                 <p>The <code>[ux_self_serve_checksum]</code> shortcode can be used to protect your forms and force a valid checksum before form submission.</p>
-                <p>Read more on how to use the shortcode in the <a href="https://github.com/agileware/wp-civicrm-ux/blob/GFCV-107/USAGE.md#self-serve-checksum-shortcode" target="_blank">CiviCRM UX User Guide.</a></p>
+                <p>Read more on how to use the shortcode in the <a href="https://github.com/agileware/wp-civicrm-ux/blob/master/docs/self-serve-checksum.md" target="_blank">CiviCRM UX User Guide.</a></p>
                 <p>Configure the contents of the Self Serve Checksum request form and the email to be sent to the user below.</p>
                 <h3>Protection Form</h3>
                 <table width="100%">
