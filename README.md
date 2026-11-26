@@ -33,9 +33,20 @@ Contributor, Author or Editor roles) to untrusted or public-facing users.***
 * Activity listing and Contact field value shortcodes
 * A Self Serve Checksum form to protect CiviCRM forms behind a valid checksum link
 
-## Usage
+## Documentation
 
-For more details on how to use this plugin, please read the [documentation](USAGE.md).
+| Page | What it covers |
+|---|---|
+| [Events Calendar](docs/event-calendar.md) | The interactive Events Calendar shortcode and its options |
+| [CiviCRM APIv4 Shortcode](docs/api4-get.md) | `[ux_cv_api4_get]` for custom listings and pages of contacts and events, with examples, filtering, permissions, trouble-shooting and caching |
+| [URL Parameter Shortcodes](docs/url-parameters.md) | `[urlparam]` and `[ifurlparam]`, for reading values from the page URL |
+| [Campaign Shortcode](docs/campaign.md) | Campaign fundraising thermometer and contribution honour roll |
+| [Event shortcodes](docs/event-shortcodes.md) | iCal feed, event listing, cancel registration, mark attendance, complete evaluation and custom button shortcodes |
+| [Membership Shortcodes](docs/membership.md) | Membership summary, status and renewal shortcodes, and overriding their templates |
+| [CiviCRM Data Processor Shortcode](docs/data-processor-listing.md) | `[ux_civicrm_listing]`, listing a Data Processor's output, and its permissions |
+| [Contact, activity and GDPR shortcodes](docs/contact-shortcodes.md) | Activity listing, contact field values and the GDPR communication preferences link |
+| [WordPress Helper Shortcodes](docs/wordpress-helpers.md) | `[ux_cf_value]` and `[ux_convert_date]` |
+| [Self Serve Checksum Form](docs/self-serve-checksum.md) | Protecting CiviCRM forms behind a valid checksum link, its settings and Cloudflare Turnstile |
 
 ## For Developers
 
@@ -58,4 +69,4 @@ This WordPress plugin was developed by the team at [Agileware](https://agileware
 Support your Australian [CiviCRM](https://civicrm.org) developers, [contact Agileware](https://agileware.com.au/contact) today!
 
 
-![Agileware](logo/agileware-logo.png)
+![Agileware](docs/logo/agileware-logo.png)
