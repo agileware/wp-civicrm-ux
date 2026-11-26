@@ -204,20 +204,21 @@ At this stage, only select lists and the `[urlparam]` shortcode are supported fo
 
 - Map the name of the select element to the desired query parameter.
 - Set the option values to the value to pass through to the shortcode attribute.
+- Do not use an empty option value for "all". The form sends every select, and an empty value removes that filter from the query entirely, so it is not the same as the attribute's `??` default. Use the default itself as the value instead, as the "All Events" option below does with `IN:1,2,7,8,14,15,17`.
 
 Example usage:
 ```
 <form id="wp-civicrm-ux-filter-form">
    <label for="search-keyword">Keywords</label>
    [urlparam htmltag="input" type="text" name="keyword" id="search-keyword" attr="value" param="keyword" /]
-   <label for"participant_status_id">Filter events</label>
-   <select name="participant_status_id">
-      <option value="">All Events</option>
+   <label for="participant_status_id">Filter events</label>
+   <select name="participant_status_id" id="participant_status_id">
+      <option value="IN:1,2,7,8,14,15,17">All Events</option>
       <option value="1">Upcoming / Mark Attendance</option>
       <option value="17">Incomplete Evaluations</option>
    </select>
-   <label for"sort">Sort by</label>
-   <select name="sort">
+   <label for="sort">Sort by</label>
+   <select name="sort" id="sort">
       <option value="start_date:DESC">Date Descending</option>
       <option value="start_date:ASC">Date Ascending</option>
    </select>
