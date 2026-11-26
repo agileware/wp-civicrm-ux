@@ -54,6 +54,11 @@ class Civicrm_Ux_Shortcode_Event_MarkAttendance_Button extends Abstract_Civicrm_
 
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
+		// Only for a logged-in contact.
+		if ( empty( $cid ) ) {
+			return '';
+		}
+
 		// Make sure the current logged in user has permission to edit their registration.
 		// This should match up to the permission set in the mark_event_attendance Form Processor,
 		// OR default to the 'register for events' permission

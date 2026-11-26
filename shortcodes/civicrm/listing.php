@@ -91,19 +91,29 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
     // Prefer $_GET over $_REQUEST if filters are expected in the URL query string
     foreach ($_GET as $key => $query) {
       // Efficient O(1) existence and filter check
-      if (isset($header[$key]) && ! empty($header[$key]['api.filter'])) {
-        // Handle both string inputs and array inputs safely
-        $params[$key] = is_array($query)
-          ? map_deep($query, 'sanitize_text_field')
-          : sanitize_text_field($query);
+      // Only plain values are accepted as filter values.
+      if (isset($header[$key]) && ! empty($header[$key]['api.filter']) && is_scalar($query)) {
+        $params[$key] = sanitize_text_field( wp_unslash( (string) $query ) );
       }
     }
 
 		// get the contact id if the user login
 		// todo checksum?
 		if ( $mod_atts['autopop_user_id'] ) {
-			$params[$mod_atts['autopop_user_id']] = CRM_Core_Session::getLoggedInContactID();
+			$contact_id = (int) CRM_Core_Session::getLoggedInContactID();
+
+			// This lists the logged-in contact's records, so it needs a logged-in contact.
+			if ( $contact_id <= 0 ) {
+				return '';
+			}
+
+			$params[$mod_atts['autopop_user_id']] = $contact_id;
 		}
+
+		// Apply the permission set on the Data Processor API output for the person
+		// viewing the page. Sites can opt out with the
+		// ux_civicrm_listing/check_permissions filter.
+		$params['check_permissions'] = (bool) apply_filters( 'ux_civicrm_listing/check_permissions', true, $dp, $mod_atts );
 
 		try {
 			$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );

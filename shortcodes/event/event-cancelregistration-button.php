@@ -48,6 +48,11 @@ class Civicrm_Ux_Shortcode_Event_CancelRegistration_Button extends Abstract_Civi
 
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
+		// Only for a logged-in contact.
+		if ( empty( $cid ) ) {
+			return '';
+		}
+
 		// Make sure the current logged in user has permission to cancel their registration.
 		// This should match up to the permission set in the cancel_event_registration Form Processor,
 		// OR default to the 'register for events' permission

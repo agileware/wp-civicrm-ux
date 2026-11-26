@@ -54,6 +54,11 @@ class Civicrm_Ux_Shortcode_Event_CompleteEvaluation_Button extends Abstract_Civi
 
 		$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
 
+		// Only for a logged-in contact.
+		if ( empty( $cid ) ) {
+			return '';
+		}
+
         // Only display this button for events that have already passed.
         $today = current_time('mysql');
 		$event = \Civi\Api4\Event::get(FALSE)
