@@ -7,6 +7,10 @@ export type SeededIds = {
   pastEventId: number;
   futureEventId: number;
   unattendedEventId: number;
+  /** Not public, active; the member is registered for it. */
+  privateEventId: number;
+  /** Public, not active. */
+  disabledEventId: number;
   campaignId: number;
   emptyCampaignId: number;
 };
@@ -75,6 +79,8 @@ function load(): SeededIds {
     pastEventId: byTitle(events, `${PREFIX} Past Event`),
     futureEventId: byTitle(events, `${PREFIX} Future Event`),
     unattendedEventId: byTitle(events, `${PREFIX} Unattended Event`),
+    privateEventId: byTitle(events, `${PREFIX} Private Event`),
+    disabledEventId: byTitle(events, `${PREFIX} Disabled Event`),
     campaignId: byTitle(campaigns, `${PREFIX} Campaign`, false),
     emptyCampaignId: byTitle(campaigns, `${PREFIX} Empty Campaign`, false),
   };

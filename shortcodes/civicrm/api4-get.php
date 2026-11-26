@@ -79,6 +79,16 @@ class Civicrm_Ux_Shortcode_CiviCRM_Api4_Get extends Abstract_Civicrm_Ux_Shortcod
 
 		$atts = apply_filters( $this->get_shortcode_name() . '/attributes', $atts );
 
+		// Event queries list only public, active events unless the shortcode sets is_public or
+		// is_active itself, for example is_public="0" for non-public events only, or
+		// is_public="IN:0,1" for both.
+		if ( $atts['entity'] === 'Event' ) {
+			$atts += [
+				'is_public' => '1',
+				'is_active' => '1',
+			];
+		}
+
 		// Interpret attributes as where clauses.
 		foreach ( $atts as $k => $v ) {
 			$v = html_entity_decode( preg_replace_callback( '/^( ( " ) | \' )(?<value>.*)(?(2) " | \' )$/', function ( $matches ) {

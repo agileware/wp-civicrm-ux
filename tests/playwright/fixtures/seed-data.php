@@ -99,7 +99,7 @@ function ensureContact(array $spec): int {
   return $contactId;
 }
 
-function ensureEvent(string $title, string $start, string $end): int {
+function ensureEvent(string $title, string $start, string $end, bool $isPublic = TRUE, bool $isActive = TRUE): int {
   $existing = Event::get(FALSE)->addWhere('title', '=', $title)->execute()->first();
 
   $values = [
@@ -107,8 +107,8 @@ function ensureEvent(string $title, string $start, string $end): int {
     'event_type_id' => 1,
     'start_date' => $start,
     'end_date' => $end,
-    'is_public' => TRUE,
-    'is_active' => TRUE,
+    'is_public' => $isPublic,
+    'is_active' => $isActive,
     'is_online_registration' => TRUE,
     // CiviCRM's own event form always populates this, but the column is nullable and an
     // API-created event leaves it NULL - which [ux_event_listing] cannot render (see the
@@ -200,12 +200,31 @@ $unattendedEventId = ensureEvent(
   date('Y-m-d H:i:s', strtotime('+45 days +3 hours'))
 );
 
+// A non-public event and a disabled event. [ux_cv_api4_get entity="Event"] lists only public,
+// active events unless the shortcode sets is_public or is_active itself (D-19 to D-21).
+$privateEventId = ensureEvent(
+  PREFIX . ' Private Event',
+  date('Y-m-d H:i:s', strtotime('+60 days')),
+  date('Y-m-d H:i:s', strtotime('+60 days +3 hours')),
+  FALSE
+);
+$disabledEventId = ensureEvent(
+  PREFIX . ' Disabled Event',
+  date('Y-m-d H:i:s', strtotime('+60 days')),
+  date('Y-m-d H:i:s', strtotime('+60 days +3 hours')),
+  TRUE,
+  FALSE
+);
+
 out('Participants:');
 // Both members are registered on the past event: that pairing is what the ownership test in
 // Suite C needs - member A attempting to mark member B's participant record.
 ensureParticipant($memberCid, $pastEventId, 1);
 ensureParticipant($otherCid, $pastEventId, 1);
 ensureParticipant($memberCid, $futureEventId, 1);
+// The member is also registered for the private event, so my_events can show it only when the
+// shortcode asks for non-public events too (D-21).
+ensureParticipant($memberCid, $privateEventId, 1);
 
 // ---------------------------------------------------------------- membership
 

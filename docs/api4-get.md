@@ -112,6 +112,8 @@ The Event in this example has CiviCRM Custom Fields as follows:
 
 The standard CiviCRM Event Registration form is shown at the bottom of the page.
 
+The page only shows public, active events, as Event queries do by default (see [Permissions](#permissions)). To also show an event that is not public, for example one shared by a direct link, add `is_public=IN:0,1` to the shortcode.
+
 The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates how to apply styles and layout to the listing.
 
 ```
@@ -189,11 +191,12 @@ You can further define a default value for the attribute filter by adding `??<pa
 
 For example:
 
-`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=?participant_status_id??IN:1,2,7,8,14,15,17 title=LIKE:%?keyword% is_public=1 is_active=1 sort=start_date:DESC?sort limit=0]`
+`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=?participant_status_id??IN:1,2,7,8,14,15,17 title=LIKE:%?keyword% is_public=1 is_active=1 sort=?sort??start_date:DESC limit=0]`
 
 - If the `participant_status_id` query parameter is not present in the URL, the shortcode attribute will default to the value after the `??`.
 - If the `participant_status_id` query parameter is present in the URL, the shortcode attribute value will be replaced by the query parameter value.
 - If the `keyword` query parameter is present in the URL, the value of the keyword in the shortcode attribute will be replaced by the query parameter value. e.g. `LIKE:%?my-query%`
+- If the `sort` query parameter is present in the URL, for example `?sort=start_date:ASC`, it replaces the whole sort. Otherwise the sort defaults to `start_date:DESC`. Use `?sort??<default>` rather than adding `?sort` to the end of a value: `sort=start_date:DESC?sort` would add the URL value to `start_date:DESC`, and the result is not a valid sort.
 
 For now, a form can be built using a Custom HTML WordPress block. Use the HTML ID `wp-civicrm-ux-filter-form` on the form element to enable JavaScript handling from `wp-civicrm-ux-filter.js`.
 
@@ -201,20 +204,21 @@ At this stage, only select lists and the `[urlparam]` shortcode are supported fo
 
 - Map the name of the select element to the desired query parameter.
 - Set the option values to the value to pass through to the shortcode attribute.
+- Do not use an empty option value for "all". The form sends every select, and an empty value removes that filter from the query entirely, so it is not the same as the attribute's `??` default. Use the default itself as the value instead, as the "All Events" option below does with `IN:1,2,7,8,14,15,17`.
 
 Example usage:
 ```
 <form id="wp-civicrm-ux-filter-form">
    <label for="search-keyword">Keywords</label>
    [urlparam htmltag="input" type="text" name="keyword" id="search-keyword" attr="value" param="keyword" /]
-   <label for"participant_status_id">Filter events</label>
-   <select name="participant_status_id">
-      <option value="">All Events</option>
+   <label for="participant_status_id">Filter events</label>
+   <select name="participant_status_id" id="participant_status_id">
+      <option value="IN:1,2,7,8,14,15,17">All Events</option>
       <option value="1">Upcoming / Mark Attendance</option>
       <option value="17">Incomplete Evaluations</option>
    </select>
-   <label for"sort">Sort by</label>
-   <select name="sort">
+   <label for="sort">Sort by</label>
+   <select name="sort" id="sort">
       <option value="start_date:DESC">Date Descending</option>
       <option value="start_date:ASC">Date Ascending</option>
    </select>
@@ -225,7 +229,14 @@ Example usage:
 
 ## Permissions
 
-`Contact` queries run with CiviCRM's permission checks **on**, so they return only the records the person viewing the page is allowed to see. `Event` queries run with permission checks **off**, because an events listing or calendar is meant to show public events to anonymous visitors, who usually do not have the *access CiviEvent* permission. Add `is_public=1 is_active=1` to an Event query yourself to limit it to public, active events. The shortcode does not add those conditions for you, so without them it returns every event, including non-public and inactive ones.
+`Contact` queries run with CiviCRM's permission checks **on**, so they return only the records the person viewing the page is allowed to see. `Event` queries run with permission checks **off**, because an events listing or calendar is meant to show public events to anonymous visitors, who usually do not have the *access CiviEvent* permission.
+
+`Event` queries list only **public, active** events by default: the shortcode adds `is_public=1 is_active=1` unless you set either attribute yourself. To list other events, set the attribute explicitly:
+
+* `is_public=0` lists only non-public events, and `is_active=0` only disabled events.
+* `is_public=IN:0,1` lists public and non-public events, and `is_active=IN:0,1` active and disabled events.
+
+This also applies to `my_events=1`: a "my events" listing leaves out the events a person is registered for that are not public, unless it also sets `is_public=IN:0,1`. Only list non-public or disabled events on pages whose audience may see them.
 
 `check_permissions=0` turns the checks off for a query (and `check_permissions=1` turns them on). Use `check_permissions=0` deliberately: it returns **every** matching record to whoever can view the page, so only use it where that is intended, and keep such pages visible only to the audience that should see the data. If you allow a further entity through the `ux_cv_api4_get/allowed_entities` filter, it defaults to checks on. See the security note at the top of this guide about who should be allowed to edit pages that use these shortcodes.
 

@@ -4,9 +4,9 @@ Display a CiviCRM Events Calendar on your website using the [FullCalendar Javasc
 
 Use WordPress shortcode `[ux_event_fullcalendar]` to display an interactive calendar of all CiviCRM Events which are both public and active.
 
-![](img/event-calendar.png)
+![The Events Calendar showing a month of events, with buttons to switch to a list view, filter by event type and move between months and years](img/event-calendar.png)
 
-![](img/event-single.png)
+![The details of one event shown after clicking it in the calendar: its event type, title, dates, location and description](img/event-single.png)
 
 ## Shortcode options
 

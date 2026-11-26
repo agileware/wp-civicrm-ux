@@ -136,12 +136,21 @@ test.describe('Suite D - only Contact and Event may be queried', () => {
 
 test.describe('Suite D - my_events isolation', () => {
   test('D-08 each member sees only their own registrations', async ({ memberPage, otherMemberPage }) => {
+    // [ux_cv_api4_get entity="Event"] lists only public, active events by default.
     const expectedMember = civiApi4<Array<{ id: number }>>('Participant.get', {
-      where: [['contact_id', '=', ids.memberContactId]],
+      where: [
+        ['contact_id', '=', ids.memberContactId],
+        ['event_id.is_public', '=', true],
+        ['event_id.is_active', '=', true],
+      ],
       select: ['id'],
     }).length;
     const expectedOther = civiApi4<Array<{ id: number }>>('Participant.get', {
-      where: [['contact_id', '=', ids.otherContactId]],
+      where: [
+        ['contact_id', '=', ids.otherContactId],
+        ['event_id.is_public', '=', true],
+        ['event_id.is_active', '=', true],
+      ],
       select: ['id'],
     }).length;
 
@@ -178,7 +187,11 @@ test.describe('Suite D - my_events isolation', () => {
     // and unfiltered counts are identical either way.
     const allEvents = civiApi4<Array<{ id: number }>>('Event.get', { select: ['id'], limit: 0 }).length;
     const myParticipations = civiApi4<Array<{ id: number }>>('Participant.get', {
-      where: [['contact_id', '=', ids.memberContactId]],
+      where: [
+        ['contact_id', '=', ids.memberContactId],
+        ['event_id.is_public', '=', true],
+        ['event_id.is_active', '=', true],
+      ],
       select: ['id'],
     }).length;
 
@@ -198,6 +211,8 @@ test.describe('Suite D - my_events isolation', () => {
       where: [
         ['contact_id', '=', ids.memberContactId],
         ['status_id', '=', 1],
+        ['event_id.is_public', '=', true],
+        ['event_id.is_active', '=', true],
       ],
       select: ['id'],
     }).length;
@@ -213,6 +228,49 @@ test.describe('Suite D - my_events isolation', () => {
       );
       expect(html.match(/E=/g)?.length ?? 0).toBe(expected);
     }
+  });
+});
+
+test.describe('Suite D - entity=Event lists public, active events by default', () => {
+  const eventIds = (html: string) => [...html.matchAll(/E=(\d+)\|/g)].map((m) => Number(m[1]));
+
+  test('D-19 without is_public or is_active, non-public and disabled events are left out', async ({ anonymousPage }) => {
+    const listed = eventIds(
+      await renderShortcode(anonymousPage, `[ux_cv_api4_get entity="Event" cache_results="false" limit="0"]E=[api4:id]|[/ux_cv_api4_get]`)
+    );
+
+    expect(listed).toContain(ids.futureEventId);
+    expect(listed).not.toContain(ids.privateEventId);
+    expect(listed).not.toContain(ids.disabledEventId);
+  });
+
+  test('D-20 is_public="0" and is_active="0" list non-public and disabled events', async ({ anonymousPage }) => {
+    const nonPublic = eventIds(
+      await renderShortcode(anonymousPage, `[ux_cv_api4_get entity="Event" is_public="0" cache_results="false" limit="0"]E=[api4:id]|[/ux_cv_api4_get]`)
+    );
+    expect(nonPublic).toContain(ids.privateEventId);
+    expect(nonPublic).not.toContain(ids.futureEventId);
+
+    const disabled = eventIds(
+      await renderShortcode(anonymousPage, `[ux_cv_api4_get entity="Event" is_active="0" cache_results="false" limit="0"]E=[api4:id]|[/ux_cv_api4_get]`)
+    );
+    expect(disabled).toContain(ids.disabledEventId);
+    expect(disabled).not.toContain(ids.futureEventId);
+  });
+
+  test('D-21 my_events includes a non-public registration only when is_public allows it', async ({ memberPage }) => {
+    const byDefault = eventIds(
+      await renderShortcode(memberPage, `[ux_cv_api4_get entity="Event" my_events="1" cache_results="false" limit="50"]E=[api4:id]|[/ux_cv_api4_get]`)
+    );
+    expect(byDefault).toContain(ids.futureEventId);
+    expect(byDefault).not.toContain(ids.privateEventId);
+
+    purgeApi4Transients();
+    const withPrivate = eventIds(
+      await renderShortcode(memberPage, `[ux_cv_api4_get entity="Event" my_events="1" is_public="IN:0,1" cache_results="false" limit="50"]E=[api4:id]|[/ux_cv_api4_get]`)
+    );
+    expect(withPrivate).toContain(ids.futureEventId);
+    expect(withPrivate).toContain(ids.privateEventId);
   });
 });
 
