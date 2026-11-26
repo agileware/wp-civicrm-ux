@@ -72,15 +72,23 @@ class Civicrm_Ux_Shortcode_Activity_Listing extends Abstract_Civicrm_Ux_Shortcod
 		$mod_atts['format'] = sanitize_text_field($mod_atts['format']);
 		$mod_atts['sort'] = sanitize_text_field($mod_atts['sort']);
 
-		$cid = [ CRM_Core_Session::singleton()->getLoggedInContactID() ];
+		$logged_in_cid = (int) CRM_Core_Session::singleton()->getLoggedInContactID();
+
+		// This lists the logged-in contact's own activities (and their related
+		// contacts'), so it needs a logged-in contact.
+		if ( $logged_in_cid <= 0 ) {
+			return '';
+		}
+
+		$cid = [ $logged_in_cid ];
 		if ( ! empty( $mod_atts['relationship-id'] ) ) {
 			// get related contact ids
 			try {
 				$result = civicrm_api3( 'Relationship', 'get', [
 					'sequential'           => 1,
 					'relationship_type_id' => $mod_atts['relationship-id'],
-					'contact_id_a'         => "user_contact_id",
-					'contact_id_b'         => "user_contact_id",
+					'contact_id_a'         => $logged_in_cid,
+					'contact_id_b'         => $logged_in_cid,
 					'options'              => [
 						'or'    => [ [ "contact_id_a", "contact_id_b" ] ],
 						'limit' => PHP_INT_MAX
