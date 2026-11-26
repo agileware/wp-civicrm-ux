@@ -112,6 +112,8 @@ The Event in this example has CiviCRM Custom Fields as follows:
 
 The standard CiviCRM Event Registration form is shown at the bottom of the page.
 
+The page only shows public, active events, as Event queries do by default (see [Permissions](#permissions)). To also show an event that is not public, for example one shared by a direct link, add `is_public=IN:0,1` to the shortcode.
+
 The following example code can be inserted into a WordPress page when using the Code Editor mode. This code demonstrates how to apply styles and layout to the listing.
 
 ```
