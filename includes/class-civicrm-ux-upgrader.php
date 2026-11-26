@@ -5,17 +5,25 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
-
-if (!class_exists('WP_Upgrader')) {
-    require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-}
-
 /**
- * Handles the update process for the plugin using WP_Upgrader.
+ * Offers the latest GitHub release of the plugin as a WordPress plugin update.
+ *
+ * This hooks the WordPress update checks and does not need anything from
+ * WP_Upgrader, so it does not extend it. Extending Plugin_Upgrader meant
+ * loading the WordPress upgrader classes on every request, front end included.
  */
-class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
+class Civicrm_Ux_Upgrader {
+
+    /**
+     * How long a successful release lookup is cached, in seconds.
+     */
+    const CACHE_TTL = 12 * HOUR_IN_SECONDS;
+
+    /**
+     * How long a failed release lookup is cached, in seconds, so a GitHub
+     * outage or rate limit does not cause a request on every update check.
+     */
+    const ERROR_CACHE_TTL = HOUR_IN_SECONDS;
 
     private $plugin_uri           = '';
     private $plugin_update_uri    = '';
@@ -71,12 +79,10 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 			$transient = new \stdClass();
 		}
 
-        if ( ! empty( $transient->response ) && ! empty( $transient->response[ $this->name ] ) ) {
+        // The response is keyed by the plugin basename, not the plugin name.
+        if ( ! empty( $transient->response[ $this->plugin ] ) ) {
 			return $transient;
 		}
-
-        // Get the current version of the plugin
-        $current_version = $this->version;
 
         // Get the latest version information from GitHub
         $update_info = $this->get_update_info();
@@ -85,20 +91,22 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
             return $transient;
         }
 
-        $latest_version = $update_info->tag_name;
+        $plugin = (object) [
+            'id'          => $this->plugin,
+            'slug'        => $this->slug,
+            'plugin'      => $this->plugin,
+            'new_version' => $update_info->version,
+            'url'         => $update_info->html_url,
+            'package'     => $update_info->zipball_url
+        ];
 
-        // Compare versions and add the update info if a newer version is available
-        if ( version_compare( $current_version, $latest_version, '<' ) ) {
-            $plugin = [
-                'slug'        => $this->slug,
-                'plugin'      => $this->plugin,
-                'name'        => $this->name,
-                'new_version' => $latest_version,
-                'url'         => $update_info->html_url,
-                'package'     => $update_info->zipball_url
-            ];
-
-            $transient->response[$this->plugin] = (object) $plugin;
+        // Compare versions and add the update info if a newer version is available.
+        // Listing the plugin in no_update otherwise lets WordPress offer the
+        // auto-updates setting for it.
+        if ( version_compare( $this->version, $update_info->version, '<' ) ) {
+            $transient->response[ $this->plugin ] = $plugin;
+        } else {
+            $transient->no_update[ $this->plugin ] = $plugin;
         }
 
         return $transient;
@@ -129,12 +137,13 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
         }
 
         $plugin_info = new stdClass();
-        $plugin_info->name = $this->name . ' version ' . $update_info->tag_name;
-        $plugin_info->slug = $this->plugin;
-        $plugin_info->version = ltrim($update_info->tag_name, 'v');
-        $plugin_info->author = '<a href="' . $this->author_uri . '">' . $this->author . '</a>';
+        $plugin_info->name = $this->name . ' version ' . $update_info->version;
+        $plugin_info->slug = $this->slug;
+        $plugin_info->version = $update_info->version;
+        $plugin_info->author = sprintf( '<a href="%s">%s</a>', esc_url( $this->author_uri ), esc_html( $this->author ) );
         $plugin_info->homepage = $this->plugin_uri;
         $plugin_info->download_link = $update_info->zipball_url;
+        // WordPress filters the sections through wp_kses() before showing them.
         $plugin_info->sections = [
             'Release Notes' => $update_info->html_body,
         ];
@@ -146,7 +155,7 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
      * Convert the Markdown body to HTML using GitHub's Markdown API
      * 
      * @param string    $markdown_body
-	 * @return string
+	 * @return string HTML, or the escaped Markdown when the conversion fails
      */
     private function convert_markdown_to_html( $markdown_body ) {
         // GitHub API URL for converting Markdown to HTML
@@ -158,8 +167,8 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
                 'Accept'        => 'application/vnd.github.v3+json',
                 'User-Agent'    => $this->name . ' Plugin Updater',
             ],
-            'body' => json_encode([
-                'text'   => $markdown_body,
+            'body' => wp_json_encode([
+                'text'   => (string) $markdown_body,
                 'mode'   => 'gfm',
                 'context' => WP_CIVICRM_UX_PLUGIN_GITHUB_REPO
             ]),
@@ -167,7 +176,11 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 
         if ( is_wp_error( $response ) ) {
             error_log( 'Error converting Markdown to HTML via GitHub API : ' . $response->get_error_message() );
-            return false;
+        }
+
+        // Show the notes as plain text rather than nothing when the conversion fails.
+        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+            return '<pre>' . esc_html( (string) $markdown_body ) . '</pre>';
         }
 
         $html_body = wp_remote_retrieve_body( $response );
@@ -188,22 +201,20 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 			$version_info = $this->get_update_info_from_remote();
 
 			if ( ! $version_info ) {
+				// Remember the failure for a while instead of asking GitHub on every
+				// check. Unauthenticated GitHub API requests are limited to 60 an hour
+				// per IP address, shared by every site on the same host.
+				$this->set_version_info_cache( 'error', '', self::ERROR_CACHE_TTL );
 				return false;
 			}
 
-			// This is required to support auto-updates since WordPress 5.5.
-			$version_info->plugin   = $this->name;
-			$version_info->id       = $this->name;
-			$version_info->version  = $version_info->new_version ?? $version_info->tag_name;
-			$version_info->author   = sprintf( '<a href="%s">%s</a>', esc_url($this->author_uri), esc_html($this->author) );
-
             // Cache the body after converting from Markdown to HTML
-            $version_info->html_body = $this->convert_markdown_to_html( $version_info->body );
+            $version_info->html_body = $this->convert_markdown_to_html( $version_info->body ?? '' );
 
 			$this->set_version_info_cache( $version_info );
 		}
 
-		return $version_info;
+		return is_object( $version_info ) ? $version_info : false;
     }
 
     /**
@@ -221,16 +232,25 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
         ];
         $response = wp_remote_get( $this->plugin_update_uri, $args );
 
-        if ( is_wp_error( $response ) ) {
+        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
             return false;
         }
 
         $body = wp_remote_retrieve_body( $response );
         $data = json_decode( $body );
 
-        if ( empty( $data ) || isset( $data->message ) ) {
+        // Only accept a release with a plain version tag and a download from
+        // this repository on GitHub.
+        if ( ! is_object( $data ) || empty( $data->tag_name ) || ! is_string( $data->tag_name )
+            || ! preg_match( '/^v?\d+(\.\d+)*$/', $data->tag_name )
+            || empty( $data->zipball_url ) || ! is_string( $data->zipball_url )
+            || 0 !== strpos( $data->zipball_url, 'https://api.github.com/repos/' . WP_CIVICRM_UX_PLUGIN_GITHUB_REPO . '/' ) ) {
             return false;
         }
+
+        // Tags may have a leading "v", the version compared and shown never does.
+        $data->version  = ltrim( $data->tag_name, 'v' );
+        $data->html_url = ( isset( $data->html_url ) && is_string( $data->html_url ) ) ? $data->html_url : $this->plugin_uri;
 
         return $data;
     }
@@ -255,17 +275,17 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
     /**
 	 * Adds the plugin version information to the database.
 	 *
-	 * @param string $value
+	 * @param mixed  $value
 	 * @param string $cache_key
+	 * @param int    $expiration seconds, 12 hours by default
 	 */
-	public function set_version_info_cache( $value = '', $cache_key = '' ) {
+	public function set_version_info_cache( $value = '', $cache_key = '', $expiration = self::CACHE_TTL ) {
 
 		if ( empty( $cache_key ) ) {
 			$cache_key = $this->get_cache_key();
 		}
 
-        // Set the transient to expire in 12 hours (12 * 60 * 60 seconds)
-        set_transient( $cache_key, $value, 12 * 60 * 60 );
+        set_transient( $cache_key, $value, $expiration );
 	}
 
     /**
@@ -279,8 +299,14 @@ class Civicrm_Ux_Upgrader extends Plugin_Upgrader {
 		return 'wpciviux_vi_' . md5( $string );
 	}
 
+	/**
+	 * Whether cached release information can be used. "Check again" on the
+	 * WordPress Updates page skips the cache, for users who can update plugins.
+	 *
+	 * @return bool
+	 */
 	private function allowCached() : bool {
-		return empty(sanitize_text_field($_GET['force-check'] ?? ''));
+		return empty( $_GET['force-check'] ) || ! current_user_can( 'update_plugins' );
 	}
 
     /**
