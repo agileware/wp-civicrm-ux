@@ -527,6 +527,18 @@ This shortcode will output a [CiviCRM Data Processor](https://lab.civicrm.org/ex
  - **hide_fields**: comma separated list of fields to be excluded from the output.
  - **css_id**: CSS ID to assign to the table.
 
+### Permissions
+
+The data is read with CiviCRM permission checks, so the permission set on the Data Processor **API output** applies to the person viewing the page. For a listing shown to anonymous visitors, set the output permission to one that the anonymous role has in CiviCRM, and make sure the output only returns fields and records that are safe to publish. Anyone with that permission can read the whole output, not just the columns the listing shows. When the person viewing the page does not have the permission, the listing shows "CiviCRM API error." instead of the data.
+
+Sites that need the behaviour of earlier versions (no permission check) can opt out with:
+
+```php
+add_filter( 'ux_civicrm_listing/check_permissions', '__return_false' );
+```
+
+***With this filter, any page using this shortcode shows the whole Data Processor output to everyone who can see the page.***
+
 The example usage below uses a Data Processor with the ID of 4, excludes the contact_id column from display and assigns the CSS ID of member_directory to the table.
 
 [Datatables](https://datatables.net/) can be used to add features to the table displayed on the page, as shown below. 

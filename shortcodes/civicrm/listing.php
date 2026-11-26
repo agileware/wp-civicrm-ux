@@ -105,6 +105,11 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 			$params[$mod_atts['autopop_user_id']] = CRM_Core_Session::getLoggedInContactID();
 		}
 
+		// Apply the permission set on the Data Processor API output for the person
+		// viewing the page. Sites can opt out with the
+		// ux_civicrm_listing/check_permissions filter.
+		$params['check_permissions'] = (bool) apply_filters( 'ux_civicrm_listing/check_permissions', true, $dp, $mod_atts );
+
 		try {
 			$result = civicrm_api3( $dp['api_entity'], $dp['api_action'], $params );
 		} catch ( CiviCRM_API3_Exception $e ) {
