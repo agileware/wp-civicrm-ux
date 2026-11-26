@@ -47,6 +47,7 @@ Contributor, Author or Editor roles) to untrusted or public-facing users.***
 | [Contact, activity and GDPR shortcodes](docs/contact-shortcodes.md) | Activity listing, contact field values and the GDPR communication preferences link |
 | [WordPress Helper Shortcodes](docs/wordpress-helpers.md) | `[ux_cf_value]` and `[ux_convert_date]` |
 | [Self Serve Checksum Form](docs/self-serve-checksum.md) | Protecting CiviCRM forms behind a valid checksum link, its settings and Cloudflare Turnstile |
+| [Security policy](SECURITY.md) | How to report a security vulnerability |
 
 ## For Developers
 
