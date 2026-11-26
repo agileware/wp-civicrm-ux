@@ -225,7 +225,14 @@ Example usage:
 
 ## Permissions
 
-`Contact` queries run with CiviCRM's permission checks **on**, so they return only the records the person viewing the page is allowed to see. `Event` queries run with permission checks **off**, because an events listing or calendar is meant to show public events to anonymous visitors, who usually do not have the *access CiviEvent* permission. Add `is_public=1 is_active=1` to an Event query yourself to limit it to public, active events. The shortcode does not add those conditions for you, so without them it returns every event, including non-public and inactive ones.
+`Contact` queries run with CiviCRM's permission checks **on**, so they return only the records the person viewing the page is allowed to see. `Event` queries run with permission checks **off**, because an events listing or calendar is meant to show public events to anonymous visitors, who usually do not have the *access CiviEvent* permission.
+
+`Event` queries list only **public, active** events by default: the shortcode adds `is_public=1 is_active=1` unless you set either attribute yourself. To list other events, set the attribute explicitly:
+
+* `is_public=0` lists only non-public events, and `is_active=0` only disabled events.
+* `is_public=IN:0,1` lists public and non-public events, and `is_active=IN:0,1` active and disabled events.
+
+This also applies to `my_events=1`: a "my events" listing leaves out the events a person is registered for that are not public, unless it also sets `is_public=IN:0,1`. Only list non-public or disabled events on pages whose audience may see them.
 
 `check_permissions=0` turns the checks off for a query (and `check_permissions=1` turns them on). Use `check_permissions=0` deliberately: it returns **every** matching record to whoever can view the page, so only use it where that is intended, and keep such pages visible only to the audience that should see the data. If you allow a further entity through the `ux_cv_api4_get/allowed_entities` filter, it defaults to checks on. See the security note at the top of this guide about who should be allowed to edit pages that use these shortcodes.
 
