@@ -523,7 +523,7 @@ This shortcode will output a [CiviCRM Data Processor](https://lab.civicrm.org/ex
  - **dpid**: Data Processor ID
  - **limit**: the limit of result default is 0 (no limit)
  - **sort**: the order of result, either: asc (ascending) or desc (descending)
- - **autopop_user_id**: Define the parameter name sent to the Data Processor which contains the current users CiviCRM Contact ID. Text value.
+ - **autopop_user_id**: Define the parameter name sent to the Data Processor which contains the current users CiviCRM Contact ID. Text value. When nobody is logged in, the listing shows nothing.
  - **hide_fields**: comma separated list of fields to be excluded from the output.
  - **css_id**: CSS ID to assign to the table.
 

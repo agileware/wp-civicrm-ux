@@ -102,7 +102,14 @@ class Civicrm_Ux_Shortcode_Civicrm_Listing extends Abstract_Civicrm_Ux_Shortcode
 		// get the contact id if the user login
 		// todo checksum?
 		if ( $mod_atts['autopop_user_id'] ) {
-			$params[$mod_atts['autopop_user_id']] = CRM_Core_Session::getLoggedInContactID();
+			$contact_id = (int) CRM_Core_Session::getLoggedInContactID();
+
+			// This lists the logged-in contact's records, so it needs a logged-in contact.
+			if ( $contact_id <= 0 ) {
+				return '';
+			}
+
+			$params[$mod_atts['autopop_user_id']] = $contact_id;
 		}
 
 		// Apply the permission set on the Data Processor API output for the person
