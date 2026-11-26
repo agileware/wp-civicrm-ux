@@ -28,6 +28,11 @@ class Civicrm_Ux_Shortcode_Gdpr_Url extends Abstract_Civicrm_Ux_Shortcode {
 			try {
 
 				$cid = CRM_Core_Session::singleton()->getLoggedInContactID();
+
+				// The communication preferences link is for the logged-in contact.
+				if ( empty( $cid ) ) {
+					return '#';
+				}
 				//This plugin requires CiviCRM GDPR: https://github.com/veda-consulting/uk.co.vedaconsulting.gdpr
 				// That extension is not part of CiviCRM core, so on a site without it the class
 				// below does not exist. A missing class raises an Error, not an exception, so it
