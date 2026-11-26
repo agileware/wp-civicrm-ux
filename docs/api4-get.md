@@ -191,11 +191,12 @@ You can further define a default value for the attribute filter by adding `??<pa
 
 For example:
 
-`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=?participant_status_id??IN:1,2,7,8,14,15,17 title=LIKE:%?keyword% is_public=1 is_active=1 sort=start_date:DESC?sort limit=0]`
+`[ux_cv_api4_get entity=Event cache_results=false my_events=true participant_status_id=?participant_status_id??IN:1,2,7,8,14,15,17 title=LIKE:%?keyword% is_public=1 is_active=1 sort=?sort??start_date:DESC limit=0]`
 
 - If the `participant_status_id` query parameter is not present in the URL, the shortcode attribute will default to the value after the `??`.
 - If the `participant_status_id` query parameter is present in the URL, the shortcode attribute value will be replaced by the query parameter value.
 - If the `keyword` query parameter is present in the URL, the value of the keyword in the shortcode attribute will be replaced by the query parameter value. e.g. `LIKE:%?my-query%`
+- If the `sort` query parameter is present in the URL, for example `?sort=start_date:ASC`, it replaces the whole sort. Otherwise the sort defaults to `start_date:DESC`. Use `?sort??<default>` rather than adding `?sort` to the end of a value: `sort=start_date:DESC?sort` would add the URL value to `start_date:DESC`, and the result is not a valid sort.
 
 For now, a form can be built using a Custom HTML WordPress block. Use the HTML ID `wp-civicrm-ux-filter-form` on the form element to enable JavaScript handling from `wp-civicrm-ux-filter.js`.
 
